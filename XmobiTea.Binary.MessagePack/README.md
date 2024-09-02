@@ -22,4 +22,4 @@
 ## Installation
 
 To install XmobiTea.Binary.MessagePack, use NuGet Package Manager:
-
+Install-Package XmobiTea.Binary.MessagePack

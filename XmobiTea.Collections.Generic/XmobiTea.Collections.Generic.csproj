@@ -8,13 +8,13 @@
 		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet-Solution</RepositoryUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNetSolution</RepositoryUrl>
 		<PackageTags>collection, generic, threadsafe, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
 		<Version>1.0.0</Version>
-		<Description></Description>
+		<Description>XmobiTea.Collections.Generic offers a robust suite of thread-safe data structures, including ThreadSafeArray, ThreadSafeDictionary, and ThreadSafeList, specifically designed to ensure safe and efficient multithreading operations.</Description>
 	</PropertyGroup>
 	
 	<ItemGroup>

@@ -8,13 +8,13 @@
 		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet-Solution</RepositoryUrl>
-		<PackageTags>threading, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNetSolution</RepositoryUrl>
+		<PackageTags>threading, threading manager, thread, thread manager, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
 		<Version>1.0.0</Version>
-		<Description></Description>
+		<Description>XmobiTea.Threading is designed to manage processes, providing the tools necessary to efficiently handle threading and concurrency within your application. It ensures that multiple processes are managed effectively, allowing for smooth and coordinated execution in a multithreaded environment.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>

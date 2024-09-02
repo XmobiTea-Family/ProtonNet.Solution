@@ -29,7 +29,7 @@ if [ -z "$TARGET_FRAMEWORK" ] || [ -z "$TARGET_RUNTIME" ]; then
 fi
 
 # Define the path to the control file
-CONTROL_SUPPORT_FILE_PATH="./control/${TARGET_FRAMEWORK}/${TARGET_RUNTIME}/XmobiTea.ProtonService.Control"
+CONTROL_SUPPORT_FILE_PATH="./control/${TARGET_FRAMEWORK}/${TARGET_RUNTIME}/XmobiTea.ProtonNet.Control"
 
 # Add the .exe extension if needed
 if [[ "$TARGET_RUNTIME" == win* ]]; then

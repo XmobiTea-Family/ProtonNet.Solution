@@ -8,7 +8,7 @@
         /// <summary>
         /// Represents the version of the Proton Agent Control.
         /// </summary>
-        public static readonly string ProtonAgentControlVersion = "1.0.0";
+        public static readonly string ProtonAgentControlVersion = "1.0";
 
     }
 

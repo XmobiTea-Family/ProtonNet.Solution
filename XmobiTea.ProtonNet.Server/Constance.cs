@@ -8,7 +8,7 @@
         /// <summary>
         /// Represents the version of the Proton server.
         /// </summary>
-        public static readonly string ProtonServerVersion = "1.0.0";
+        public static readonly string ProtonServerVersion = "1.0";
 
     }
 

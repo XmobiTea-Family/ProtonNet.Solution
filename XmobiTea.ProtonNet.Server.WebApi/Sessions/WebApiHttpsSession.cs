@@ -118,7 +118,8 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Sessions
         {
             var cloneRequest = request.Clone();
 
-            this.context.GetControllerService().OnReceived(this, cloneRequest);
+            if (this.fiber == null) this.context.GetControllerService().OnReceived(this, cloneRequest);
+            else this.fiber.Enqueue(() => this.context.GetControllerService().OnReceived(this, cloneRequest));
         }
 
         /// <summary>

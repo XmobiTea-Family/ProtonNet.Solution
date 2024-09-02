@@ -16,11 +16,14 @@ dotnet add package XmobiTea.Logging.Log4Net
 
 ## Usage Examples
 
-using XmobiTea.Logging.Log4Net; using XmobiTea.Logging.Config;
+```csharp
+using XmobiTea.Logging.Log4Net;
+using XmobiTea.Logging.Config;
 
 var logger = LoggerFactory.CreateLogger(config => { config.UseLog4Net("log4net.config"); });
 
 logger.LogInfo("This is an information log using Log4Net."); logger.LogError("This is an error log using Log4Net.");
+```
 
 ## Supported Data Types
 

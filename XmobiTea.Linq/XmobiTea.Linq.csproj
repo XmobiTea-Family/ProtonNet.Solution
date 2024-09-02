@@ -8,18 +8,14 @@
 		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet-Solution</RepositoryUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNetSolution</RepositoryUrl>
 		<PackageTags>linq, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.0</Version>
-		<Description></Description>
+		<Version>1.0.2</Version>
+		<Description>XmobiTea.Linq contains functions similar to those in System.Linq, offering familiar and powerful querying capabilities for collections and data manipulation. It allows developers to perform complex data operations with ease, just like the native LINQ library in .NET.</Description>
 	</PropertyGroup>
-
-	<ItemGroup>
-		<None Include="README.md" Pack="true" PackagePath="\" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<None Include="README.md" Pack="true" PackagePath="\" />

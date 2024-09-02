@@ -10,13 +10,13 @@
 		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet-Solution</RepositoryUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNetSolution</RepositoryUrl>
 		<PackageTags>proton net control agent, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
 		<Version>1.0.0</Version>
-		<Description></Description>
+		<Description>XmobiTea.ProtonNet.Control.Agent assists in managing services, providing the tools necessary for overseeing and controlling the lifecycle and operations of various ProtonNet services. It plays a crucial role in ensuring the efficient and effective management of services within the ProtonNet ecosystem.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -24,11 +24,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\XmobiTea.Logging.Log4Net\XmobiTea.Logging.Log4Net.csproj" />
-		<ProjectReference Include="..\XmobiTea.Logging\XmobiTea.Logging.csproj" />
-		<ProjectReference Include="..\XmobiTea.ProtonNet.Server.Socket\XmobiTea.ProtonNet.Server.Socket.csproj" />
-		<ProjectReference Include="..\XmobiTea.ProtonNet.Server.WebApi\XmobiTea.ProtonNet.Server.WebApi.csproj" />
-		<ProjectReference Include="..\XmobiTea.ProtonNet.Server\XmobiTea.ProtonNet.Server.csproj" />
+		<ProjectReference Include="..\XmobiTea.Logging.Log4Net\XmobiTea.Logging.Log4Net.csproj" Version="1.0.0" />
+		<ProjectReference Include="..\XmobiTea.Logging\XmobiTea.Logging.csproj" Version="1.0.0" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Server.Socket\XmobiTea.ProtonNet.Server.Socket.csproj" Version="1.0.0" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Server.WebApi\XmobiTea.ProtonNet.Server.WebApi.csproj" Version="1.0.0" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Server\XmobiTea.ProtonNet.Server.csproj" Version="1.0.0" />
 	</ItemGroup>
 	
 	<ItemGroup Condition="'$(TargetFramework)' == 'net46' Or '$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or '$(TargetFramework)' == 'net47' Or '$(TargetFramework)' == 'net471' Or '$(TargetFramework)' == 'net472' Or '$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'net481'">

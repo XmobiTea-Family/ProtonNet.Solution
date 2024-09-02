@@ -1,8 +1,8 @@
 # Proton Net Server
 
-![GitHub release](https://img.shields.io/github/release/XmobiTea-Family/ProtonNet-Solution.svg)
-![License](https://img.shields.io/github/license/XmobiTea-Family/ProtonNet-Solution)
-[![GitHub star chart](https://img.shields.io/github/stars/XmobiTea-Family/ProtonNet-Solution?style=social)](https://star-history.com/#XmobiTea-Family/ProtonNet-Solution)
+![GitHub release](https://img.shields.io/github/release/XmobiTea-Family/ProtonNetSolution.svg)
+![License](https://img.shields.io/github/license/XmobiTea-Family/ProtonNetSolution)
+[![GitHub star chart](https://img.shields.io/github/stars/XmobiTea-Family/ProtonNetSolution?style=social)](https://star-history.com/#XmobiTea-Family/ProtonNetSolution)
 
 ## Instructions
 An Open Solution for all your Real-Time needs

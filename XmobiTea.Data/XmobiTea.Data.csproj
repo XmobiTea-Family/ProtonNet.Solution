@@ -8,13 +8,13 @@
 		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet-Solution</RepositoryUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNetSolution</RepositoryUrl>
 		<PackageTags>data, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
 		<Version>1.0.0</Version>
-		<Description></Description>
+		<Description>XmobiTea.Data includes GNData, which features GNHashtable and GNArray, designed to facilitate the serialization of data into various formats and the deserialization of data back into objects. This makes it easier to manage and transfer complex data structures efficiently.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>

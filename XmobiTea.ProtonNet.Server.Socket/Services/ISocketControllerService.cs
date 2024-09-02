@@ -86,7 +86,7 @@ namespace XmobiTea.ProtonNet.Server.Socket.Services
         /// <summary>
         /// A dictionary mapping each session to its corresponding <see cref="SessionPerSecondAmount"/> to track the session's activity.
         /// </summary>
-        private System.Collections.Generic.IDictionary<ISocketSession, SessionPerSecondAmount> sessionReceiveAtTimeAmountDict { get; }
+        private System.Collections.Concurrent.ConcurrentDictionary<ISocketSession, SessionPerSecondAmount> sessionReceiveAtTimeAmountDict { get; }
 
         /// <summary>
         /// Automatically binds the socket session emit service using the <see cref="AutoBindAttribute"/>.
@@ -141,7 +141,7 @@ namespace XmobiTea.ProtonNet.Server.Socket.Services
         {
             this.logger = LogManager.GetLogger(this);
             this.socketControllerLst = new System.Collections.Generic.List<SocketController>();
-            this.sessionReceiveAtTimeAmountDict = new System.Collections.Generic.Dictionary<ISocketSession, SessionPerSecondAmount>();
+            this.sessionReceiveAtTimeAmountDict = new System.Collections.Concurrent.ConcurrentDictionary<ISocketSession, SessionPerSecondAmount>();
         }
 
         /// <summary>
@@ -321,7 +321,7 @@ namespace XmobiTea.ProtonNet.Server.Socket.Services
         public void OnDisconnected(ISocketSession session)
         {
             System.Threading.Interlocked.Decrement(ref this.totalSession);
-            this.sessionReceiveAtTimeAmountDict.Remove(session);
+            this.sessionReceiveAtTimeAmountDict.TryRemove(session, out _);
 
             this.otherFiber.Enqueue(() =>
             {

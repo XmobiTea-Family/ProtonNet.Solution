@@ -45,7 +45,7 @@ if "%TARGET_RUNTIME%"=="" (
 )
 
 REM Determine the path to the control file
-set CONTROL_SUPPORT_FILE_PATH=./control/%TARGET_FRAMEWORK%/%TARGET_RUNTIME%/XmobiTea.ProtonService.Control
+set CONTROL_SUPPORT_FILE_PATH=./control/%TARGET_FRAMEWORK%/%TARGET_RUNTIME%/XmobiTea.ProtonNet.Control
 
 REM Add the .exe extension if needed
 if "%TARGET_RUNTIME:~0,3%"=="win" (

@@ -15,11 +15,15 @@ dotnet add package XmobiTea.Logging
 - **Performance Optimized:** Lightweight and designed for minimal performance overhead.
 
 ## Usage Examples
-using XmobiTea.Logging; using XmobiTea.Logging.Config;
+
+```csharp
+using XmobiTea.Logging;
+using XmobiTea.Logging.Config;
 
 var logger = LoggerFactory.CreateLogger(config => { config.SetLevel(LogLevel.Debug); config.AddConsoleOutput(); config.AddFileOutput("log.txt"); });
 
 logger.LogInformation("This is an information log."); logger.LogError("This is an error log.");
+```
 
 ## Supported Data Types
 

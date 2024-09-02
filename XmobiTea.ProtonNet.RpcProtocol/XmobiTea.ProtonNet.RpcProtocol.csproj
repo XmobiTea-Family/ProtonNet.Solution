@@ -8,21 +8,21 @@
 		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet-Solution</RepositoryUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNetSolution</RepositoryUrl>
 		<PackageTags>rpc protocol, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
 		<Version>1.0.0</Version>
-		<Description></Description>
+		<Description>XmobiTea.ProtonNet.RpcProtocol is responsible for encoding, decoding, and transforming XmobiTea.ProtonNet.Networking objects into the specific objects required by the server and client. This ensures seamless communication and interaction between different components within the ProtonNet framework.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\XmobiTea.Binary\XmobiTea.Binary.csproj" />
-		<ProjectReference Include="..\XmobiTea.Crypto.Aes\XmobiTea.Crypto.Aes.csproj" />
-		<ProjectReference Include="..\XmobiTea.Crypto\XmobiTea.Crypto.csproj" />
-		<ProjectReference Include="..\XmobiTea.Data\XmobiTea.Data.csproj" />
-		<ProjectReference Include="..\XmobiTea.ProtonNet.Networking\XmobiTea.ProtonNet.Networking.csproj" />
+		<ProjectReference Include="..\XmobiTea.Binary\XmobiTea.Binary.csproj" Version="1.0.0" />
+		<ProjectReference Include="..\XmobiTea.Crypto.Aes\XmobiTea.Crypto.Aes.csproj" Version="1.0.0" />
+		<ProjectReference Include="..\XmobiTea.Crypto\XmobiTea.Crypto.csproj" Version="1.0.0" />
+		<ProjectReference Include="..\XmobiTea.Data\XmobiTea.Data.csproj" Version="1.0.0" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Networking\XmobiTea.ProtonNet.Networking.csproj" Version="1.0.0" />
 	</ItemGroup>
 	
 	<ItemGroup>

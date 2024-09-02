@@ -145,7 +145,8 @@ namespace XmobiTea.ProtonNet.Server.Socket.Sessions
         {
             base.OnWsReceived(buffer, position, length);
 
-            this.controllerService.OnReceived(this, buffer, position, length);
+            if (this.fiber == null) this.controllerService.OnReceived(this, buffer, position, length);
+            else this.fiber.Enqueue(() => this.controllerService.OnReceived(this, buffer, position, length));
         }
 
         /// <summary>

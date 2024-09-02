@@ -21,29 +21,36 @@ To install XmobiTea.Binary via NuGet, run the following command:
 
 You can serialize an object to binary data using the DataConverter:
 
+```csharp
     var myObject = new MyCustomObject();
     var binaryData = DataConverter.SerializeObject(myObject);
+```
 
 ### Deserialization
 
 To deserialize binary data back into an object:
 
+```csharp
     var binaryData = /* your binary data */;
     var deserializedObject = DataConverter.DeserializeObject<MyCustomObject>(binaryData);
+```
 
 ### Working with Arrays
 
 Serialization and deserialization of arrays or lists is also straightforward:
 
+```csharp
     var myArray = new List<MyCustomObject> { new MyCustomObject(), new MyCustomObject() };
     var binaryArray = DataConverter.SerializeArray(myArray);
 
     var deserializedArray = DataConverter.DeserializeArray<MyCustomObject>(binaryArray);
+```
 
 ### Custom Binary Readers and Writers
 
 If you need to handle custom data types, you can create custom binary readers and writers:
 
+```csharp
     public class MyCustomObjectBinaryReader : BinaryReader<MyCustomObject>
     {
         public override MyCustomObject Read(Stream stream)
@@ -51,15 +58,18 @@ If you need to handle custom data types, you can create custom binary readers an
             // Custom deserialization logic here
         }
     }
+```
 
 ### Extending the Data Converter
 
 For advanced scenarios, you can extend the IDataConverter to implement custom serialization logic:
 
+```csharp
     public class MyCustomDataConverter : IDataConverter
     {
         // Implement custom serialization and deserialization methods
     }
+```
 
 ## Supported Data Types
 

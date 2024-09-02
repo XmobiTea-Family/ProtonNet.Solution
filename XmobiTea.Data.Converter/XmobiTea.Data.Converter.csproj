@@ -8,19 +8,19 @@
 		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet-Solution</RepositoryUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNetSolution</RepositoryUrl>
 		<PackageTags>data, data converter, converter, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
 		<Version>1.0.0</Version>
-		<Description></Description>
+		<Description>XmobiTea.Data.Converter is designed to facilitate the conversion of data into objects, making them easier to work with and integrate into your application. It simplifies the process of transforming raw data into structured objects, enhancing usability and efficiency.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\XmobiTea.Collections.Generic\XmobiTea.Collections.Generic.csproj" />
-		<ProjectReference Include="..\XmobiTea.Data\XmobiTea.Data.csproj" />
-		<ProjectReference Include="..\XmobiTea.Linq\XmobiTea.Linq.csproj" />
+		<ProjectReference Include="..\XmobiTea.Collections.Generic\XmobiTea.Collections.Generic.csproj" Version="1.0.0" />
+		<ProjectReference Include="..\XmobiTea.Data\XmobiTea.Data.csproj" Version="1.0.0" />
+		<ProjectReference Include="..\XmobiTea.Linq\XmobiTea.Linq.csproj" Version="1.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>

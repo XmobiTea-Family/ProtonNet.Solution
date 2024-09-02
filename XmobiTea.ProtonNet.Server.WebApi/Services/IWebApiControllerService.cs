@@ -170,7 +170,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
         /// <summary>
         /// Dictionary tracking the amount of requests received per session per second.
         /// </summary>
-        private System.Collections.Generic.IDictionary<IWebApiSession, SessionPerSecondAmount> sessionReceiveAtTimeAmountDict { get; }
+        private System.Collections.Concurrent.ConcurrentDictionary<IWebApiSession, SessionPerSecondAmount> sessionReceiveAtTimeAmountDict { get; }
 
         /// <summary>
         /// Controller responsible for handling GET method requests.
@@ -237,7 +237,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
             this.middlewareMethodController = new MethodController(string.Empty, string.Empty);
 
             this.webApiControllerLst = new System.Collections.Generic.List<WebApiController>();
-            this.sessionReceiveAtTimeAmountDict = new System.Collections.Generic.Dictionary<IWebApiSession, SessionPerSecondAmount>();
+            this.sessionReceiveAtTimeAmountDict = new System.Collections.Concurrent.ConcurrentDictionary<IWebApiSession, SessionPerSecondAmount>();
 
             this.staticCache = new StaticCache();
         }
@@ -1108,7 +1108,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
         /// <remarks>Removes the session from tracking and enqueues the disconnection handling to another fiber, invoking the OnDisconnected method for each web API controller.</remarks>
         public void OnDisconnected(IWebApiSession session)
         {
-            this.sessionReceiveAtTimeAmountDict.Remove(session);
+            this.sessionReceiveAtTimeAmountDict.TryRemove(session, out _);
 
             this.otherFiber.Enqueue(() =>
             {

@@ -42,3 +42,4 @@ if (threadSafeDict.TryGetValue(1, out var value))
 {
     Console.WriteLine(value); // Output: Value1
 }
+```
