@@ -1,0 +1,48 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFrameworks>netcoreapp3.1;net6.0;net8.0;net461;net46;net462;net47;net471;net472;net48;net481;</TargetFrameworks>
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<Authors>Chàng X</Authors>
+		<Company>XmobiTea Family</Company>
+		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet-Solution</RepositoryUrl>
+		<PackageTags>proton net control agent, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
+		<RepositoryType>git</RepositoryType>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>ICON.png</PackageIcon>
+		<Version>1.0.0</Version>
+		<Description></Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\XmobiTea.Logging.Log4Net\XmobiTea.Logging.Log4Net.csproj" />
+		<ProjectReference Include="..\XmobiTea.Logging\XmobiTea.Logging.csproj" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Server.Socket\XmobiTea.ProtonNet.Server.Socket.csproj" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Server.WebApi\XmobiTea.ProtonNet.Server.WebApi.csproj" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Server\XmobiTea.ProtonNet.Server.csproj" />
+	</ItemGroup>
+	
+	<ItemGroup Condition="'$(TargetFramework)' == 'net46' Or '$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or '$(TargetFramework)' == 'net47' Or '$(TargetFramework)' == 'net471' Or '$(TargetFramework)' == 'net472' Or '$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'net481'">
+		<Reference Include="System.ServiceProcess" />
+	</ItemGroup>
+	
+	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1' Or '$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net8.0'">
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="8.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+		<None Include="ICON.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+</Project>

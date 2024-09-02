@@ -1,0 +1,26 @@
+
+dotnet pack .\XmobiTea.Bean\XmobiTea.Bean.csproj --configuration Release
+dotnet pack .\XmobiTea.Binary\XmobiTea.Binary.csproj --configuration Release
+dotnet pack .\XmobiTea.Binary.MessagePack\XmobiTea.Binary.MessagePack.csproj --configuration Release
+dotnet pack .\XmobiTea.Binary.SimplePack\XmobiTea.Binary.SimplePack.csproj --configuration Release
+dotnet pack .\XmobiTea.Collections.Generic\XmobiTea.Collections.Generic.csproj --configuration Release
+dotnet pack .\XmobiTea.Crypto\XmobiTea.Crypto.csproj --configuration Release
+dotnet pack .\XmobiTea.Crypto.Aes\XmobiTea.Crypto.Aes.csproj --configuration Release
+dotnet pack .\XmobiTea.Data\XmobiTea.Data.csproj --configuration Release
+dotnet pack .\XmobiTea.Data.Converter\XmobiTea.Data.Converter.csproj --configuration Release
+dotnet pack .\XmobiTea.Linq\XmobiTea.Linq.csproj --configuration Release
+dotnet pack .\XmobiTea.Logging\XmobiTea.Logging.csproj --configuration Release
+dotnet pack .\XmobiTea.Logging.Log4Net\XmobiTea.Logging.Log4Net.csproj --configuration Release
+dotnet pack .\XmobiTea.ProtonNet.Client\XmobiTea.ProtonNet.Client.csproj --configuration Release
+dotnet pack .\XmobiTea.ProtonNet.Control\XmobiTea.ProtonNet.Control.csproj --configuration Release
+dotnet pack .\XmobiTea.ProtonNet.Control.Agent\XmobiTea.ProtonNet.Control.Agent.csproj --configuration Release
+dotnet pack .\XmobiTea.ProtonNet.Networking\XmobiTea.ProtonNet.Networking.csproj --configuration Release
+dotnet pack .\XmobiTea.ProtonNet.RpcProtocol\XmobiTea.ProtonNet.RpcProtocol.csproj --configuration Release
+dotnet pack .\XmobiTea.ProtonNet.Server\XmobiTea.ProtonNet.Server.csproj --configuration Release
+dotnet pack .\XmobiTea.ProtonNet.Server.Socket\XmobiTea.ProtonNet.Server.Socket.csproj --configuration Release
+dotnet pack .\XmobiTea.ProtonNet.Server.WebApi\XmobiTea.ProtonNet.Server.WebApi.csproj --configuration Release
+dotnet pack .\XmobiTea.ProtonNet.Token\XmobiTea.ProtonNet.Token.csproj --configuration Release
+dotnet pack .\XmobiTea.ProtonNetClient\XmobiTea.ProtonNetClient.csproj --configuration Release
+dotnet pack .\XmobiTea.ProtonNetCommon\XmobiTea.ProtonNetCommon.csproj --configuration Release
+dotnet pack .\XmobiTea.ProtonNetServer\XmobiTea.ProtonNetServer.csproj --configuration Release
+dotnet pack .\XmobiTea.Threading\XmobiTea.Threading.csproj --configuration Release

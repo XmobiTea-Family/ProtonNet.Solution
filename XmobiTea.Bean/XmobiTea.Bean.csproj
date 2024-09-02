@@ -1,0 +1,29 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netcoreapp3.1;net6.0;net8.0;netstandard2.0;netstandard2.1;net46;net461;net462;net47;net471;net472;net48;net481;</TargetFrameworks>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<Authors>Chàng X</Authors>
+		<Company>XmobiTea Family</Company>
+		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet-Solution</RepositoryUrl>
+		<PackageTags>bean, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
+		<RepositoryType>git</RepositoryType>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>ICON.png</PackageIcon>
+		<Version>1.0.0</Version>
+		<Description>**XmobiTea.Bean** is a powerful library designed to simplify the management of singleton objects and automate component binding in .NET applications. With its easy-to-use API, XmobiTea.Bean provides a streamlined approach to handling dependency injection, object initialization, and automatic binding.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\XmobiTea.Linq\XmobiTea.Linq.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+		<None Include="ICON.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+</Project>

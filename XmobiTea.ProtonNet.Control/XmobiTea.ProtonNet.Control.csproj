@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFrameworks>netcoreapp3.1;net6.0;net8.0;net461;net46;net462;net47;net471;net472;net48;net481;</TargetFrameworks>
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<Authors>Chàng X</Authors>
+		<Company>XmobiTea Family</Company>
+		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet-Solution</RepositoryUrl>
+		<PackageTags>proton net control, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
+		<RepositoryType>git</RepositoryType>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>ICON.png</PackageIcon>
+		<Version>1.0.0</Version>
+		<Description></Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\XmobiTea.Logging.Log4Net\XmobiTea.Logging.Log4Net.csproj" />
+		<ProjectReference Include="..\XmobiTea.Logging\XmobiTea.Logging.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+		<None Include="ICON.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+</Project>

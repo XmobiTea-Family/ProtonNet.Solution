@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netcoreapp3.1;net6.0;net8.0;netstandard2.0;netstandard2.1;net461;net46;net462;net47;net471;net472;net48;net481;</TargetFrameworks>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<Authors>Chàng X</Authors>
+		<Company>XmobiTea Family</Company>
+		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet-Solution</RepositoryUrl>
+		<PackageTags>web api, webapi server, webapi, socket server, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
+		<RepositoryType>git</RepositoryType>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>ICON.png</PackageIcon>
+		<Version>1.0.0</Version>
+		<Description></Description>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net46' Or '$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or '$(TargetFramework)' == 'net47' Or '$(TargetFramework)' == 'net471' Or '$(TargetFramework)' == 'net472' Or '$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'net481'">
+		<Reference Include="System.Web" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Server\XmobiTea.ProtonNet.Server.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+		<None Include="ICON.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+</Project>

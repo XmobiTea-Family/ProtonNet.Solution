@@ -1,0 +1,6 @@
+.vs/
+*/bin/
+*/obj/
+packages/
+XmobiTea.ProtonNet.Control/XmobiTea.ProtonNet.Control.csproj.user
+XmobiTea.ProtonNet.Control.Agent/Properties/PublishProfiles/win-net46.pubxml.user

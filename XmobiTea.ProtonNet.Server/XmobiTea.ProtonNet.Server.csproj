@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netcoreapp3.1;net6.0;net8.0;netstandard2.0;netstandard2.1;net461;net46;net462;net47;net471;net472;net48;net481;</TargetFrameworks>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<Authors>Chàng X</Authors>
+		<Company>XmobiTea Family</Company>
+		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet-Solution</RepositoryUrl>
+		<PackageTags>server, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
+		<RepositoryType>git</RepositoryType>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageIcon>ICON.png</PackageIcon>
+		<Version>1.0.0</Version>
+		<Description></Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\XmobiTea.Bean\XmobiTea.Bean.csproj" />
+		<ProjectReference Include="..\XmobiTea.Binary.MessagePack\XmobiTea.Binary.MessagePack.csproj" />
+		<ProjectReference Include="..\XmobiTea.Binary.SimplePack\XmobiTea.Binary.SimplePack.csproj" />
+		<ProjectReference Include="..\XmobiTea.Binary\XmobiTea.Binary.csproj" />
+		<ProjectReference Include="..\XmobiTea.Collections.Generic\XmobiTea.Collections.Generic.csproj" />
+		<ProjectReference Include="..\XmobiTea.Crypto\XmobiTea.Crypto.csproj" />
+		<ProjectReference Include="..\XmobiTea.Data.Converter\XmobiTea.Data.Converter.csproj" />
+		<ProjectReference Include="..\XmobiTea.Data\XmobiTea.Data.csproj" />
+		<ProjectReference Include="..\XmobiTea.Logging\XmobiTea.Logging.csproj" />
+		<ProjectReference Include="..\XmobiTea.ProtonNetCommon\XmobiTea.ProtonNetCommon.csproj" />
+		<ProjectReference Include="..\XmobiTea.ProtonNetServer\XmobiTea.ProtonNetServer.csproj" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Networking\XmobiTea.ProtonNet.Networking.csproj" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.RpcProtocol\XmobiTea.ProtonNet.RpcProtocol.csproj" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Token\XmobiTea.ProtonNet.Token.csproj" />
+		<ProjectReference Include="..\XmobiTea.Threading\XmobiTea.Threading.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
+		<None Include="ICON.png" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+</Project>
