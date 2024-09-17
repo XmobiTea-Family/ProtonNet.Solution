@@ -4,3 +4,4 @@
 packages/
 XmobiTea.ProtonNet.Control/XmobiTea.ProtonNet.Control.csproj.user
 XmobiTea.ProtonNet.Control.Agent/Properties/PublishProfiles/win-net46.pubxml.user
+push.bat

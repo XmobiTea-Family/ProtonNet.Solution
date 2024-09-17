@@ -24,8 +24,7 @@ namespace XmobiTea.ProtonNet.Server.Socket.Server
         /// <param name="options">The TCP server options for configuring the server's behavior.</param>
         /// <param name="sslOptions">The SSL options for secure communication.</param>
         /// <param name="context">The context that provides services and configuration for the server.</param>
-        public SocketSslServer(string address, int port, TcpServerOptions options, ProtonNetCommon.SslOptions sslOptions, ISocketServerContext context)
-            : base(address, port, options, sslOptions) => this.context = context;
+        public SocketSslServer(string address, int port, TcpServerOptions options, ProtonNetCommon.SslOptions sslOptions, ISocketServerContext context) : base(address, port, options, sslOptions) => this.context = context;
 
         /// <summary>
         /// Gets the address the server is bound to.

@@ -98,6 +98,25 @@ namespace XmobiTea.ProtonNet.Control.Agent.Agents
             server.Start();
 
             this.webApiServer = server;
+
+            this.SetupWwwRootPath();
+            this.SetupWebsPath();
+        }
+
+        private void SetupWwwRootPath()
+        {
+            var wwwRootPath = this.startupAgentInfo.BinPath + "/wwwroot";
+
+            if (Directory.Exists(wwwRootPath))
+                this.webApiServer.GetContext().GetControllerService().AddStaticFolderContent(wwwRootPath);
+        }
+
+        private void SetupWebsPath()
+        {
+            var websPath = this.startupAgentInfo.BinPath + "/web";
+
+            if (Directory.Exists(websPath))
+                this.webApiServer.GetContext().GetControllerService().SetupWebsPathContent(websPath);
         }
 
         /// <summary>
@@ -153,6 +172,10 @@ namespace XmobiTea.ProtonNet.Control.Agent.Agents
                 .SetReceivedFiber(webApiStartupSettings.ThreadPoolSize.ReceivedFiber)
                 .Build();
 
+            var authToken = Server.WebApi.AuthTokenSettings.NewBuilder()
+                .SetPassword(webApiStartupSettings.AuthToken.Password)
+                .Build();
+
             var startupSettings = Server.WebApi.StartupSettings.NewBuilder()
                 .SetName(webApiStartupSettings.Name)
                 .SetMaxPendingRequest(webApiStartupSettings.MaxPendingRequest)
@@ -160,6 +183,7 @@ namespace XmobiTea.ProtonNet.Control.Agent.Agents
                 .SetMaxSessionRequestPerSecond(webApiStartupSettings.MaxSessionRequestPerSecond)
                 .SetHttpServer(httpServer)
                 .SetThreadPoolSize(threadPoolSize)
+                .SetAuthToken(authToken)
                 .Build();
 
             return startupSettings;
@@ -281,6 +305,10 @@ namespace XmobiTea.ProtonNet.Control.Agent.Agents
                 .SetReceivedFiber(socketStartupSettings.ThreadPoolSize.ReceivedFiber)
                 .Build();
 
+            var authToken = Server.Socket.AuthTokenSettings.NewBuilder()
+                .SetPassword(socketStartupSettings.AuthToken.Password)
+                .Build();
+
             var startupSettings = Server.Socket.StartupSettings.NewBuilder()
                 .SetName(socketStartupSettings.Name)
                 .SetMaxSession(socketStartupSettings.MaxSession)
@@ -296,6 +324,7 @@ namespace XmobiTea.ProtonNet.Control.Agent.Agents
                 .SetUdpServer(udpServer)
                 .SetWebSocketServer(webSocketServer)
                 .SetThreadPoolSize(threadPoolSize)
+                .SetAuthToken(authToken)
                 .Build();
 
             return startupSettings;

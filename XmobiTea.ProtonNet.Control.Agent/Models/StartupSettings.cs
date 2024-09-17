@@ -3,6 +3,19 @@
 namespace XmobiTea.ProtonNet.Control.Agent.Models
 {
     /// <summary>
+    /// Settings auth token service
+    /// </summary>
+    public class AuthTokenSettings
+    {
+        /// <summary>
+        /// Gets the password of UserPeerAuthTokenService
+        /// Default is empty.
+        /// </summary>
+        public string Password { get; } = string.Empty;
+
+    }
+
+    /// <summary>
     /// Settings for thread pool size configuration.
     /// </summary>
     class ThreadPoolSizeSettings
@@ -73,13 +86,13 @@ namespace XmobiTea.ProtonNet.Control.Agent.Models
         public bool KeepAlive { get; private set; } = true;
 
         /// <summary>
-        /// TCP keep-alive time in milliseconds.
+        /// TCP keep-alive time in seconds.
         /// Default is -1 (disabled).
         /// </summary>
         public int TcpKeepAliveTime { get; private set; } = -1;
 
         /// <summary>
-        /// TCP keep-alive interval in milliseconds.
+        /// TCP keep-alive interval in seconds.
         /// Default is -1 (disabled).
         /// </summary>
         public int TcpKeepAliveInterval { get; private set; } = -1;
@@ -211,6 +224,12 @@ namespace XmobiTea.ProtonNet.Control.Agent.Models
         /// </summary>
         [JsonProperty("ThreadPoolSize")]
         public ThreadPoolSizeSettings ThreadPoolSize { get; private set; }
+
+        /// <summary>
+        /// Thread pool size settings.
+        /// </summary>
+        [JsonProperty("AuthToken")]
+        public AuthTokenSettings AuthToken { get; private set; }
 
     }
 
@@ -456,6 +475,12 @@ namespace XmobiTea.ProtonNet.Control.Agent.Models
         /// </summary>
         [JsonProperty("ThreadPoolSize")]
         public ThreadPoolSizeSettings ThreadPoolSize { get; private set; }
+
+        /// <summary>
+        /// Auth token settings.
+        /// </summary>
+        [JsonProperty("AuthToken")]
+        public AuthTokenSettings AuthToken { get; private set; }
 
     }
 

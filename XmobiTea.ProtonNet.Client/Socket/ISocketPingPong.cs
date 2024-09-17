@@ -7,7 +7,7 @@ namespace XmobiTea.ProtonNet.Client.Socket
     /// Interface that defines the service method for managing ping-pong 
     /// operations over a socket connection.
     /// </summary>
-    interface ISocketPingPong
+    public interface ISocketPingPong
     {
         /// <summary>
         /// Services the socket ping-pong operation, sending pings at regular intervals.

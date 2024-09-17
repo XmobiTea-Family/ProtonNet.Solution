@@ -1,6 +1,60 @@
 ﻿namespace XmobiTea.ProtonNet.Server.Socket
 {
     /// <summary>
+    /// Settings auth token service
+    /// </summary>
+    public class AuthTokenSettings
+    {
+        /// <summary>
+        /// Gets the password of UserPeerAuthTokenService
+        /// </summary>
+        public string Password { get; }
+
+        private AuthTokenSettings(Builder builder)
+        {
+            this.Password = builder.Password;
+        }
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="Builder"/> class.
+        /// </summary>
+        /// <returns>A new <see cref="Builder"/> instance.</returns>
+        public static Builder NewBuilder() => new Builder();
+
+        /// <summary>
+        /// Builder for ThreadPoolSizeSettings
+        /// </summary>
+        public class Builder
+        {
+            /// <summary>
+            /// Gets or sets the password of UserPeerAuthTokenService.
+            /// </summary>
+            public string Password { get; set; }
+
+            internal Builder() { }
+
+            /// <summary>
+            /// Sets the password of UserPeerAuthTokenService.
+            /// </summary>
+            /// <param name="password">The password of UserPeerAuthTokenService.</param>
+            /// <returns>The current <see cref="Builder"/> instance.</returns>
+            public Builder SetPassword(string password)
+            {
+                this.Password = password;
+                return this;
+            }
+
+            /// <summary>
+            /// Builds a new instance of the <see cref="AuthTokenSettings"/> class.
+            /// </summary>
+            /// <returns>A new <see cref="AuthTokenSettings"/> instance.</returns>
+            public AuthTokenSettings Build() => new AuthTokenSettings(this);
+
+        }
+
+    }
+
+    /// <summary>
     /// Represents the settings for thread pool size, specifically for different types of fibers.
     /// </summary>
     public class ThreadPoolSizeSettings
@@ -687,17 +741,20 @@
         public bool KeepAlive { get; }
 
         /// <summary>
-        /// Gets the keep-alive time for TCP connections in milliseconds.
+        /// Gets the keep-alive time for TCP connections in seconds.
+        /// Only available on .NET Core
         /// </summary>
         public int TcpKeepAliveTime { get; }
 
         /// <summary>
-        /// Gets the interval between keep-alive probes for TCP connections in milliseconds.
+        /// Gets the interval between keep-alive probes for TCP connections in seconds.
+        /// Only available on .NET Core
         /// </summary>
         public int TcpKeepAliveInterval { get; }
 
         /// <summary>
         /// Gets the number of keep-alive probes before timing out the TCP connection.
+        /// Only available on .NET Core
         /// </summary>
         public int TcpKeepAliveRetryCount { get; }
 
@@ -785,17 +842,20 @@
             public bool KeepAlive { get; set; }
 
             /// <summary>
-            /// Gets or sets the keep-alive time for TCP connections in milliseconds.
+            /// Gets or sets the keep-alive time for TCP connections in seconds.
+            /// Only available on .NET Core
             /// </summary>
             public int TcpKeepAliveTime { get; set; }
 
             /// <summary>
-            /// Gets or sets the interval between keep-alive probes for TCP connections in milliseconds.
+            /// Gets or sets the interval between keep-alive probes for TCP connections in seconds.
+            /// Only available on .NET Core
             /// </summary>
             public int TcpKeepAliveInterval { get; set; }
 
             /// <summary>
             /// Gets or sets the number of keep-alive probes before timing out the TCP connection.
+            /// Only available on .NET Core
             /// </summary>
             public int TcpKeepAliveRetryCount { get; set; }
 
@@ -873,9 +933,10 @@
             }
 
             /// <summary>
-            /// Sets the keep-alive time for TCP connections in milliseconds.
+            /// Sets the keep-alive time for TCP connections in seconds.
+            /// Only available on .NET Core
             /// </summary>
-            /// <param name="tcpKeepAliveTime">The keep-alive time in milliseconds.</param>
+            /// <param name="tcpKeepAliveTime">The keep-alive time in seconds.</param>
             /// <returns>The current instance of the <see cref="Builder"/>.</returns>
             public Builder SetTcpKeepAliveTime(int tcpKeepAliveTime)
             {
@@ -884,9 +945,10 @@
             }
 
             /// <summary>
-            /// Sets the interval between keep-alive probes for TCP connections in milliseconds.
+            /// Sets the interval between keep-alive probes for TCP connections in seconds.
+            /// Only available on .NET Core
             /// </summary>
-            /// <param name="tcpKeepAliveInterval">The keep-alive interval in milliseconds.</param>
+            /// <param name="tcpKeepAliveInterval">The keep-alive interval in seconds.</param>
             /// <returns>The current instance of the <see cref="Builder"/>.</returns>
             public Builder SetTcpKeepAliveInterval(int tcpKeepAliveInterval)
             {
@@ -896,6 +958,7 @@
 
             /// <summary>
             /// Sets the number of keep-alive probes before timing out the TCP connection.
+            /// Only available on .NET Core
             /// </summary>
             /// <param name="tcpKeepAliveRetryCount">The number of keep-alive probes.</param>
             /// <returns>The current instance of the <see cref="Builder"/>.</returns>
@@ -1242,6 +1305,11 @@
         public ThreadPoolSizeSettings ThreadPoolSize { get; }
 
         /// <summary>
+        /// Gets the auth token settings.
+        /// </summary>
+        public AuthTokenSettings AuthToken { get; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="StartupSettings"/> class using the specified builder.
         /// </summary>
         /// <param name="builder">The builder used to configure the startup settings.</param>
@@ -1261,6 +1329,7 @@
             this.UdpServer = builder.UdpServer;
             this.WebSocketServer = builder.WebSocketServer;
             this.ThreadPoolSize = builder.ThreadPoolSize;
+            this.AuthToken = builder.AuthToken;
         }
 
         /// <summary>
@@ -1344,6 +1413,11 @@
             /// Gets or sets the thread pool size configuration settings.
             /// </summary>
             public ThreadPoolSizeSettings ThreadPoolSize { get; set; }
+
+            /// <summary>
+            /// Gets the auth token settings.
+            /// </summary>
+            public AuthTokenSettings AuthToken { get; set; }
 
             /// <summary>
             /// Initializes a new instance of the <see cref="Builder"/> class.
@@ -1501,6 +1575,17 @@
             public Builder SetThreadPoolSize(ThreadPoolSizeSettings threadPoolSize)
             {
                 this.ThreadPoolSize = threadPoolSize;
+                return this;
+            }
+
+            /// <summary>
+            /// Sets the auth token settings.
+            /// </summary>
+            /// <param name="authToken">The auth token settings.</param>
+            /// <returns>The current <see cref="Builder"/> instance.</returns>
+            public Builder SetAuthToken(AuthTokenSettings authToken)
+            {
+                this.AuthToken = authToken;
                 return this;
             }
 

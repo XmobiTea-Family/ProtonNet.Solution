@@ -37,16 +37,18 @@ namespace XmobiTea.ProtonNet.Server.Services
     {
         private ILogger logger { get; }
         private IAuthToken authToken { get; }
-        private string password { get; } = "defaultPassword"; // Default value, should be configured securely
+        private string password { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserPeerAuthTokenService"/> class.
         /// </summary>
-        public UserPeerAuthTokenService()
+        public UserPeerAuthTokenService(string password)
         {
             this.logger = LogManager.GetLogger(this);
 
             this.authToken = this.CreateAuthToken();
+
+            this.password = password;
         }
 
         /// <summary>

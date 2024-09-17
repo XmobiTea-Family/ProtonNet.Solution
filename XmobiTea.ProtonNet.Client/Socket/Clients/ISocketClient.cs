@@ -5,12 +5,12 @@ namespace XmobiTea.ProtonNet.Client.Socket.Clients
     /// <summary>
     /// Delegate for handling socket client connection events.
     /// </summary>
-    delegate void OnSocketClientConnected();
+    public delegate void OnSocketClientConnected();
 
     /// <summary>
     /// Delegate for handling socket client disconnection events.
     /// </summary>
-    delegate void OnSocketClientDisconnected();
+    public delegate void OnSocketClientDisconnected();
 
     /// <summary>
     /// Delegate for handling data received by the socket client.
@@ -18,13 +18,13 @@ namespace XmobiTea.ProtonNet.Client.Socket.Clients
     /// <param name="buffer">The buffer containing the received data.</param>
     /// <param name="position">The position in the buffer where the data starts.</param>
     /// <param name="length">The length of the data received.</param>
-    delegate void OnSocketClientReceived(byte[] buffer, int position, int length);
+    public delegate void OnSocketClientReceived(byte[] buffer, int position, int length);
 
     /// <summary>
     /// Delegate for handling socket client errors.
     /// </summary>
     /// <param name="error">The socket error that occurred.</param>
-    delegate void OnSocketClientError(System.Net.Sockets.SocketError error);
+    public delegate void OnSocketClientError(System.Net.Sockets.SocketError error);
 
     /// <summary>
     /// Interface for setting the encryption key used by the socket client.

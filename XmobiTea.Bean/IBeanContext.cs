@@ -209,20 +209,45 @@ namespace XmobiTea.Bean
 
             var type = singletonObj.GetType();
 
-            var fieldInfos = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                                 .Where(x => x.GetCustomAttribute<AutoBindAttribute>(true) != null);
+            var fieldInfoLst = new System.Collections.Generic.List<FieldInfo>();
+            var propertyInfoLst = new System.Collections.Generic.List<PropertyInfo>();
 
-            var propertyInfos = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                                    .Where(x => x.GetCustomAttribute<AutoBindAttribute>(true) != null);
+            var currentCls = type;
 
-            foreach (var fieldInfo in fieldInfos)
+            while (true)
+            {
+                var allDeclaredFields = currentCls
+                    .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                    .Where(field => field.GetCustomAttribute<AutoBindAttribute>(true) != null);
+
+                foreach (var field in allDeclaredFields)
+                {
+                    if (!fieldInfoLst.Contains(field)) fieldInfoLst.Add(field);
+                }
+
+                var allDeclaredProperties = currentCls
+                    .GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
+                    .Where(field => field.GetCustomAttribute<AutoBindAttribute>(true) != null);
+
+                foreach (var property in allDeclaredProperties)
+                {
+                    if (!propertyInfoLst.Contains(property)) propertyInfoLst.Add(property);
+                }
+
+                if (currentCls.BaseType == typeof(object))
+                    break;
+
+                currentCls = currentCls.BaseType;
+            }
+
+            foreach (var fieldInfo in fieldInfoLst)
             {
                 var autoBindAttribute = fieldInfo.GetCustomAttribute<AutoBindAttribute>();
                 var value = autoBindAttribute.Type != null ? this.GetSingleton(autoBindAttribute.Type) : this.GetSingleton(fieldInfo.FieldType);
                 fieldInfo.SetValue(singletonObj, value);
             }
 
-            foreach (var propertyInfo in propertyInfos)
+            foreach (var propertyInfo in propertyInfoLst)
             {
                 var autoBindAttribute = propertyInfo.GetCustomAttribute<AutoBindAttribute>();
                 var value = autoBindAttribute.Type != null ? this.GetSingleton(autoBindAttribute.Type) : this.GetSingleton(propertyInfo.PropertyType);
