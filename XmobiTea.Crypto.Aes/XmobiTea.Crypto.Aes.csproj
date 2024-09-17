@@ -8,17 +8,17 @@
 		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNetSolution</RepositoryUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet.Solution</RepositoryUrl>
 		<PackageTags>crypto, aes, crypto aes, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.0</Version>
+		<Version>1.0.2</Version>
 		<Description>XmobiTea.Crypto.Aes is an implementation that utilizes the AES (Advanced Encryption Standard) algorithm, providing a concrete and secure method for encrypting and decrypting data. This implementation builds on the foundation laid by XmobiTea.Crypto, offering robust cryptographic functionality through the AES standard.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\XmobiTea.Crypto\XmobiTea.Crypto.csproj" Version="1.0.0" />
+		<ProjectReference Include="..\XmobiTea.Crypto\XmobiTea.Crypto.csproj" Version="1.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>

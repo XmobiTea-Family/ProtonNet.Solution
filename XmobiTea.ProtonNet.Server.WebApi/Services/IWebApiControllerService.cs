@@ -1,10 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using XmobiTea.Bean;
 using XmobiTea.Linq;
 using XmobiTea.Logging;
 using XmobiTea.ProtonNet.Server.WebApi.Controllers;
 using XmobiTea.ProtonNet.Server.WebApi.Controllers.Attribute;
+using XmobiTea.ProtonNet.Server.WebApi.Controllers.Render;
 using XmobiTea.ProtonNet.Server.WebApi.Exceptions;
 using XmobiTea.ProtonNet.Server.WebApi.Extensions;
 using XmobiTea.ProtonNet.Server.WebApi.Helper;
@@ -53,6 +55,12 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
         /// <param name="filePath">The path of the static file.</param>
         /// <param name="prefix">The URL prefix for the static file. Defaults to "/".</param>
         void RemoveStaticFileContent(string filePath, string prefix = "/");
+
+        /// <summary>
+        /// Setup the path for all web path
+        /// </summary>
+        /// <param name="path">The path.</param>
+        void SetupWebsPathContent(string path);
 
         /// <summary>
         /// Configures middleware to be used with a specific URL prefix.
@@ -223,14 +231,26 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
         private IFiber receivedFiber { get; set; }
 
         /// <summary>
+        /// The view engine to render View()
+        /// </summary>
+        private IViewEngine viewEngine { get; }
+
+        /// <summary>
+        /// The bean context
+        /// </summary>
+        private IBeanContext beanContext { get; }
+
+        /// <summary>
         /// Initializes a new instance of the WebApiControllerService class.
         /// </summary>
         /// <remarks>
         /// Sets up the logger, method controllers, and initializes collections for WebApiControllers and session data.
         /// </remarks>
-        public WebApiControllerService()
+        public WebApiControllerService(IBeanContext beanContext)
         {
             this.logger = LogManager.GetLogger(this);
+
+            this.beanContext = beanContext;
 
             this.getMethodController = new MethodController(string.Empty, string.Empty);
             this.postMethodController = new MethodController(string.Empty, string.Empty);
@@ -240,6 +260,9 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
             this.sessionReceiveAtTimeAmountDict = new System.Collections.Concurrent.ConcurrentDictionary<IWebApiSession, SessionPerSecondAmount>();
 
             this.staticCache = new StaticCache();
+
+            this.viewEngine = (IViewEngine)this.beanContext.CreateSingleton(typeof(ViewEngine));
+
         }
 
         /// <summary>
@@ -328,7 +351,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
 
             timeout = timeout ?? TimeSpan.FromHours(1);
 
-            byte[] GetBufferFileHandler(string key, string prefix1, string filePath, byte[] fileBuffer)
+            this.staticCache.AddFolder(prefix, path, filter, true, (key, subPrefix, filePath, fileBuffer) =>
             {
                 var response = new HttpResponse();
 
@@ -338,9 +361,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
                 response.SetBody(fileBuffer);
 
                 return response.Cache.Buffer;
-            }
-
-            this.staticCache.AddFolder(path, prefix, filter, true, GetBufferFileHandler);
+            });
         }
 
         /// <summary>
@@ -393,6 +414,12 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
 
             this.staticCache.RemoveFile(prefix, filePath);
         }
+
+        /// <summary>
+        /// Setup the webs path
+        /// </summary>
+        /// <param name="websPath">The webs path.</param>
+        public void SetupWebsPathContent(string websPath) => this.viewEngine.SetupWebsPath(websPath);
 
         /// <summary>
         /// Adds a method controller for a given method in a Web API controller, associating it with specified prefixes and HTTP method types.
@@ -494,6 +521,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
                                 else if (fromHttpParamAttribute is FromParamAttribute) tryGenerateParameterDatas[j] = this.TryGenerateFromParamParameterData;
                                 else if (fromHttpParamAttribute is FromQueryAttribute) tryGenerateParameterDatas[j] = this.TryGenerateFromQueryParameterData;
                                 else if (fromHttpParamAttribute is FromMiddlewareContextAttribute) tryGenerateParameterDatas[j] = this.TryGenerateFromMiddlewareContextParameterData;
+                                else if (fromHttpParamAttribute is FromAutoBindAttribute) tryGenerateParameterDatas[j] = this.TryGenerateFromAutoBindParameterData;
                             }
                         }
                     }
@@ -566,6 +594,36 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
             obj = parameterData.HttpRequest.GetBodyBytes();
 
             return true;
+        }
+
+        /// <summary>
+        /// Tries to generate parameter data from the body of an HTTP request, based on the provided GenerateParameterData.
+        /// </summary>
+        /// <param name="parameterData">The parameter data that includes HTTP request information.</param>
+        /// <param name="obj">The output object representing the body bytes of the HTTP request.</param>
+        /// <returns>True if the parameter data was successfully generated; otherwise, false.</returns>
+        private bool TryGenerateFromAutoBindParameterData(GenerateParameterData parameterData, out object obj)
+        {
+            var fromAutoBindAttribute = parameterData.FromHttpParam as FromAutoBindAttribute;
+
+            var value = fromAutoBindAttribute.Type != null ? this.beanContext.GetSingleton(fromAutoBindAttribute.Type) : this.beanContext.GetSingleton(parameterData.ParameterType);
+            if (value == null)
+            {
+                obj = null;
+
+                if (!parameterData.FromHttpParam.IsOptional)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+            else
+            {
+                obj = value;
+
+                return true;
+            }
         }
 
         /// <summary>

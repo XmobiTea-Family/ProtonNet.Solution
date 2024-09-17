@@ -8,12 +8,12 @@
 		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNetSolution</RepositoryUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet.Solution</RepositoryUrl>
 		<PackageTags>logging, log4net, logging log4net, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.0</Version>
+		<Version>1.0.2</Version>
 		<Description>XmobiTea.Logging.Log4Net is an implementation class that utilizes the log4net framework, providing robust logging capabilities within the XmobiTea.Logging interface. This implementation allows developers to leverage the powerful features of log4net for consistent and effective logging in their applications.</Description>
 	</PropertyGroup>
 
@@ -22,7 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\XmobiTea.Logging\XmobiTea.Logging.csproj" Version="1.0.0" />
+		<ProjectReference Include="..\XmobiTea.Logging\XmobiTea.Logging.csproj" Version="1.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>

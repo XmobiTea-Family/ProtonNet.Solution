@@ -534,6 +534,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers
             if (!File.Exists(filePath)) return false;
 
             var key = prefix + "/" + HttpUtility.UrlDecode(Path.GetFileName(filePath));
+            key = key.Replace("//", "/");
 
             var finalBuffer = handler?.Invoke(key, prefix, filePath, File.ReadAllBytes(filePath));
 
@@ -555,6 +556,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers
         internal bool RemoveFileInternal(string prefix, string filePath)
         {
             var key = prefix + "/" + HttpUtility.UrlDecode(Path.GetFileName(filePath));
+            key = key.Replace("//", "/");
 
             this.bufferCache.Remove(key);
             this.watchCache.Remove(key);
@@ -575,6 +577,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers
             if (!File.Exists(filePath)) return false;
 
             var key = prefix + "/" + HttpUtility.UrlDecode(Path.GetFileName(filePath).Replace(path, string.Empty));
+            key = key.Replace("//", "/");
 
             var finalBuffer = handler?.Invoke(key, prefix, filePath, File.ReadAllBytes(filePath));
 
@@ -595,6 +598,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers
         internal bool RemoveFileInFolderInternal(string prefix, string path, string filePath)
         {
             var key = prefix + "/" + HttpUtility.UrlDecode(Path.GetFileName(filePath).Replace(path, string.Empty));
+            key = key.Replace("//", "/");
 
             this.bufferCache.Remove(key);
 
@@ -631,6 +635,8 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers
             if (watchAndAutoUpdate)
             {
                 var key = prefix + "/" + HttpUtility.UrlDecode(Path.GetFileName(path));
+                key = key.Replace("//", "/");
+
                 this.watchCache.Add(key, new FolderCacheWatch(this, prefix, path, filter, handler));
             }
 
@@ -662,6 +668,8 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers
             }
 
             var key = prefix + "/" + HttpUtility.UrlDecode(Path.GetFileName(path));
+            key = key.Replace("//", "/");
+
             this.watchCache.Remove(key);
 
             return true;

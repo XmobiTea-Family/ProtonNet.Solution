@@ -21,10 +21,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Server
         /// <param name="options">TCP server options for configuration.</param>
         /// <param name="context">The context for the Web API server.</param>
         /// <remarks>Passes parameters to the base HttpServer class and sets the server context.</remarks>
-        public WebApiHttpServer(string address, int port, TcpServerOptions options, IWebApiServerContext context) : base(address, port, options)
-        {
-            this.context = context;
-        }
+        public WebApiHttpServer(string address, int port, TcpServerOptions options, IWebApiServerContext context) : base(address, port, options) => this.context = context;
 
         /// <summary>
         /// Gets the address the server is bound to.

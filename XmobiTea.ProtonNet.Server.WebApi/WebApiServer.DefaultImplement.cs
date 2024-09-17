@@ -68,7 +68,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi
         /// </summary>
         /// <param name="startupSettings">The startup settings for configuring the user peer auth token service.</param>
         /// <returns>Returns a new IUserPeerAuthTokenService instance.</returns>
-        protected virtual IUserPeerAuthTokenService CreateUserPeerAuthTokenService(StartupSettings startupSettings) => new UserPeerAuthTokenService();
+        protected virtual IUserPeerAuthTokenService CreateUserPeerAuthTokenService(StartupSettings startupSettings) => new UserPeerAuthTokenService(startupSettings.AuthToken.Password);
 
         /// <summary>
         /// Creates and returns a new IUserPeerService instance based on the provided startup settings.
@@ -124,7 +124,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi
         /// <returns>Returns a new IWebApiControllerService instance.</returns>
         protected virtual IWebApiControllerService CreateControllerService(StartupSettings startupSettings, System.Collections.Generic.IEnumerable<System.Reflection.Assembly> assemblies)
         {
-            var answer = new WebApiControllerService();
+            var answer = new WebApiControllerService(this.beanContext);
 
             answer.SetOtherFiber(startupSettings.ThreadPoolSize.OtherFiber);
             answer.SetReceiveFiber(startupSettings.ThreadPoolSize.ReceivedFiber);

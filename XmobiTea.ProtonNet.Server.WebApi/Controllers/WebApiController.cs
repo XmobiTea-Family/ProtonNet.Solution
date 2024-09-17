@@ -5,6 +5,7 @@ using XmobiTea.ProtonNet.Server.WebApi.Models;
 using XmobiTea.ProtonNet.Server.WebApi.Sessions;
 using XmobiTea.ProtonNetCommon;
 using XmobiTea.ProtonNetCommon.Extensions;
+using XmobiTea.ProtonNetCommon.Types;
 
 namespace XmobiTea.ProtonNet.Server.WebApi.Controllers
 {
@@ -19,24 +20,15 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers
         protected ILogger logger { get; }
 
         /// <summary>
-        /// View renderer bound by AutoBind attribute.
+        /// View engine bound by AutoBind attribute.
         /// </summary>
-        [AutoBind(typeof(IViewRender))]
-        private IViewRender viewRender { get; set; }
-
-        /// <summary>
-        /// Layout renderer bound by AutoBind attribute.
-        /// </summary>
-        [AutoBind(typeof(ILayoutRender))]
-        private ILayoutRender layoutRender { get; set; }
+        [AutoBind]
+        private IViewEngine viewEngine { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the WebApiController class.
         /// </summary>
-        protected WebApiController()
-        {
-            this.logger = LogManager.GetLogger(this);
-        }
+        protected WebApiController() => this.logger = LogManager.GetLogger(this);
 
         /// <summary>
         /// Called when a new session is connected.
@@ -89,25 +81,20 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers
         {
             var answer = new ViewResult();
 
-            string content;
-
-            if (string.IsNullOrEmpty(layout)) content = this.viewRender.GetView(view);
-            else
+            try
             {
-                content = this.layoutRender.GetLayout(layout).Replace("@RenderBody()", this.viewRender.GetView(view));
-            }
+                var template = this.viewEngine.GetTemplate(view, layout);
 
-            if (viewData != null)
+                var v = this.viewEngine.Render(template, viewData);
+
+                answer.MakeGetResponse(v.Html, "text/html");
+            }
+            catch (System.Exception ex)
             {
-                var dataDict = viewData.GetDataDict();
+                this.logger.Fatal(ex);
 
-                foreach (var c in dataDict)
-                {
-                    content = content.Replace("@Data." + c.Key, c.Value);
-                }
+                answer.MakeErrorResponse(StatusCode.InternalServerError, $"Message: {ex.Message}\nStackTrace: {ex.StackTrace}");
             }
-
-            answer.MakeGetResponse(content, "text/html");
 
             return answer;
         }

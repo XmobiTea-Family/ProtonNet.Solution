@@ -135,6 +135,13 @@ namespace XmobiTea.ProtonNet.Server.Socket
         protected virtual IChannelService CreateChannelService(StartupSettings startupSettings) => new ChannelService();
 
         /// <summary>
+        /// Creates and returns a new IUserPeerAuthTokenService instance based on the provided startup settings.
+        /// </summary>
+        /// <param name="startupSettings">The startup settings for configuring the user peer auth token service.</param>
+        /// <returns>Returns a new IUserPeerAuthTokenService instance.</returns>
+        protected virtual IUserPeerAuthTokenService CreateUserPeerAuthTokenService(StartupSettings startupSettings) => new UserPeerAuthTokenService(startupSettings.AuthToken.Password);
+
+        /// <summary>
         /// Creates and initializes the RPC protocol service.
         /// </summary>
         /// <param name="startupSettings">The startup settings configuration.</param>

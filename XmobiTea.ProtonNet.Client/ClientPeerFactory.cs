@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Threading;
 using XmobiTea.Bean;
 using XmobiTea.Bean.Attributes;
 using XmobiTea.Bean.Support;
@@ -28,9 +28,14 @@ namespace XmobiTea.ProtonNet.Client
         private ILogger logger { get; }
 
         /// <summary>
+        /// Lock for clientPeers
+        /// </summary>
+        private object _lockClientPeers { get; }
+
+        /// <summary>
         /// A list containing all the client peers that are managed by the factory.
         /// </summary>
-        private IList<IClientPeer> clientPeers { get; }
+        private System.Collections.Generic.IList<IClientPeer> clientPeers { get; }
 
         /// <summary>
         /// The context for managing beans and their dependencies.
@@ -98,14 +103,34 @@ namespace XmobiTea.ProtonNet.Client
         public int SendRate { get; }
 
         /// <summary>
+        /// The assemblies to find for event service auto create event handler
+        /// </summary>
+        public System.Collections.Generic.IEnumerable<System.Reflection.Assembly> Assemblies { get; }
+
+        /// <summary>
+        /// Auto call service on 1 thread
+        /// </summary>
+        public bool AutoCallService { get; }
+
+        /// <summary>
+        /// Thread handler auto call service
+        /// </summary>
+        private Thread autoCallServiceThread { get; set; }
+
+        /// <summary>
         /// Private constructor to initialize ClientPeerFactory
         /// with the provided builder.
         /// </summary>
         /// <param name="builder">Builder instance used to configure the factory.</param>
-        private ClientPeerFactory(Builder builder)
+        protected ClientPeerFactory(Builder builder)
         {
             this.logger = LogManager.GetLogger(this);
-            this.clientPeers = new List<IClientPeer>();
+            this._lockClientPeers = new object();
+
+            this.clientPeers = new System.Collections.Generic.List<IClientPeer>();
+
+            this.AutoCallService = builder.AutoCallService;
+            this.Assemblies = builder.Assemblies;
 
             this.BeanContext = builder.BeanContext ?? this.CreateBeanContext();
             this.BeanContext.SetSingleton(this.BeanContext);
@@ -140,6 +165,24 @@ namespace XmobiTea.ProtonNet.Client
             this.SendRate = builder.SendRate > 0 ? builder.SendRate : 60;
 
             this.SetupSingleton();
+
+            if (this.AutoCallService)
+            {
+                this.SetupAutoCallService();
+            }
+        }
+
+        /// <summary>
+        /// Setup AutoCallService when AutoCallService enable
+        /// </summary>
+        protected virtual void SetupAutoCallService()
+        {
+            this.autoCallServiceThread = new Thread(() =>
+            {
+                while (true) this.Service();
+            });
+
+            this.autoCallServiceThread.Start();
         }
 
         /// <summary>
@@ -156,7 +199,9 @@ namespace XmobiTea.ProtonNet.Client
         /// </summary>
         private void CreateSingletonClassesAttribute()
         {
-            var singletonTypes = this.BeanContext.ScanClassHasCustomAttribute(typeof(SingletonAttribute), false);
+            var singletonTypes = this.Assemblies == null
+                ? this.BeanContext.ScanClassHasCustomAttribute(typeof(SingletonAttribute), false)
+                : this.BeanContext.ScanClassHasCustomAttribute(typeof(SingletonAttribute), false, this.Assemblies);
 
             foreach (var singletonType in singletonTypes)
             {
@@ -192,7 +237,7 @@ namespace XmobiTea.ProtonNet.Client
         /// <returns>A new instance of IWebApiClientPeer.</returns>
         public virtual IWebApiClientPeer NewWebApiClientPeer(string serverAddress)
         {
-            var answer = new HttpClientClientPeer(serverAddress, this.InitRequestProviderService.NewClientPeerInitRequest(), this.TcpClientOptions);
+            var answer = this.CreateNewWebApiClientPeer(serverAddress);
 
             this.BeanContext.AutoBind(answer);
 
@@ -202,10 +247,19 @@ namespace XmobiTea.ProtonNet.Client
 
             answer.SetSendRate(this.SendRate);
 
-            this.clientPeers.Add(answer);
+            lock (this._lockClientPeers)
+                this.clientPeers.Add(answer);
 
             return answer;
         }
+
+        /// <summary>
+        /// Creates a new instance of the IWebApiClientPeer for handling communication 
+        /// with the specified server address using HTTP as the transport protocol.
+        /// </summary>
+        /// <param name="serverAddress">The address of the server to connect to.</param>
+        /// <returns>A new instance of IWebApiClientPeer for the given server address.</returns>
+        protected virtual IWebApiClientPeer CreateNewWebApiClientPeer(string serverAddress) => new HttpClientClientPeer(serverAddress, this.InitRequestProviderService.NewClientPeerInitRequest(), this.TcpClientOptions);
 
         /// <summary>
         /// Creates a new Socket client peer.
@@ -215,7 +269,7 @@ namespace XmobiTea.ProtonNet.Client
         /// <returns>A new instance of ISocketClientPeer.</returns>
         public virtual ISocketClientPeer NewSocketClientPeer(string serverAddress, TransportProtocol protocol)
         {
-            var answer = new SocketClientPeer(serverAddress, this.InitRequestProviderService.NewClientPeerInitRequest(), this.TcpClientOptions, this.UdpClientOptions, protocol);
+            var answer = this.CreateNewSocketClientPeer(serverAddress, protocol);
 
             this.BeanContext.AutoBind(answer);
 
@@ -225,10 +279,20 @@ namespace XmobiTea.ProtonNet.Client
 
             answer.SetSendRate(this.SendRate);
 
-            this.clientPeers.Add(answer);
+            lock (this._lockClientPeers)
+                this.clientPeers.Add(answer);
 
             return answer;
         }
+
+        /// <summary>
+        /// Creates a new instance of the ISocketClientPeer for handling communication 
+        /// with the specified server address using the given transport protocol.
+        /// </summary>
+        /// <param name="serverAddress">The address of the server to connect to.</param>
+        /// <param name="protocol">The transport protocol to use (e.g., TCP or UDP).</param>
+        /// <returns>A new instance of ISocketClientPeer for the given server address and protocol.</returns>
+        protected virtual ISocketClientPeer CreateNewSocketClientPeer(string serverAddress, TransportProtocol protocol) => new SocketClientPeer(serverAddress, this.InitRequestProviderService.NewClientPeerInitRequest(), this.TcpClientOptions, this.UdpClientOptions, protocol);
 
         /// <summary>
         /// Creates a new SSL Socket client peer.
@@ -238,7 +302,7 @@ namespace XmobiTea.ProtonNet.Client
         /// <returns>A new instance of ISocketClientPeer with SSL enabled.</returns>
         public virtual ISocketClientPeer NewSslSocketClientPeer(string serverAddress, SslTransportProtocol sslProtocol)
         {
-            var answer = new SocketClientPeer(serverAddress, this.InitRequestProviderService.NewClientPeerInitRequest(), this.TcpClientOptions, this.UdpClientOptions, sslProtocol, sslProtocol == SslTransportProtocol.Ssl ? this.SslOptions : this.WsSslOptions);
+            var answer = this.CreateNewSslSocketClientPeer(serverAddress, sslProtocol);
 
             this.BeanContext.AutoBind(answer);
 
@@ -248,17 +312,31 @@ namespace XmobiTea.ProtonNet.Client
 
             answer.SetSendRate(this.SendRate);
 
-            this.clientPeers.Add(answer);
+            lock (this._lockClientPeers)
+                this.clientPeers.Add(answer);
 
             return answer;
         }
+
+        /// <summary>
+        /// Creates a new instance of the ISocketClientPeer for handling communication 
+        /// with the specified server address using the given SSL transport protocol.
+        /// </summary>
+        /// <param name="serverAddress">The address of the server to connect to.</param>
+        /// <param name="sslProtocol">The SSL transport protocol to use (e.g., SSL or WebSocket SSL).</param>
+        /// <returns>A new instance of ISocketClientPeer for the given server address and SSL protocol.</returns>
+        protected virtual ISocketClientPeer CreateNewSslSocketClientPeer(string serverAddress, SslTransportProtocol sslProtocol) => new SocketClientPeer(serverAddress, this.InitRequestProviderService.NewClientPeerInitRequest(), this.TcpClientOptions, this.UdpClientOptions, sslProtocol, sslProtocol == SslTransportProtocol.Ssl ? this.SslOptions : this.WsSslOptions);
 
         /// <summary>
         /// Retrieves a client peer by its client ID.
         /// </summary>
         /// <param name="clientId">The ID of the client peer to retrieve.</param>
         /// <returns>The client peer with the specified ID.</returns>
-        public IClientPeer GetClientPeer(int clientId) => this.clientPeers.Find(x => x.GetClientId() == clientId);
+        public IClientPeer GetClientPeer(int clientId)
+        {
+            lock (this._lockClientPeers)
+                return this.clientPeers.Find(x => x.GetClientId() == clientId);
+        }
 
         /// <summary>
         /// Destroys a client peer by its client ID.
@@ -271,7 +349,8 @@ namespace XmobiTea.ProtonNet.Client
 
             if (clientPeer == null) return false;
 
-            return this.clientPeers.Remove(clientPeer);
+            lock (this._lockClientPeers)
+                return this.clientPeers.Remove(clientPeer);
         }
 
         /// <summary>
@@ -279,8 +358,20 @@ namespace XmobiTea.ProtonNet.Client
         /// </summary>
         public void Service()
         {
-            foreach (var clientPeer in this.clientPeers)
-                clientPeer.Service();
+            try
+            {
+                System.Collections.Generic.IEnumerable<IClientPeer> cloneClientPeers;
+
+                lock (this._lockClientPeers)
+                    cloneClientPeers = new System.Collections.Generic.List<IClientPeer>(this.clientPeers);
+
+                foreach (var clientPeer in cloneClientPeers)
+                    clientPeer?.Service();
+            }
+            catch (System.Exception ex)
+            {
+                this.logger.Error("Service ClientPeerFactory", ex);
+            }
         }
 
         /// <summary>
@@ -361,9 +452,19 @@ namespace XmobiTea.ProtonNet.Client
             public int SendRate { get; set; }
 
             /// <summary>
-            /// Internal constructor to restrict direct instantiation.
+            /// The assemblies to find for event service auto create event handler
             /// </summary>
-            internal Builder() { }
+            public System.Collections.Generic.IEnumerable<System.Reflection.Assembly> Assemblies { get; set; }
+
+            /// <summary>
+            /// Auto call service in 1 thread
+            /// </summary>
+            public bool AutoCallService { get; set; }
+
+            /// <summary>
+            /// Constructor to restrict direct instantiation.
+            /// </summary>
+            public Builder() { }
 
             /// <summary>
             /// Sets the bean context for the builder.
@@ -509,10 +610,32 @@ namespace XmobiTea.ProtonNet.Client
             }
 
             /// <summary>
+            /// Sets the assemblies for the builder.
+            /// </summary>
+            /// <param name="assemblies">The assemblies to set.</param>
+            /// <returns>The current Builder instance.</returns>
+            public Builder SetAssemblies(System.Collections.Generic.IEnumerable<System.Reflection.Assembly> assemblies)
+            {
+                this.Assemblies = assemblies;
+                return this;
+            }
+
+            /// <summary>
+            /// Sets the auto call service for the builder.
+            /// </summary>
+            /// <param name="autoCallService">The assemblies to set.</param>
+            /// <returns>The current Builder instance.</returns>
+            public Builder SetAutoCallService(bool autoCallService)
+            {
+                this.AutoCallService = autoCallService;
+                return this;
+            }
+
+            /// <summary>
             /// Builds and returns a new instance of ClientPeerFactory.
             /// </summary>
             /// <returns>A new ClientPeerFactory instance.</returns>
-            public ClientPeerFactory Build() => new ClientPeerFactory(this);
+            public virtual ClientPeerFactory Build() => new ClientPeerFactory(this);
 
         }
 

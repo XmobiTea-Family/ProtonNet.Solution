@@ -3,9 +3,7 @@ using XmobiTea.Bean;
 using XmobiTea.Bean.Attributes;
 using XmobiTea.Bean.Support;
 using XmobiTea.Logging;
-using XmobiTea.ProtonNet.Server.Helper;
 using XmobiTea.ProtonNet.Server.WebApi.Context;
-using XmobiTea.ProtonNet.Server.WebApi.Controllers.Render;
 using XmobiTea.ProtonNet.Server.WebApi.Server;
 using XmobiTea.ProtonNetCommon;
 using XmobiTea.ProtonNetServer.Options;
@@ -78,10 +76,9 @@ namespace XmobiTea.ProtonNet.Server.WebApi
             this.httpsServer?.Start();
 
             this.logger.Info("Server starting");
-            this.SetupLayouts();
-            this.SetupViews();
 
             if (System.IO.Directory.Exists("wwwroot")) this.context.GetControllerService().AddStaticFolderContent("wwwroot");
+            if (System.IO.Directory.Exists("web")) this.context.GetControllerService().SetupWebsPathContent("web");
 
             this.SetupSingleton();
 
@@ -105,6 +102,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi
 
             this.logger.Info("Server stopped");
             this.OnStopped();
+
         }
 
         /// <summary>
@@ -116,17 +114,17 @@ namespace XmobiTea.ProtonNet.Server.WebApi
             var userPeerSessionService = this.CreateUserPeerSessionService(startupSettings);
             this.beanContext.SetSingleton(userPeerSessionService);
 
-            var channelService = this.CreateChannelService(startupSettings);
-            this.beanContext.SetSingleton(channelService);
-
-            var userPeerAuthTokenService = this.CreateUserPeerAuthTokenService(startupSettings);
-            this.beanContext.SetSingleton(userPeerAuthTokenService);
+            var rpcProtocolService = this.CreateRpcProtocolService(startupSettings);
+            this.beanContext.SetSingleton(rpcProtocolService);
 
             var userPeerService = this.CreateUserPeerService(startupSettings);
             this.beanContext.SetSingleton(userPeerService);
 
-            var rpcProtocolService = this.CreateRpcProtocolService(startupSettings);
-            this.beanContext.SetSingleton(rpcProtocolService);
+            var userPeerAuthTokenService = this.CreateUserPeerAuthTokenService(startupSettings);
+            this.beanContext.SetSingleton(userPeerAuthTokenService);
+
+            var channelService = this.CreateChannelService(startupSettings);
+            this.beanContext.SetSingleton(channelService);
 
             var dataConverter = this.CreateDataConverter(startupSettings);
             this.beanContext.SetSingleton(dataConverter);
@@ -186,7 +184,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi
         /// <param name="sslConfig">The SSL configuration settings.</param>
         /// <returns>Returns a configured SslOptions instance.</returns>
         private SslOptions GetSslOptions(SslConfigSettings sslConfig) => new SslOptions(
-#if NETCOREAPP
+#if NETCOREAPP || NET48_OR_GREATER
             System.Security.Authentication.SslProtocols.Tls13
 #else
             System.Security.Authentication.SslProtocols.Tls12
@@ -265,70 +263,12 @@ namespace XmobiTea.ProtonNet.Server.WebApi
         }
 
         /// <summary>
-        /// Configures the layouts for the server by loading layout files from the Layouts directory.
-        /// </summary>
-        private void SetupLayouts()
-        {
-            var layoutsPath = System.IO.Path.Combine(LibraryUtils.GetDllPath(), "Layouts");
-
-            if (!System.IO.Directory.Exists(layoutsPath)) return;
-
-            var files = System.IO.Directory.GetFiles(layoutsPath, "*.phtml");
-
-            var layoutRender = new LayoutRender();
-
-            for (var i = 0; i < files.Length; i++)
-            {
-                var filePath = files[i];
-
-                var layout = filePath
-                    .Replace(layoutsPath, string.Empty)
-                    .Replace(".phtml", string.Empty)
-                    .Replace("\\", string.Empty)
-                    .Replace("/", string.Empty);
-
-                layoutRender.SetLayout(layout, System.IO.File.ReadAllText(filePath));
-            }
-
-            this.beanContext.SetSingleton(layoutRender);
-        }
-
-        /// <summary>
-        /// Configures the views for the server by loading view files from the Views directory.
-        /// </summary>
-        private void SetupViews()
-        {
-            var viewsPath = System.IO.Path.Combine(LibraryUtils.GetDllPath(), "Views");
-
-            if (!System.IO.Directory.Exists(viewsPath)) return;
-
-            var files = System.IO.Directory.GetFiles(viewsPath, "*.phtml");
-
-            var viewRender = new ViewRender();
-
-            for (var i = 0; i < files.Length; i++)
-            {
-                var filePath = files[i];
-
-                var layout = filePath
-                    .Replace(viewsPath, string.Empty)
-                    .Replace(".phtml", string.Empty)
-                    .Replace("\\", string.Empty)
-                    .Replace("/", string.Empty);
-
-                viewRender.SetView(layout, System.IO.File.ReadAllText(filePath));
-            }
-
-            this.beanContext.SetSingleton(viewRender);
-        }
-
-        /// <summary>
         /// Displays the startup banner in the logs.
         /// </summary>
         private void ShowBanner()
         {
             var banner =
-                "██████╗ ██████╗  ██████╗ ████████╗ ██████╗ ███╗   ██╗    ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ \r\n██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝██╔═══██╗████╗  ██║    ██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗\r\n██████╔╝██████╔╝██║   ██║   ██║   ██║   ██║██╔██╗ ██║    ███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝\r\n██╔═══╝ ██╔══██╗██║   ██║   ██║   ██║   ██║██║╚██╗██║    ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██╔══██╗\r\n██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║ ╚████║    ███████║███████╗██║  ██║ ╚████╔╝ ███████╗██║  ██║\r\n╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝  ╚═══╝    ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝\r\n                                                                                                          \r\n __          ________ ____             _____ _____ \r\n \\ \\        / /  ____|  _ \\      /\\   |  __ \\_   _|\r\n  \\ \\  /\\  / /| |__  | |_) |    /  \\  | |__) || |  \r\n   \\ \\/  \\/ / |  __| |  _ <    / /\\ \\ |  ___/ | |  \r\n    \\  /\\  /  | |____| |_) |  / ____ \\| |    _| |_ \r\n     \\/  \\/   |______|____/  /_/    \\_\\_|   |_____|\r\n                                                   \r\n                                                   \r\n                ©2024 XmobiTea Family\r\n                https://xmobitea.com\r\n";
+                "\r\n██████╗ ██████╗  ██████╗ ████████╗ ██████╗ ███╗   ██╗    ███╗   ██╗███████╗████████╗\r\n██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝██╔═══██╗████╗  ██║    ████╗  ██║██╔════╝╚══██╔══╝\r\n██████╔╝██████╔╝██║   ██║   ██║   ██║   ██║██╔██╗ ██║    ██╔██╗ ██║█████╗     ██║   \r\n██╔═══╝ ██╔══██╗██║   ██║   ██║   ██║   ██║██║╚██╗██║    ██║╚██╗██║██╔══╝     ██║   \r\n██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║ ╚████║    ██║ ╚████║███████╗   ██║   \r\n╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝  ╚═══╝    ╚═╝  ╚═══╝╚══════╝   ╚═╝   \r\n\r\n __        _______ ____    _    ____ ___   ____  _____ ______     _______ ____  \r\n \\ \\      / / ____| __ )  / \\  |  _ \\_ _| / ___|| ____|  _ \\ \\   / / ____|  _ \\ \r\n  \\ \\ /\\ / /|  _| |  _ \\ / _ \\ | |_) | |  \\___ \\|  _| | |_) \\ \\ / /|  _| | |_) |\r\n   \\ V  V / | |___| |_) / ___ \\|  __/| |   ___) | |___|  _ < \\ V / | |___|  _ < \r\n    \\_/\\_/  |_____|____/_/   \\_\\_|  |___| |____/|_____|_| \\_\\ \\_/  |_____|_| \\_\\\r\n                                                                                \r\n\r\n                Powed by XmobiTea Family\r\n                https://xmobitea.com\r\n";
 
             this.logger.Info($"\n\n{banner}\n");
 

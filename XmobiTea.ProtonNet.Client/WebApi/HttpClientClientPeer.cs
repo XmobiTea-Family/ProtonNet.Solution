@@ -53,10 +53,7 @@ namespace XmobiTea.ProtonNet.Client.WebApi
         /// Sends an operation request to the server.
         /// </summary>
         /// <param name="operationRequestPending">The pending operation request to send.</param>
-        protected override void SendOperation(OperationRequestPending operationRequestPending)
-        {
-            this.Execute(operationRequestPending);
-        }
+        protected override void SendOperation(OperationRequestPending operationRequestPending) => this.Execute(operationRequestPending);
 
         /// <summary>
         /// Executes the operation request by sending it to the server and processing the response.

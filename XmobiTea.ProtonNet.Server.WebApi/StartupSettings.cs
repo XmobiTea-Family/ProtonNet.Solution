@@ -1,6 +1,60 @@
 ﻿namespace XmobiTea.ProtonNet.Server.WebApi
 {
     /// <summary>
+    /// Settings auth token service
+    /// </summary>
+    public class AuthTokenSettings
+    {
+        /// <summary>
+        /// Gets the password of UserPeerAuthTokenService
+        /// </summary>
+        public string Password { get; }
+
+        private AuthTokenSettings(Builder builder)
+        {
+            this.Password = builder.Password;
+        }
+
+        /// <summary>
+        /// Creates a new instance of the <see cref="Builder"/> class.
+        /// </summary>
+        /// <returns>A new <see cref="Builder"/> instance.</returns>
+        public static Builder NewBuilder() => new Builder();
+
+        /// <summary>
+        /// Builder for ThreadPoolSizeSettings
+        /// </summary>
+        public class Builder
+        {
+            /// <summary>
+            /// Gets or sets the password of UserPeerAuthTokenService.
+            /// </summary>
+            public string Password { get; set; }
+
+            internal Builder() { }
+
+            /// <summary>
+            /// Sets the password of UserPeerAuthTokenService.
+            /// </summary>
+            /// <param name="password">The password of UserPeerAuthTokenService.</param>
+            /// <returns>The current <see cref="Builder"/> instance.</returns>
+            public Builder SetPassword(string password)
+            {
+                this.Password = password;
+                return this;
+            }
+
+            /// <summary>
+            /// Builds a new instance of the <see cref="AuthTokenSettings"/> class.
+            /// </summary>
+            /// <returns>A new <see cref="AuthTokenSettings"/> instance.</returns>
+            public AuthTokenSettings Build() => new AuthTokenSettings(this);
+
+        }
+
+    }
+
+    /// <summary>
     /// Settings thread pool size
     /// </summary>
     public class ThreadPoolSizeSettings
@@ -70,12 +124,10 @@
             /// Builds a new instance of the <see cref="ThreadPoolSizeSettings"/> class.
             /// </summary>
             /// <returns>A new <see cref="ThreadPoolSizeSettings"/> instance.</returns>
-            public ThreadPoolSizeSettings Build()
-            {
-                // Optional validation can be added here
-                return new ThreadPoolSizeSettings(this);
-            }
+            public ThreadPoolSizeSettings Build() => new ThreadPoolSizeSettings(this);
+
         }
+
     }
 
     /// <summary>
@@ -192,12 +244,10 @@
             /// Builds a new instance of the <see cref="SslConfigSettings"/> class.
             /// </summary>
             /// <returns>A new <see cref="SslConfigSettings"/> instance.</returns>
-            public SslConfigSettings Build()
-            {
-                // Optional validation can be added here
-                return new SslConfigSettings(this);
-            }
+            public SslConfigSettings Build() => new SslConfigSettings(this);
+
         }
+
     }
 
     /// <summary>
@@ -344,12 +394,10 @@
             /// Builds a new instance of the <see cref="HttpServerSettings"/> class.
             /// </summary>
             /// <returns>A new <see cref="HttpServerSettings"/> instance.</returns>
-            public HttpServerSettings Build()
-            {
-                // Optional validation can be added here
-                return new HttpServerSettings(this);
-            }
+            public HttpServerSettings Build() => new HttpServerSettings(this);
+
         }
+
     }
 
     /// <summary>
@@ -373,17 +421,20 @@
         public bool KeepAlive { get; }
 
         /// <summary>
-        /// Gets the TCP keep-alive time.
+        /// Gets the TCP keep-alive time in seconds.
+        /// Only available on .NET Core
         /// </summary>
         public int TcpKeepAliveTime { get; }
 
         /// <summary>
-        /// Gets the TCP keep-alive interval.
+        /// Gets the TCP keep-alive interval in seconds.
+        /// Only available on .NET Core
         /// </summary>
         public int TcpKeepAliveInterval { get; }
 
         /// <summary>
         /// Gets the TCP keep-alive retry count.
+        /// Only available on .NET Core
         /// </summary>
         public int TcpKeepAliveRetryCount { get; }
 
@@ -473,16 +524,19 @@
 
             /// <summary>
             /// Gets or sets the TCP keep-alive time.
+            /// Only available on .NET Core
             /// </summary>
             public int TcpKeepAliveTime { get; set; }
 
             /// <summary>
             /// Gets or sets the TCP keep-alive interval.
+            /// Only available on .NET Core
             /// </summary>
             public int TcpKeepAliveInterval { get; set; }
 
             /// <summary>
             /// Gets or sets the TCP keep-alive retry count.
+            /// Only available on .NET Core
             /// </summary>
             public int TcpKeepAliveRetryCount { get; set; }
 
@@ -560,9 +614,10 @@
             }
 
             /// <summary>
-            /// Sets the TCP keep-alive time.
+            /// Sets the TCP keep-alive time in seconds.
+            /// Only available on .NET Core
             /// </summary>
-            /// <param name="tcpKeepAliveTime">The TCP keep-alive time.</param>
+            /// <param name="tcpKeepAliveTime">The TCP keep-alive time in seconds.</param>
             /// <returns>The current <see cref="Builder"/> instance.</returns>
             public Builder SetTcpKeepAliveTime(int tcpKeepAliveTime)
             {
@@ -571,9 +626,10 @@
             }
 
             /// <summary>
-            /// Sets the TCP keep-alive interval.
+            /// Sets the TCP keep-alive interval in seconds.
+            /// Only available on .NET Core
             /// </summary>
-            /// <param name="tcpKeepAliveInterval">The TCP keep-alive interval.</param>
+            /// <param name="tcpKeepAliveInterval">The TCP keep-alive interval in seconds.</param>
             /// <returns>The current <see cref="Builder"/> instance.</returns>
             public Builder SetTcpKeepAliveInterval(int tcpKeepAliveInterval)
             {
@@ -583,6 +639,7 @@
 
             /// <summary>
             /// Sets the TCP keep-alive retry count.
+            /// Only available on .NET Core
             /// </summary>
             /// <param name="tcpKeepAliveRetryCount">The TCP keep-alive retry count.</param>
             /// <returns>The current <see cref="Builder"/> instance.</returns>
@@ -673,12 +730,10 @@
             /// Builds a new instance of the <see cref="SessionConfigSettings"/> class.
             /// </summary>
             /// <returns>A new <see cref="SessionConfigSettings"/> instance.</returns>
-            public SessionConfigSettings Build()
-            {
-                // Optional validation can be added here
-                return new SessionConfigSettings(this);
-            }
+            public SessionConfigSettings Build() => new SessionConfigSettings(this);
+
         }
+
     }
 
     /// <summary>
@@ -717,6 +772,11 @@
         public ThreadPoolSizeSettings ThreadPoolSize { get; }
 
         /// <summary>
+        /// Gets the auth token settings.
+        /// </summary>
+        public AuthTokenSettings AuthToken { get; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="StartupSettings"/> class.
         /// </summary>
         /// <param name="builder">The builder instance used to construct this instance.</param>
@@ -730,6 +790,7 @@
 
             this.HttpServer = builder.HttpServer;
             this.ThreadPoolSize = builder.ThreadPoolSize;
+            this.AuthToken = builder.AuthToken;
         }
 
         /// <summary>
@@ -772,6 +833,11 @@
             /// Gets or sets the thread pool size settings.
             /// </summary>
             public ThreadPoolSizeSettings ThreadPoolSize { get; set; }
+
+            /// <summary>
+            /// Gets the auth token settings.
+            /// </summary>
+            public AuthTokenSettings AuthToken { get; set; }
 
             /// <summary>
             /// Initializes a new instance of the <see cref="Builder"/> class.
@@ -845,14 +911,22 @@
             }
 
             /// <summary>
+            /// Sets the auth token settings.
+            /// </summary>
+            /// <param name="authToken">The auth token settings.</param>
+            /// <returns>The current <see cref="Builder"/> instance.</returns>
+            public Builder SetAuthToken(AuthTokenSettings authToken)
+            {
+                this.AuthToken = authToken;
+                return this;
+            }
+
+            /// <summary>
             /// Builds a new instance of the <see cref="StartupSettings"/> class.
             /// </summary>
             /// <returns>A new <see cref="StartupSettings"/> instance.</returns>
-            public StartupSettings Build()
-            {
-                // Optional validation can be added here
-                return new StartupSettings(this);
-            }
+            public StartupSettings Build() => new StartupSettings(this);
+
         }
 
     }

@@ -75,6 +75,7 @@ namespace XmobiTea.ProtonNet.Server.Socket
 
             this.logger.Info("Server started");
             this.OnStarted();
+
         }
 
         /// <summary>
@@ -93,6 +94,7 @@ namespace XmobiTea.ProtonNet.Server.Socket
 
             this.logger.Info("Server stopped");
             this.OnStopped();
+
         }
 
         /// <summary>
@@ -113,28 +115,35 @@ namespace XmobiTea.ProtonNet.Server.Socket
         /// <param name="startupSettings">The startup settings configuration.</param>
         private void CreateOtherSingleton(StartupSettings startupSettings)
         {
-            var channelService = this.CreateChannelService(startupSettings);
-            this.beanContext.SetSingleton(channelService);
+            var userPeerSessionService = this.CreateUserPeerSessionService(startupSettings);
+            this.beanContext.SetSingleton(userPeerSessionService);
 
             var rpcProtocolService = this.CreateRpcProtocolService(startupSettings);
             this.beanContext.SetSingleton(rpcProtocolService);
 
-            var socketSessionEmitService = this.CreateSocketSessionEmitService(startupSettings);
-            this.beanContext.SetSingleton(socketSessionEmitService);
-
             var userPeerService = this.CreateUserPeerService(startupSettings);
             this.beanContext.SetSingleton(userPeerService);
 
-            var socketOperationModelService = this.CreateSocketOperationModelService(startupSettings);
-            this.beanContext.SetSingleton(socketOperationModelService);
+            var userPeerAuthTokenService = this.CreateUserPeerAuthTokenService(startupSettings);
+            this.beanContext.SetSingleton(userPeerAuthTokenService);
+
+            var channelService = this.CreateChannelService(startupSettings);
+            this.beanContext.SetSingleton(channelService);
 
             var dataConverter = this.CreateDataConverter(startupSettings);
             this.beanContext.SetSingleton(dataConverter);
 
+            var socketOperationModelService = this.CreateSocketOperationModelService(startupSettings);
+            this.beanContext.SetSingleton(socketOperationModelService);
+
             var socketSessionTimeService = this.CreateSocketSessionTimeService(startupSettings);
             this.beanContext.SetSingleton(socketSessionTimeService);
 
+            var socketSessionEmitService = this.CreateSocketSessionEmitService(startupSettings);
+            this.beanContext.SetSingleton(socketSessionEmitService);
+
             this.CreateApplicationAssemblies(startupSettings, System.AppDomain.CurrentDomain.GetAssemblies());
+
         }
 
         /// <summary>
@@ -153,6 +162,7 @@ namespace XmobiTea.ProtonNet.Server.Socket
 
             var eventService = this.CreateEventService(startupSettings, assemblies);
             this.beanContext.SetSingleton(eventService);
+
         }
 
         /// <summary>
@@ -208,7 +218,7 @@ namespace XmobiTea.ProtonNet.Server.Socket
         /// <param name="sslConfig">The SSL configuration settings.</param>
         /// <returns>An instance of <see cref="SslOptions"/>.</returns>
         private SslOptions GetSslOptions(SslConfigSettings sslConfig) => new SslOptions(
-#if NETCOREAPP
+#if NETCOREAPP || NET48_OR_GREATER
             System.Security.Authentication.SslProtocols.Tls13
 #else
             System.Security.Authentication.SslProtocols.Tls12
@@ -351,7 +361,7 @@ namespace XmobiTea.ProtonNet.Server.Socket
         private void ShowBanner()
         {
             var banner =
-                "██████╗ ██████╗  ██████╗ ████████╗ ██████╗ ███╗   ██╗    ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗ \r\n██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝██╔═══██╗████╗  ██║    ██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗\r\n██████╔╝██████╔╝██║   ██║   ██║   ██║   ██║██╔██╗ ██║    ███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝\r\n██╔═══╝ ██╔══██╗██║   ██║   ██║   ██║   ██║██║╚██╗██║    ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██╔══██╗\r\n██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║ ╚████║    ███████║███████╗██║  ██║ ╚████╔╝ ███████╗██║  ██║\r\n╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝  ╚═══╝    ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝\r\n                                                                                                          \r\n       _____  ____   _____ _  ________ _______ \r\n      / ____|/ __ \\ / ____| |/ /  ____|__   __|\r\n     | (___ | |  | | |    | ' /| |__     | |   \r\n      \\___ \\| |  | | |    |  < |  __|    | |   \r\n      ____) | |__| | |____| . \\| |____   | |   \r\n     |_____/ \\____/ \\_____|_|\\_\\______|  |_|   \r\n                                           \r\n                                           \r\n                ©2024 XmobiTea Family\r\n                https://xmobitea.com\r\n";
+                "\r\n██████╗ ██████╗  ██████╗ ████████╗ ██████╗ ███╗   ██╗    ███╗   ██╗███████╗████████╗\r\n██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝██╔═══██╗████╗  ██║    ████╗  ██║██╔════╝╚══██╔══╝\r\n██████╔╝██████╔╝██║   ██║   ██║   ██║   ██║██╔██╗ ██║    ██╔██╗ ██║█████╗     ██║   \r\n██╔═══╝ ██╔══██╗██║   ██║   ██║   ██║   ██║██║╚██╗██║    ██║╚██╗██║██╔══╝     ██║   \r\n██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║ ╚████║    ██║ ╚████║███████╗   ██║   \r\n╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝  ╚═══╝    ╚═╝  ╚═══╝╚══════╝   ╚═╝   \r\n\r\n  ____   ___   ____ _  _______ _____   ____  _____ ______     _______ ____  \r\n / ___| / _ \\ / ___| |/ / ____|_   _| / ___|| ____|  _ \\ \\   / / ____|  _ \\ \r\n \\___ \\| | | | |   | ' /|  _|   | |   \\___ \\|  _| | |_) \\ \\ / /|  _| | |_) |\r\n  ___) | |_| | |___| . \\| |___  | |    ___) | |___|  _ < \\ V / | |___|  _ < \r\n |____/ \\___/ \\____|_|\\_\\_____| |_|   |____/|_____|_| \\_\\ \\_/  |_____|_| \\_\\\r\n                                                                            \r\n\r\n                Powed by XmobiTea Family\r\n                https://xmobitea.com\r\n";
 
             this.logger.Info($"\n\n{banner}\n");
         }

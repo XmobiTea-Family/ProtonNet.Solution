@@ -8,17 +8,17 @@
 		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNetSolution</RepositoryUrl>
+		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet.Solution</RepositoryUrl>
 		<PackageTags>binary message pack, binary, message pack, msgpack, binary msgpack, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.0</Version>
+		<Version>1.0.2</Version>
 		<Description>XmobiTea.Binary.MessagePack serves as an implement dedicated to the serialization and deserialization of data using the MessagePack format.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\XmobiTea.Binary\XmobiTea.Binary.csproj" Version="1.0.0" />
+		<ProjectReference Include="..\XmobiTea.Binary\XmobiTea.Binary.csproj" Version="1.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -112,6 +112,12 @@ namespace XmobiTea.ProtonNet.Client.Models
         public bool IsTimeout() => this.tickEndTimeout < System.DateTime.UtcNow.Ticks;
 
         /// <summary>
+        /// Gets the timeout in seconds
+        /// </summary>
+        /// <returns></returns>
+        public int GetTimeoutInSeconds() => this.timeoutInSeconds;
+
+        /// <summary>
         /// Gets the operation request that is pending to be sent.
         /// </summary>
         /// <returns>The <see cref="OperationRequest"/> that is pending.</returns>

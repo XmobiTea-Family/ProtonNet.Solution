@@ -71,7 +71,9 @@ namespace XmobiTea.ProtonNet.Client
         {
             var answer = new EventService();
 
-            var eventHandlerTypes = this.BeanContext.ScanClassFromAssignable(typeof(IEventHandler));
+            var eventHandlerTypes = this.Assemblies == null
+                ? this.BeanContext.ScanClassFromAssignable(typeof(IEventHandler))
+                : this.BeanContext.ScanClassFromAssignable(typeof(IEventHandler), this.Assemblies);
 
             foreach (var eventHandlerType in eventHandlerTypes)
             {

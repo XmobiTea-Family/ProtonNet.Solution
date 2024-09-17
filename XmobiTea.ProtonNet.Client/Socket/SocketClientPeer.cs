@@ -19,7 +19,7 @@ namespace XmobiTea.ProtonNet.Client.Socket
     /// and handles various socket events such as connection, disconnection, and errors.
     /// Inherits from <see cref="ClientPeer"/> and implements <see cref="ISocketClientPeer"/> and <see cref="IAfterAutoBind"/>.
     /// </summary>
-    class SocketClientPeer : ClientPeer, ISocketClientPeer, IAfterAutoBind
+    public class SocketClientPeer : ClientPeer, ISocketClientPeer, IAfterAutoBind
     {
         /// <summary>
         /// Prefix used in logging messages specific to this socket client peer.
@@ -408,7 +408,7 @@ namespace XmobiTea.ProtonNet.Client.Socket
         /// <param name="length">The length of the data in the buffer.</param>
         private void OnSocketClientReceived(byte[] buffer, int position, int length)
         {
-            using (var mStream = new System.IO.MemoryStream(buffer))
+            using (var mStream = new System.IO.MemoryStream(buffer, position, length))
                 while (true)
                 {
                     OperationHeader header;
