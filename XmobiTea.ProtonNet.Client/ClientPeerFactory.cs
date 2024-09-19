@@ -592,7 +592,7 @@ namespace XmobiTea.ProtonNet.Client
             /// </summary>
             /// <param name="sslOptions">The sslOptions to set.</param>
             /// <returns>The current Builder instance.</returns>
-            public Builder SetWsSslContext(SslOptions sslOptions)
+            public Builder SetWsSslOptions(SslOptions sslOptions)
             {
                 this.WsSslOptions = sslOptions;
                 return this;

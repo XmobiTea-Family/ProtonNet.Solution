@@ -1,12 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 using XmobiTea.Logging;
-using XmobiTea.ProtonNet.Control.Agent.Models;
+using XmobiTea.ProtonNet.Control.Helper.Models;
 using XmobiTea.ProtonNet.Control.Agent.Types;
 using XmobiTea.ProtonNet.Server.Socket;
 using XmobiTea.ProtonNet.Server.WebApi;
+using XmobiTea.ProtonNet.Control.Helper;
 
 namespace XmobiTea.ProtonNet.Control.Agent.Agents
 {
@@ -21,6 +21,8 @@ namespace XmobiTea.ProtonNet.Control.Agent.Agents
         private StartupAgentInfo startupAgentInfo { get; }
         private string[] lookupBinPaths { get; }
 
+        private IStartupSettingsReader startupSettingsReader { get; }
+
         private IWebApiServer webApiServer { get; set; }
         private ISocketServer socketServer { get; set; }
 
@@ -30,6 +32,8 @@ namespace XmobiTea.ProtonNet.Control.Agent.Agents
 
             this.startupAgentInfo = builder.StartupAgentInfo;
             this.lookupBinPaths = this.CreateLookupBinPaths(builder.StartupAgentInfo);
+
+            this.startupSettingsReader = new StartupSettingsReader();
 
             Environment.CurrentDirectory = this.startupAgentInfo.BinPath;
         }
@@ -125,7 +129,7 @@ namespace XmobiTea.ProtonNet.Control.Agent.Agents
         /// <returns>The startup settings for the Web API server.</returns>
         private Server.WebApi.StartupSettings LoadWebApiServerStartupSettings()
         {
-            var webApiStartupSettings = JsonConvert.DeserializeObject<WebApiStartupSettings>(File.ReadAllText(this.startupAgentInfo.StartupSettingsFilePath));
+            var webApiStartupSettings = this.startupSettingsReader.LoadWebApiStartupSettings(this.startupAgentInfo.StartupSettingsFilePath);
             return this.GenerateStartupSettingsFrom(webApiStartupSettings);
         }
 
@@ -155,8 +159,8 @@ namespace XmobiTea.ProtonNet.Control.Agent.Agents
             var sslConfig = Server.WebApi.SslConfigSettings.NewBuilder()
                 .SetEnable(webApiStartupSettings.HttpServer.SslConfig.Enable)
                 .SetPort(webApiStartupSettings.HttpServer.SslConfig.Port)
-                .SetCerFilePath(webApiStartupSettings.HttpServer.SslConfig.CerFilePath)
-                .SetCerPassword(webApiStartupSettings.HttpServer.SslConfig.CerPassword)
+                .SetCertFilePath(webApiStartupSettings.HttpServer.SslConfig.CertFilePath)
+                .SetCertPassword(webApiStartupSettings.HttpServer.SslConfig.CertPassword)
                 .Build();
 
             var httpServer = Server.WebApi.HttpServerSettings.NewBuilder()
@@ -210,7 +214,7 @@ namespace XmobiTea.ProtonNet.Control.Agent.Agents
         /// <returns>The startup settings for the Socket server.</returns>
         private Server.Socket.StartupSettings LoadSocketServerStartupSettings()
         {
-            var socketStartupSettings = JsonConvert.DeserializeObject<SocketStartupSettings>(File.ReadAllText(this.startupAgentInfo.StartupSettingsFilePath));
+            var socketStartupSettings = this.startupSettingsReader.LoadSocketStartupSettings(this.startupAgentInfo.StartupSettingsFilePath);
             return this.GenerateStartupSettingsFrom(socketStartupSettings);
         }
 
@@ -240,8 +244,8 @@ namespace XmobiTea.ProtonNet.Control.Agent.Agents
             var tcpSslConfig = Server.Socket.SslConfigSettings.NewBuilder()
                 .SetEnable(socketStartupSettings.TcpServer.SslConfig.Enable)
                 .SetPort(socketStartupSettings.TcpServer.SslConfig.Port)
-                .SetCerFilePath(socketStartupSettings.TcpServer.SslConfig.CerFilePath)
-                .SetCerPassword(socketStartupSettings.TcpServer.SslConfig.CerPassword)
+                .SetCertFilePath(socketStartupSettings.TcpServer.SslConfig.CertFilePath)
+                .SetCertPassword(socketStartupSettings.TcpServer.SslConfig.CertPassword)
                 .Build();
 
             var tcpServer = Server.Socket.TcpServerSettings.NewBuilder()
@@ -287,8 +291,8 @@ namespace XmobiTea.ProtonNet.Control.Agent.Agents
             var webSocketSslConfig = Server.Socket.SslConfigSettings.NewBuilder()
                 .SetEnable(socketStartupSettings.WebSocketServer.SslConfig.Enable)
                 .SetPort(socketStartupSettings.WebSocketServer.SslConfig.Port)
-                .SetCerFilePath(socketStartupSettings.WebSocketServer.SslConfig.CerFilePath)
-                .SetCerPassword(socketStartupSettings.WebSocketServer.SslConfig.CerPassword)
+                .SetCertFilePath(socketStartupSettings.WebSocketServer.SslConfig.CertFilePath)
+                .SetCertPassword(socketStartupSettings.WebSocketServer.SslConfig.CertPassword)
                 .Build();
 
             var webSocketServer = Server.Socket.WebSocketServerSettings.NewBuilder()

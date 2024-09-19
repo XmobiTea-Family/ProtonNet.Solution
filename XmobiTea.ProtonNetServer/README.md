@@ -60,7 +60,7 @@ using XmobiTea.ProtonNetServer;
 using XmobiTea.ProtonNetServer.Options;
 using XmobiTea.ProtonNetServer.Ssl;
 
-var sslContext = new SslContext("server.pfx", "password");
+var sslOptions = new SslOptions("server.pfx", "password");
 var options = new TcpServerOptions
 {
     NoDelay = true,
@@ -69,7 +69,7 @@ var options = new TcpServerOptions
     TcpKeepAliveRetryCount = 5
 };
 
-var server = new WssServer("127.0.0.1", 9001, options, sslContext);
+var server = new WssServer("127.0.0.1", 9001, options, sslOptions);
 
 server.Start();
 
@@ -84,7 +84,7 @@ server.Stop();
 - **TcpServerOptions:** Configuration options for TCP servers.
 - **UdpServerOptions:** Configuration options for UDP servers.
 - **WebSocket:** A class representing a WebSocket connection, supporting text and binary frames.
-- **SslContext:** SSL/TLS context for secure connections.
+- **SslOptions:** SSL/TLS options for secure connections.
 
 ## Extensibility
 

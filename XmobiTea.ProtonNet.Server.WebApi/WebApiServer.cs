@@ -189,7 +189,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi
 #else
             System.Security.Authentication.SslProtocols.Tls12
 #endif
-            , new X509Certificate2(sslConfig.CerFilePath, sslConfig.CerPassword));
+            , new X509Certificate2(sslConfig.CertFilePath, sslConfig.CertPassword));
 
         /// <summary>
         /// Creates and returns an HTTP server instance based on the provided startup settings.

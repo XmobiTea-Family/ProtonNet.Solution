@@ -223,7 +223,7 @@ namespace XmobiTea.ProtonNet.Server.Socket
 #else
             System.Security.Authentication.SslProtocols.Tls12
 #endif
-            , new X509Certificate2(sslConfig.CerFilePath, sslConfig.CerPassword));
+            , new X509Certificate2(sslConfig.CertFilePath, sslConfig.CertPassword));
 
         /// <summary>
         /// Creates and initializes the server context containing session-related services.

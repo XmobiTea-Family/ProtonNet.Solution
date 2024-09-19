@@ -148,19 +148,19 @@
         /// <summary>
         /// Gets the file path to the certificate.
         /// </summary>
-        public string CerFilePath { get; }
+        public string CertFilePath { get; }
 
         /// <summary>
         /// Gets the password for the certificate.
         /// </summary>
-        public string CerPassword { get; }
+        public string CertPassword { get; }
 
         private SslConfigSettings(Builder builder)
         {
             this.Enable = builder.Enable;
             this.Port = builder.Port;
-            this.CerFilePath = builder.CerFilePath;
-            this.CerPassword = builder.CerPassword;
+            this.CertFilePath = builder.CertFilePath;
+            this.CertPassword = builder.CertPassword;
         }
 
         /// <summary>
@@ -187,12 +187,12 @@
             /// <summary>
             /// Gets or sets the file path to the certificate.
             /// </summary>
-            public string CerFilePath { get; set; }
+            public string CertFilePath { get; set; }
 
             /// <summary>
             /// Gets or sets the password for the certificate.
             /// </summary>
-            public string CerPassword { get; set; }
+            public string CertPassword { get; set; }
 
             internal Builder() { }
 
@@ -221,22 +221,22 @@
             /// <summary>
             /// Sets the file path to the certificate.
             /// </summary>
-            /// <param name="cerFilePath">The file path to the certificate.</param>
+            /// <param name="certFilePath">The file path to the certificate.</param>
             /// <returns>The current <see cref="Builder"/> instance.</returns>
-            public Builder SetCerFilePath(string cerFilePath)
+            public Builder SetCertFilePath(string certFilePath)
             {
-                this.CerFilePath = cerFilePath;
+                this.CertFilePath = certFilePath;
                 return this;
             }
 
             /// <summary>
             /// Sets the password for the certificate.
             /// </summary>
-            /// <param name="cerPassword">The password for the certificate.</param>
+            /// <param name="certPassword">The password for the certificate.</param>
             /// <returns>The current <see cref="Builder"/> instance.</returns>
-            public Builder SetCerPassword(string cerPassword)
+            public Builder SetCertPassword(string certPassword)
             {
-                this.CerPassword = cerPassword;
+                this.CertPassword = certPassword;
                 return this;
             }
 

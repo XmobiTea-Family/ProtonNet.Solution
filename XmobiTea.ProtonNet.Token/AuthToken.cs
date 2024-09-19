@@ -74,7 +74,7 @@ namespace XmobiTea.ProtonNet.Token
                 options = new TokenOptions()
                 {
                     AlgorithmType = TokenAlgorithmType.SHA256,
-                    BinaryType = TokenBinaryType.SimplePack,
+                    BinaryType = TokenBinaryType.MessagePack,
                     ExpiredAfterSeconds = 24 * 60 * 60,
                 };
 

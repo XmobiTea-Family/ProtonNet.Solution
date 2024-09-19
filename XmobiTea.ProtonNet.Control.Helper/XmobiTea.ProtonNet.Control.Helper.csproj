@@ -1,24 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netcoreapp3.1;net6.0;net8.0;netstandard2.0;netstandard2.1;net46;net461;net462;net47;net471;net472;net48;net481;</TargetFrameworks>
+		<TargetFrameworks>netcoreapp3.1;net6.0;net8.0;net46;net461;net462;net47;net471;net472;net48;net481;</TargetFrameworks>
+		<InvariantGlobalization>true</InvariantGlobalization>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<Authors>Chàng X</Authors>
 		<Company>XmobiTea Family</Company>
 		<Copyright>Copyright (c) XmobiTea 2024</Copyright>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<PackageProjectUrl>https://xmobitea.com</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/XmobiTea-Family/ProtonNet.Solution</RepositoryUrl>
-		<PackageTags>crypto, aes, crypto aes, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
+		<PackageTags>proton net control helper, proton server, proton, proton net server, unity server, unity, proton net, unity server</PackageTags>
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
 		<Version>1.0.2</Version>
-		<Description>XmobiTea.Crypto.Aes is an implementation that utilizes the AES (Advanced Encryption Standard) algorithm, providing a concrete and secure method for encrypting and decrypting data. This implementation builds on the foundation laid by XmobiTea.Crypto, offering robust cryptographic functionality through the AES standard.</Description>
+		<Description>XmobiTea.ProtonNet.Control.Helper assists in managing services, providing the tools necessary for overseeing and controlling the lifecycle and operations of various ProtonNet services. It plays a crucial role in ensuring the efficient and effective management of services within the ProtonNet ecosystem.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\XmobiTea.Crypto\XmobiTea.Crypto.csproj" Version="1.0.2" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>
