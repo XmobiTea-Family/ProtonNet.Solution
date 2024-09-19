@@ -51,9 +51,25 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Context
         {
             internal Builder() { }
 
-            public IUserPeerSessionService UserPeerSessionService { get; set; }
+            /// <summary>
+            /// Gets or sets the session service used by the server.
+            /// </summary>
             public ISessionService SessionService { get; set; }
+
+            /// <summary>
+            /// Gets or sets the user peer session service used by the server.
+            /// </summary>
+            public IUserPeerSessionService UserPeerSessionService { get; set; }
+
+            /// <summary>
+            /// Gets or sets the initialization request provider service used by the server.
+            /// </summary>
             public IInitRequestProviderService InitRequestProviderService { get; set; }
+
+            /// <summary>
+            /// Gets or sets the byte array manager service used by the server.
+            /// </summary>
+            public IByteArrayManagerService ByteArrayManagerService { get; set; }
 
             /// <summary>
             /// Sets the user peer session service.
@@ -89,6 +105,17 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Context
             }
 
             /// <summary>
+            /// Sets the byte array manager service to be used by the server.
+            /// </summary>
+            /// <param name="byteArrayManagerService">The byte array manager service to set.</param>
+            /// <returns>The current <see cref="Builder"/> instance.</returns>
+            public Builder SetByteArrayManagerService(IByteArrayManagerService byteArrayManagerService)
+            {
+                this.ByteArrayManagerService = byteArrayManagerService;
+                return this;
+            }
+
+            /// <summary>
             /// Builds a new instance of WebApiServerContext with the specified services.
             /// </summary>
             /// <returns>The constructed WebApiServerContext instance.</returns>
@@ -99,6 +126,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Context
                 answer.userPeerSessionService = this.UserPeerSessionService;
                 answer.sessionService = this.SessionService;
                 answer.initRequestProviderService = this.InitRequestProviderService;
+                answer.byteArrayManagerService = this.ByteArrayManagerService;
 
                 return answer;
             }

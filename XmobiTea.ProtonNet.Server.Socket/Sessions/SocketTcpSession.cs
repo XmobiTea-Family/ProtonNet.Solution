@@ -1,4 +1,5 @@
-﻿using XmobiTea.ProtonNet.Server.Socket.Context;
+﻿using XmobiTea.ProtonNet.Server.Services;
+using XmobiTea.ProtonNet.Server.Socket.Context;
 using XmobiTea.ProtonNet.Server.Socket.Models;
 using XmobiTea.ProtonNet.Server.Socket.Server;
 using XmobiTea.ProtonNet.Server.Socket.Services;
@@ -19,6 +20,11 @@ namespace XmobiTea.ProtonNet.Server.Socket.Sessions
         /// Gets the controller service responsible for handling various socket events.
         /// </summary>
         protected ISocketControllerService controllerService { get; }
+        
+        /// <summary>
+        /// Gets the byte array manager service to clone byte array
+        /// </summary>
+        protected IByteArrayManagerService byteArrayManagerService { get; }
 
         /// <summary>
         /// Gets the session time management service.
@@ -41,6 +47,7 @@ namespace XmobiTea.ProtonNet.Server.Socket.Sessions
         public SocketTcpSession(SocketTcpServer server, ISocketServerContext context) : base(server)
         {
             this.controllerService = context.GetControllerService();
+            this.byteArrayManagerService = context.GetByteArrayManagerService();
 
             var initRequest = context.GetInitRequestProviderService().NewSessionInitRequest();
 
@@ -144,8 +151,10 @@ namespace XmobiTea.ProtonNet.Server.Socket.Sessions
         {
             base.OnReceived(buffer, position, length);
 
-            if (this.fiber == null) this.controllerService.OnReceived(this, buffer, position, length);
-            else this.fiber.Enqueue(() => this.controllerService.OnReceived(this, buffer, position, length));
+            var bufferClone = this.byteArrayManagerService.Rent(buffer, position, length);
+
+            if (this.fiber == null) this.controllerService.OnReceived(this, bufferClone, 0, bufferClone.Length);
+            else this.fiber.Enqueue(() => this.controllerService.OnReceived(this, bufferClone, 0, bufferClone.Length));
         }
 
         /// <summary>

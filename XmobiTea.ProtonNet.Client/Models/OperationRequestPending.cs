@@ -39,6 +39,11 @@ namespace XmobiTea.ProtonNet.Client.Models
         private int timeoutInSeconds { get; }
 
         /// <summary>
+        /// The parameters used for receiving the operation response.
+        /// </summary>
+        private SendParameters responseSendParameters { get; set; }
+
+        /// <summary>
         /// The response received from the server for this operation request.
         /// </summary>
         private OperationResponse operationResponse { get; set; }
@@ -99,6 +104,12 @@ namespace XmobiTea.ProtonNet.Client.Models
         public void SetOperationResponse(OperationResponse operationResponse) => this.operationResponse = operationResponse;
 
         /// <summary>
+        /// Sets the parameters used for receiving the operation response.
+        /// </summary>
+        /// <param name="sendParameters">The parameters used for receiving the operation response.</param>
+        public void SetResponseSendParameters(SendParameters sendParameters) => this.responseSendParameters = sendParameters;
+
+        /// <summary>
         /// Gets the execution time in milliseconds for the operation request, 
         /// calculated from the time it was sent until the response was received.
         /// </summary>
@@ -136,51 +147,16 @@ namespace XmobiTea.ProtonNet.Client.Models
         public SendParameters GetSendParameters() => this.sendParameters;
 
         /// <summary>
+        /// The parameters used for receiving the operation response.
+        /// </summary>
+        /// <returns>The <see cref="SendParameters"/> used for receiving the response.</returns>
+        public SendParameters GetResponseSendParameters() => this.responseSendParameters;
+
+        /// <summary>
         /// Gets the callback action to be invoked when the server responds to the request.
         /// </summary>
         /// <returns>The callback action for handling the response.</returns>
         public System.Action<OperationResponse> GetCallback() => this.onOperationResponse;
-
-    }
-
-    /// <summary>
-    /// Represents a pending operation event that is queued for sending to the server.
-    /// Stores the event data and the parameters used for sending it.
-    /// </summary>
-    public class OperationEventPending
-    {
-        /// <summary>
-        /// The operation event that is pending to be sent.
-        /// </summary>
-        private OperationEvent operationEvent { get; }
-
-        /// <summary>
-        /// The parameters used for sending the operation event.
-        /// </summary>
-        private SendParameters sendParameters { get; }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="OperationEventPending"/> class.
-        /// </summary>
-        /// <param name="operationEvent">The operation event to be sent.</param>
-        /// <param name="sendParameters">The parameters used for sending the event.</param>
-        public OperationEventPending(OperationEvent operationEvent, SendParameters sendParameters)
-        {
-            this.operationEvent = operationEvent;
-            this.sendParameters = sendParameters;
-        }
-
-        /// <summary>
-        /// Gets the operation event that is pending to be sent.
-        /// </summary>
-        /// <returns>The <see cref="OperationEvent"/> that is pending.</returns>
-        public OperationEvent GetOperationEvent() => this.operationEvent;
-
-        /// <summary>
-        /// Gets the parameters used for sending the operation event.
-        /// </summary>
-        /// <returns>The <see cref="SendParameters"/> used for sending the event.</returns>
-        public SendParameters GetSendParameters() => this.sendParameters;
 
     }
 

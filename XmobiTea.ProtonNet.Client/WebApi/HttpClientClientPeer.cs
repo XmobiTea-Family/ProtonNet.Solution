@@ -112,6 +112,8 @@ namespace XmobiTea.ProtonNet.Client.WebApi
                                     ReturnCode = ReturnCode.OperationInvalid,
                                     DebugMessage = "Cannot read data body",
                                 };
+
+                                operationRequestPending.SetResponseSendParameters(sendParameters);
                             }
                             else
                             {
@@ -145,6 +147,9 @@ namespace XmobiTea.ProtonNet.Client.WebApi
                                         operationResponse = (OperationResponse)operationModel;
                                     }
                                 }
+
+                                operationRequestPending.SetResponseSendParameters(header.SendParameters);
+
                             }
                         }
 
@@ -163,6 +168,7 @@ namespace XmobiTea.ProtonNet.Client.WebApi
                     };
 
                     operationRequestPending.SetOperationResponse(response);
+                    operationRequestPending.SetResponseSendParameters(sendParameters);
 
                     this.logger.Error("Exception", e);
                 }
@@ -178,6 +184,7 @@ namespace XmobiTea.ProtonNet.Client.WebApi
                     };
 
                     operationRequestPending.SetOperationResponse(response);
+                    operationRequestPending.SetResponseSendParameters(sendParameters);
 
                     this.logger.Error("Exception", e);
                 }

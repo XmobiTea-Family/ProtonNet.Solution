@@ -38,10 +38,7 @@ namespace XmobiTea.ProtonNet.Client.Socket.Services
         /// <summary>
         /// Initializes a new instance of the <see cref="EventService"/> class.
         /// </summary>
-        public EventService()
-        {
-            this.handlerDict = new System.Collections.Generic.Dictionary<string, IEventHandler>();
-        }
+        public EventService() => this.handlerDict = new System.Collections.Generic.Dictionary<string, IEventHandler>();
 
         /// <summary>
         /// Adds an event handler to the service.

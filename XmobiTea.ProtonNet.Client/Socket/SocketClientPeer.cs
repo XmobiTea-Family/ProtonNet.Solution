@@ -39,6 +39,12 @@ namespace XmobiTea.ProtonNet.Client.Socket
         protected ISocketOperationModelService operationModelService { get; private set; }
 
         /// <summary>
+        /// Service for handling various events within the client peer.
+        /// </summary>
+        [AutoBind]
+        protected IEventService eventService { get; private set; }
+
+        /// <summary>
         /// The underlying socket client associated with this peer.
         /// </summary>
         protected ISocketClient socketClient { get; }
@@ -71,12 +77,12 @@ namespace XmobiTea.ProtonNet.Client.Socket
         /// <summary>
         /// Lock object for synchronizing access to pending operation events.
         /// </summary>
-        private object _lockOperationEventPending { get; }
+        protected object _lockOperationEventPending { get; }
 
         /// <summary>
         /// List of pending operation events.
         /// </summary>
-        private IList<OperationEvent> operationEventPendings { get; }
+        private IList<OperationEventPending> delayOperationEventReceivedPendings { get; }
 
         /// <summary>
         /// Lock object for synchronizing access to delayed operation event pendings.
@@ -91,47 +97,47 @@ namespace XmobiTea.ProtonNet.Client.Socket
         /// <summary>
         /// Callback for immediate connection events.
         /// </summary>
-        private OnConnected onImmediatelyConnected { get; set; }
+        protected OnConnected onImmediatelyConnected { get; set; }
 
         /// <summary>
         /// Callback for immediate disconnection events.
         /// </summary>
-        private OnDisconnected onImmediatelyDisconnected { get; set; }
+        protected OnDisconnected onImmediatelyDisconnected { get; set; }
 
         /// <summary>
         /// Lock object for synchronizing access to other fields.
         /// </summary>
-        private object _lockOther { get; }
+        protected object _lockOther { get; }
 
         /// <summary>
         /// Indicates if a disconnection notice has been sent.
         /// </summary>
-        private bool isDisconnectedNotice { get; set; }
+        protected bool isDisconnectedNotice { get; set; }
 
         /// <summary>
         /// Indicates if a connection notice has been sent.
         /// </summary>
-        private bool isConnectedNotice { get; set; }
+        protected bool isConnectedNotice { get; set; }
 
         /// <summary>
         /// Indicates if an error notice has been sent.
         /// </summary>
-        private bool isErrorNotice { get; set; }
+        protected bool isErrorNotice { get; set; }
 
         /// <summary>
         /// The socket error that occurred.
         /// </summary>
-        private System.Net.Sockets.SocketError socketError { get; set; }
+        protected System.Net.Sockets.SocketError socketError { get; set; }
 
         /// <summary>
         /// The reason for the disconnection.
         /// </summary>
-        private DisconnectReason disconnectReason { get; set; }
+        protected DisconnectReason disconnectReason { get; set; }
 
         /// <summary>
         /// The message describing the disconnection.
         /// </summary>
-        private string disconnectMessage { get; set; }
+        protected string disconnectMessage { get; set; }
 
         /// <summary>
         /// The session ID provided by the server.
@@ -151,27 +157,27 @@ namespace XmobiTea.ProtonNet.Client.Socket
         /// <summary>
         /// Indicates whether the handshake has been completed.
         /// </summary>
-        private bool isHandshake = false;
+        protected bool isHandshake = false;
 
         /// <summary>
         /// Indicates whether auto-reconnect is enabled.
         /// </summary>
-        private bool autoReconnect = false;
+        protected bool autoReconnect = false;
 
         /// <summary>
         /// Task for managing reconnection attempts.
         /// </summary>
-        private Task reconnectTask { get; set; }
+        protected Task reconnectTask { get; set; }
 
         /// <summary>
         /// The delay in seconds before attempting to auto-reconnect.
         /// </summary>
-        private int autoReconnectInSeconds { get; set; }
+        protected int autoReconnectInSeconds { get; set; }
 
         /// <summary>
         /// The current count of reconnection attempts.
         /// </summary>
-        private int reconnectCount { get; set; }
+        protected int reconnectCount { get; set; }
 
         /// <summary>
         /// Options for configuring the UDP client.
@@ -185,7 +191,7 @@ namespace XmobiTea.ProtonNet.Client.Socket
             : base(serverAddress, initRequest, tcpClientOptions)
         {
             this._lockOperationEventPending = new object();
-            this.operationEventPendings = new List<OperationEvent>();
+            this.delayOperationEventReceivedPendings = new List<OperationEventPending>();
 
             this._lockDelayOperationEventPendings = new object();
             this.delayOperationEventPendings = new Queue<OperationEventPending>();
@@ -379,7 +385,7 @@ namespace XmobiTea.ProtonNet.Client.Socket
         /// <summary>
         /// Handles the socket client's connected event.
         /// </summary>
-        private void OnSocketClientConnected()
+        protected void OnSocketClientConnected()
         {
             var sendResult = this.socketSessionEmitService.SendOperationHandshake(this.socketClient, new OperationHandshake()
             {
@@ -394,7 +400,7 @@ namespace XmobiTea.ProtonNet.Client.Socket
         /// <summary>
         /// Handles the socket client's disconnected event.
         /// </summary>
-        private void OnSocketClientDisconnected()
+        protected void OnSocketClientDisconnected()
         {
             lock (this._lockOther)
                 this.isDisconnectedNotice = true;
@@ -406,7 +412,7 @@ namespace XmobiTea.ProtonNet.Client.Socket
         /// <param name="buffer">The buffer containing the received data.</param>
         /// <param name="position">The starting position in the buffer.</param>
         /// <param name="length">The length of the data in the buffer.</param>
-        private void OnSocketClientReceived(byte[] buffer, int position, int length)
+        protected void OnSocketClientReceived(byte[] buffer, int position, int length)
         {
             using (var mStream = new System.IO.MemoryStream(buffer, position, length))
                 while (true)
@@ -447,7 +453,7 @@ namespace XmobiTea.ProtonNet.Client.Socket
         /// Handles the socket client's error event.
         /// </summary>
         /// <param name="error">The socket error encountered.</param>
-        private void OnSocketClientError(System.Net.Sockets.SocketError error)
+        protected void OnSocketClientError(System.Net.Sockets.SocketError error)
         {
             lock (this._lockOther)
             {
@@ -610,23 +616,25 @@ namespace XmobiTea.ProtonNet.Client.Socket
         /// </summary>
         private void CheckWaitingOperationEventPending()
         {
-            List<OperationEvent> pendingEvents;
+            List<OperationEventPending> pendingEvents;
 
             lock (this._lockOperationEventPending)
             {
-                if (this.operationEventPendings.Count == 0) return;
+                if (this.delayOperationEventReceivedPendings.Count == 0) return;
 
-                pendingEvents = new List<OperationEvent>(this.operationEventPendings);
+                pendingEvents = new List<OperationEventPending>(this.delayOperationEventReceivedPendings);
 
-                this.operationEventPendings.Clear();
+                this.delayOperationEventReceivedPendings.Clear();
             }
 
-            foreach (var operationEvent in pendingEvents)
+            foreach (var pendingOperationEvent in pendingEvents)
             {
+                var operationEvent = pendingOperationEvent.GetOperationEvent();
                 this.LogEvent(operationEvent);
 
                 try
                 {
+                    this.eventService.Handle(operationEvent, pendingOperationEvent.GetSendParameters(), this);
                     this.OnOperationEvent?.Invoke(operationEvent);
                 }
                 catch (Exception ex)
@@ -657,11 +665,8 @@ namespace XmobiTea.ProtonNet.Client.Socket
 
                 shouldClearHandlers = !this.autoReconnect;
 
-                if (shouldClearHandlers)
-                {
-                    this.autoReconnectInSeconds = 0;
-                    this.reconnectCount = 0;
-                }
+                this.autoReconnectInSeconds = 0;
+                this.reconnectCount = 0;
             }
 
             this.onImmediatelyConnected?.Invoke(connectionId, serverSessionId);
@@ -727,12 +732,21 @@ namespace XmobiTea.ProtonNet.Client.Socket
             {
                 this.logger.Info($"autoReconnect enable, try reconnect after {reconnectInSeconds} seconds, reconnect times: {currentReconnectCount}.");
 
-                this.reconnectTask = Task.Run(async () =>
-                {
-                    await Task.Delay(reconnectInSeconds * 1000);
-                    this.Reconnect(this.autoReconnect, this.onImmediatelyConnected, this.onImmediatelyDisconnected);
-                });
+                this.OnAutoReconnect(reconnectInSeconds);
             }
+        }
+
+        /// <summary>
+        /// On AutoReconnect call to reconnect the socket
+        /// </summary>
+        /// <param name="reconnectInSeconds">The reconnectInSeconds after</param>
+        protected virtual void OnAutoReconnect(int reconnectInSeconds)
+        {
+            this.reconnectTask = Task.Run(async () =>
+            {
+                await Task.Delay(reconnectInSeconds * 1000);
+                this.Reconnect(this.autoReconnect, this.onImmediatelyConnected, this.onImmediatelyDisconnected);
+            });
         }
 
         /// <summary>
@@ -757,7 +771,8 @@ namespace XmobiTea.ProtonNet.Client.Socket
         /// Handles the receipt of an operation response internally, matching it with a pending request.
         /// </summary>
         /// <param name="operationResponse">The operation response received from the server.</param>
-        internal void OnReceiveOperationResponseInternal(OperationResponse operationResponse)
+        /// <param name="sendParameters">The send parameters to received response from the server.</param>
+        internal void OnReceiveOperationResponseInternal(OperationResponse operationResponse, SendParameters sendParameters)
         {
             var responseId = operationResponse.ResponseId;
 
@@ -771,6 +786,7 @@ namespace XmobiTea.ProtonNet.Client.Socket
                 operationRequestPending.OnRecv();
 
                 operationRequestPending.SetOperationResponse(operationResponse);
+                operationRequestPending.SetResponseSendParameters(sendParameters);
             }
         }
 
@@ -778,10 +794,11 @@ namespace XmobiTea.ProtonNet.Client.Socket
         /// Handles the receipt of an operation event internally, adding it to the list of pending events.
         /// </summary>
         /// <param name="operationEvent">The operation event received from the server.</param>
-        internal void OnReceiveOperationEventInternal(OperationEvent operationEvent)
+        /// <param name="sendParameters">The send parameters to received event from the server.</param>
+        internal void OnReceiveOperationEventInternal(OperationEvent operationEvent, SendParameters sendParameters)
         {
             lock (this._lockOperationEventPending)
-                this.operationEventPendings.Add(operationEvent);
+                this.delayOperationEventReceivedPendings.Add(new OperationEventPending(operationEvent, sendParameters));
         }
 
         /// <summary>

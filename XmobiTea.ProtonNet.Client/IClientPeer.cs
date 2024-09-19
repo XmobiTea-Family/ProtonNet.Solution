@@ -319,6 +319,7 @@ namespace XmobiTea.ProtonNet.Client
                         };
 
                         operationRequestPending.SetOperationResponse(response);
+                        operationRequestPending.SetResponseSendParameters(operationRequestPending.GetSendParameters());
                     }
                 }
                 else

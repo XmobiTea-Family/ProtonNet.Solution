@@ -322,13 +322,14 @@ namespace XmobiTea.ProtonNet.RpcProtocol
                 header.OperationType = (OperationType)operationType;
                 header.ProtocolProviderType = (ProtocolProviderType)protocolProviderType;
 
+                var sendParameters = new SendParameters();
+                header.SendParameters = sendParameters;
+
                 if (header.OperationType == OperationType.OperationRequest
                     || header.OperationType == OperationType.OperationResponse
                     || header.OperationType == OperationType.OperationEvent)
                 {
                     var byte1 = (byte)stream.ReadByte();
-
-                    var sendParameters = new SendParameters();
 
                     sendParameters.Unreliable = (byte1 & 1 << 4) != 0;
                     sendParameters.Encrypted = (byte1 & 1 << 3) != 0;
@@ -345,7 +346,6 @@ namespace XmobiTea.ProtonNet.RpcProtocol
 
                         header.CryptoProviderType = (CryptoProviderType)cryptoProviderType;
                     }
-                    header.SendParameters = sendParameters;
                 }
 
                 if (lengthByte == 0)
@@ -374,8 +374,10 @@ namespace XmobiTea.ProtonNet.RpcProtocol
 
                 return true;
             }
-            catch
+            catch (System.Exception ex)
             {
+                System.Console.WriteLine(ex);
+
                 header = null;
                 payload = null;
 

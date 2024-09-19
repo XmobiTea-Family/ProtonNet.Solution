@@ -57,6 +57,13 @@ namespace XmobiTea.ProtonNet.Server.WebApi
         protected virtual IInitRequestProviderService CreateInitRequestProviderService(StartupSettings startupSettings) => new WebApiInitRequestProviderService();
 
         /// <summary>
+        /// Creates and initializes the byte array manager service.
+        /// </summary>
+        /// <param name="startupSettings">The startup settings configuration.</param>
+        /// <returns>An instance of <see cref="IInitRequestProviderService"/>.</returns>
+        protected virtual IByteArrayManagerService CreateByteArrayManagerService(StartupSettings startupSettings) => new ByteArrayManagerService();
+
+        /// <summary>
         /// Creates and returns a new IChannelService instance based on the provided startup settings.
         /// </summary>
         /// <param name="startupSettings">The startup settings for configuring the channel service.</param>
@@ -107,10 +114,14 @@ namespace XmobiTea.ProtonNet.Server.WebApi
             var initRequestProviderService = this.CreateInitRequestProviderService(startupSettings);
             this.beanContext.SetSingleton(initRequestProviderService);
 
+            var byteArrayManagerService = this.CreateByteArrayManagerService(startupSettings);
+            this.beanContext.SetSingleton(byteArrayManagerService);
+
             var answer = WebApiServerContext.NewBuilder()
                 .SetUserPeerSessionService(userPeerSessionService)
                 .SetSessionService(sessionService)
                 .SetInitRequestProviderService(initRequestProviderService)
+                .SetByteArrayManagerService(byteArrayManagerService)
                 .Build();
 
             return answer;

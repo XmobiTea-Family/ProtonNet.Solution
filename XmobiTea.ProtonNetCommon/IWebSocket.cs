@@ -586,7 +586,7 @@ namespace XmobiTea.ProtonNetCommon
 
                     this.receiveFrameBuffer.Write(
 #if NETCOREAPP
-                    buffer[(position + index)..(position + index + minimumLength)]
+                        buffer[(position + index)..(position + index + minimumLength)]
 #else
                         buffer.ToClone((position + index), (position + index + minimumLength))
 #endif

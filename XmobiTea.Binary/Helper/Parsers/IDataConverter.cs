@@ -11,6 +11,7 @@
         /// <param name="obj">The object to convert.</param>
         /// <returns>The converted object.</returns>
         object ToData(object obj);
+
     }
 
     /// <summary>
@@ -25,6 +26,7 @@
         /// <param name="obj">The object to convert.</param>
         /// <returns>The converted object of type <typeparamref name="T"/>.</returns>
         T ToData(object obj);
+
     }
 
     /// <summary>
@@ -57,6 +59,7 @@
 
             return System.Convert.ToBoolean(obj);
         }
+
     }
 
     /// <summary>
@@ -89,6 +92,7 @@
 
             return System.Convert.ToChar(obj);
         }
+
     }
 
     /// <summary>
@@ -121,6 +125,7 @@
 
             return System.Convert.ToSByte(obj);
         }
+
     }
 
     /// <summary>
@@ -153,6 +158,7 @@
 
             return System.Convert.ToByte(obj);
         }
+
     }
 
     /// <summary>
@@ -185,6 +191,7 @@
 
             return System.Convert.ToInt16(obj);
         }
+
     }
 
     /// <summary>
@@ -217,6 +224,7 @@
 
             return System.Convert.ToUInt16(obj);
         }
+
     }
 
     /// <summary>
@@ -249,6 +257,7 @@
 
             return System.Convert.ToInt32(obj);
         }
+
     }
 
     /// <summary>
@@ -281,6 +290,7 @@
 
             return System.Convert.ToUInt32(obj);
         }
+
     }
 
     /// <summary>
@@ -313,6 +323,7 @@
 
             return System.Convert.ToInt64(obj);
         }
+
     }
 
     /// <summary>
@@ -345,6 +356,7 @@
 
             return System.Convert.ToUInt64(obj);
         }
+
     }
 
     /// <summary>
@@ -377,6 +389,7 @@
 
             return System.Convert.ToSingle(obj);
         }
+
     }
 
     /// <summary>
@@ -409,6 +422,7 @@
 
             return System.Convert.ToDouble(obj);
         }
+
     }
 
     /// <summary>
@@ -441,6 +455,7 @@
 
             return System.Convert.ToString(obj);
         }
+
     }
 
 }

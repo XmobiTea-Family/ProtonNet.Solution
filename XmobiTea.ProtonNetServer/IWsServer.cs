@@ -144,6 +144,19 @@ namespace XmobiTea.ProtonNetServer
     /// </summary>
     public class WsServer : HttpServer, IWebSocket, IWsServer
     {
+        /// <summary>
+        /// A static empty bytes
+        /// </summary>
+        private static byte[] EmptyBytes { get; }
+
+        static WsServer()
+        {
+            EmptyBytes = new byte[0];
+        }
+
+        /// <summary>
+        /// The web socket handle
+        /// </summary>
         private WebSocket webSocket { get; }
 
         /// <summary>
@@ -171,7 +184,7 @@ namespace XmobiTea.ProtonNetServer
         /// </summary>
         /// <param name="status">The status code to use when closing the sessions.</param>
         /// <returns>True if all sessions were closed successfully; otherwise, false.</returns>
-        public virtual bool CloseAll(int status) => this.CloseAll(status, new byte[0]);
+        public virtual bool CloseAll(int status) => this.CloseAll(status, EmptyBytes);
 
         /// <summary>
         /// Closes all WebSocket sessions with the specified status code and an additional buffer.
@@ -512,6 +525,19 @@ namespace XmobiTea.ProtonNetServer
     /// </summary>
     public class WssServer : HttpsServer, IWebSocket, IWsServer
     {
+        /// <summary>
+        /// A static empty bytes
+        /// </summary>
+        private static byte[] EmptyBytes { get; }
+
+        static WssServer()
+        {
+            EmptyBytes = new byte[0];
+        }
+
+        /// <summary>
+        /// The web socket handle
+        /// </summary>
         private WebSocket webSocket { get; }
 
         /// <summary>
@@ -540,7 +566,7 @@ namespace XmobiTea.ProtonNetServer
         /// </summary>
         /// <param name="status">The status code to use when closing the sessions.</param>
         /// <returns>True if all sessions were closed successfully; otherwise, false.</returns>
-        public virtual bool CloseAll(int status) => this.CloseAll(status, new byte[0]);
+        public virtual bool CloseAll(int status) => this.CloseAll(status, EmptyBytes);
 
         /// <summary>
         /// Closes all WebSocket sessions with the specified status code and an additional buffer.

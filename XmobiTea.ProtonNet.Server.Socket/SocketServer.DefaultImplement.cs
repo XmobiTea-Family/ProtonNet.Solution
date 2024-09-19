@@ -121,6 +121,13 @@ namespace XmobiTea.ProtonNet.Server.Socket
         protected virtual IInitRequestProviderService CreateInitRequestProviderService(StartupSettings startupSettings) => new InitRequestProviderService();
 
         /// <summary>
+        /// Creates and initializes the byte array manager service.
+        /// </summary>
+        /// <param name="startupSettings">The startup settings configuration.</param>
+        /// <returns>An instance of <see cref="IInitRequestProviderService"/>.</returns>
+        protected virtual IByteArrayManagerService CreateByteArrayManagerService(StartupSettings startupSettings) => new ByteArrayManagerService();
+
+        /// <summary>
         /// Creates and initializes the socket session emit service.
         /// </summary>
         /// <param name="startupSettings">The startup settings configuration.</param>
