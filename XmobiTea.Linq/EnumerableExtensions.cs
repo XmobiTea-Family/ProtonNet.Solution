@@ -191,7 +191,42 @@ namespace XmobiTea.Linq
         /// <typeparam name="T">The type of the elements of <paramref name="source"/>.</typeparam>
         /// <param name="source">The sequence of elements to convert to an array.</param>
         /// <returns>An array that contains elements from the input sequence.</returns>
-        public static T[] ToArray<T>(this IEnumerable<T> source) => ToList(source).ToArray();
+        public static T[] ToArray<T>(this IEnumerable<T> source)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (source is ICollection<T> collection)
+            {
+                var array = new T[collection.Count];
+                collection.CopyTo(array, 0);
+                return array;
+            }
+
+            using (var enumerator = source.GetEnumerator())
+            {
+                const int DefaultCapacity = 4;
+                T[] result = new T[DefaultCapacity];
+                int count = 0;
+
+                while (enumerator.MoveNext())
+                {
+                    if (count == result.Length)
+                    {
+                        Array.Resize(ref result, count * 2);
+                    }
+
+                    result[count++] = enumerator.Current;
+                }
+
+                if (count != result.Length)
+                {
+                    Array.Resize(ref result, count);
+                }
+
+                return result;
+            }
+        }
 
         /// <summary>
         /// Bypasses a specified number of elements in a sequence and then returns the remaining elements.

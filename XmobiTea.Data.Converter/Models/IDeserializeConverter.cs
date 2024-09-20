@@ -196,13 +196,13 @@ namespace XmobiTea.Data.Converter.Models
                 if (declaredField.FieldInfo != null)
                 {
                     if (declaredField.Cls == this.typeOfGNHashtable) declaredField.FieldInfo.SetValue(answer, lastValue);
-                    else if (this.typeOfDictionary.IsAssignableFrom(declaredField.Cls) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.Cls)) declaredField.FieldInfo.SetValue(answer, ((IGNData)lastValue).ToData());
+                    else if (this.typeOfDictionary.IsAssignableFrom(declaredField.FieldInfo.FieldType) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.FieldInfo.FieldType)) declaredField.FieldInfo.SetValue(answer, ((IGNData)lastValue).ToData());
                     else declaredField.FieldInfo.SetValue(answer, this.DeserializeObject((GNHashtable)lastValue, declaredField.Cls));
                 }
                 else if (declaredField.PropertyInfo != null)
                 {
                     if (declaredField.Cls == this.typeOfGNHashtable) declaredField.PropertyInfo.SetValue(answer, lastValue);
-                    else if (this.typeOfDictionary.IsAssignableFrom(declaredField.Cls) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.Cls)) declaredField.PropertyInfo.SetValue(answer, ((IGNData)lastValue).ToData());
+                    else if (this.typeOfDictionary.IsAssignableFrom(declaredField.PropertyInfo.PropertyType) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.PropertyInfo.PropertyType)) declaredField.PropertyInfo.SetValue(answer, ((IGNData)lastValue).ToData());
                     else declaredField.PropertyInfo.SetValue(answer, this.DeserializeObject((GNHashtable)lastValue, declaredField.Cls));
                 }
             }
@@ -240,12 +240,14 @@ namespace XmobiTea.Data.Converter.Models
                 if (declaredField.FieldInfo != null)
                 {
                     if (declaredField.Cls == this.typeOfGNArray) declaredField.FieldInfo.SetValue(answer, lastValue);
-                    else if (this.typeOfCollection.IsAssignableFrom(declaredField.Cls) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.Cls)) declaredField.FieldInfo.SetValue(answer, ((IGNData)lastValue).ToData());
+                    else if (this.typeOfCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType))
+                        declaredField.FieldInfo.SetValue(answer, this.CastList(this.DeserializeArray((GNArray)lastValue, declaredField.Cls), declaredField.Cls, declaredField.FieldInfo.FieldType.IsArray));
                 }
                 else if (declaredField.PropertyInfo != null)
                 {
                     if (declaredField.Cls == this.typeOfGNArray) declaredField.PropertyInfo.SetValue(answer, lastValue);
-                    else if (this.typeOfCollection.IsAssignableFrom(declaredField.Cls) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.Cls)) declaredField.PropertyInfo.SetValue(answer, ((IGNData)lastValue).ToData());
+                    else if (this.typeOfCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType))
+                        declaredField.PropertyInfo.SetValue(answer, this.CastList(this.DeserializeArray((GNArray)lastValue, declaredField.Cls), declaredField.Cls, declaredField.PropertyInfo.PropertyType.IsArray));
                 }
             }
         }
@@ -362,9 +364,10 @@ namespace XmobiTea.Data.Converter.Models
                     else if (declaredField.Cls == this.typeOfBool) declaredField.FieldInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfString) declaredField.FieldInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfGNArray) declaredField.FieldInfo.SetValue(answer, lastValue);
-                    else if (declaredField.Cls == this.typeOfCollection) declaredField.FieldInfo.SetValue(answer, ((IGNData)lastValue).ToData());
+                    else if (this.typeOfCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType))
+                        declaredField.FieldInfo.SetValue(answer, this.CastList(this.DeserializeArray((GNArray)lastValue, declaredField.Cls), declaredField.Cls, declaredField.FieldInfo.FieldType.IsArray));
                     else if (declaredField.Cls == this.typeOfGNHashtable) declaredField.FieldInfo.SetValue(answer, lastValue);
-                    else if (declaredField.Cls == this.typeOfDictionary) declaredField.FieldInfo.SetValue(answer, ((IGNData)lastValue).ToData());
+                    else if (this.typeOfDictionary.IsAssignableFrom(declaredField.FieldInfo.FieldType) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.FieldInfo.FieldType)) declaredField.FieldInfo.SetValue(answer, ((IGNData)lastValue).ToData());
                     else declaredField.FieldInfo.SetValue(answer, this.DeserializeObject((GNHashtable)lastValue, declaredField.Cls));
                 }
                 else if (declaredField.PropertyInfo != null)
@@ -379,9 +382,10 @@ namespace XmobiTea.Data.Converter.Models
                     else if (declaredField.Cls == this.typeOfBool) declaredField.PropertyInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfString) declaredField.PropertyInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfGNArray) declaredField.PropertyInfo.SetValue(answer, lastValue);
-                    else if (declaredField.Cls == this.typeOfCollection) declaredField.PropertyInfo.SetValue(answer, ((IGNData)lastValue).ToData());
+                    else if (this.typeOfCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType))
+                        declaredField.PropertyInfo.SetValue(answer, this.CastList(this.DeserializeArray((GNArray)lastValue, declaredField.Cls), declaredField.Cls, declaredField.PropertyInfo.PropertyType.IsArray));
                     else if (declaredField.Cls == this.typeOfGNHashtable) declaredField.PropertyInfo.SetValue(answer, lastValue);
-                    else if (declaredField.Cls == this.typeOfDictionary) declaredField.PropertyInfo.SetValue(answer, ((IGNData)lastValue).ToData());
+                    else if (this.typeOfDictionary.IsAssignableFrom(declaredField.PropertyInfo.PropertyType) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.PropertyInfo.PropertyType)) declaredField.PropertyInfo.SetValue(answer, ((IGNData)lastValue).ToData());
                     else declaredField.PropertyInfo.SetValue(answer, this.DeserializeObject((GNHashtable)lastValue, declaredField.Cls));
                 }
             }
@@ -447,28 +451,40 @@ namespace XmobiTea.Data.Converter.Models
                     else if (cls == this.typeOfGNArray) answer.Add(value);
                     else if (cls == this.typeOfGNHashtable) answer.Add(value);
                     else if (this.typeOfCollection.IsAssignableFrom(typeOfValue) || this.typeOfGenericCollection.IsAssignableFrom(typeOfValue))
-                        answer.Add(this.DeserializeArray(gnArray.GetGNArray(i), cls));
+                        answer.Add(this.DeserializeArray((GNArray)value, cls));
                     else
-                        answer.Add(this.DeserializeObject(gnArray.GetGNHashtable(i), cls));
+                        answer.Add(this.DeserializeObject((GNHashtable)value, cls));
                 }
             }
 
-            if (cls == this.typeOfObject) return answer;
-
-            return this.CastList(answer, cls);
+            return answer;
         }
 
-        private System.Collections.IList CastList(System.Collections.IList list, System.Type cls)
+        private System.Collections.IList CastList(System.Collections.IList list, System.Type cls, bool isArray)
         {
-            var typeOfList = typeof(System.Collections.Generic.List<>).MakeGenericType(cls);
-            var answer = (System.Collections.IList)System.Activator.CreateInstance(typeOfList);
-
-            foreach (var item in list)
+            if (isArray)
             {
-                answer.Add(System.Convert.ChangeType(item, cls));
-            }
+                var answer = System.Array.CreateInstance(cls, list.Count);
 
-            return answer;
+                for (int i = 0; i < list.Count; i++)
+                {
+                    answer.SetValue(System.Convert.ChangeType(list[i], cls), i);
+                }
+
+                return answer;
+            }
+            else
+            {
+                var typeOfList = typeof(System.Collections.Generic.List<>).MakeGenericType(cls);
+                var answer = (System.Collections.IList)System.Activator.CreateInstance(typeOfList);
+
+                foreach (var item in list)
+                {
+                    answer.Add(System.Convert.ChangeType(item, cls));
+                }
+
+                return answer;
+            }
         }
 
     }
