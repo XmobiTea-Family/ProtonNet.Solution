@@ -6,7 +6,7 @@ namespace XmobiTea.Binary.MessagePack.Serialize.Writer
     /// <summary>
     /// Provides functionality to serialize arrays into MessagePack binary format.
     /// </summary>
-    class ArrayBinaryWriter : AbstractCollectionBinaryWriter<System.Collections.IList>
+    class ArrayBinaryWriter : AbstractCollectionBinaryWriter<System.Collections.ICollection>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ArrayBinaryWriter"/> class.
@@ -27,7 +27,7 @@ namespace XmobiTea.Binary.MessagePack.Serialize.Writer
         /// </summary>
         /// <param name="value">The array for which to determine the type code.</param>
         /// <returns>The MessagePack type code as a byte.</returns>
-        public override byte GetMessagePackTypeCode(System.Collections.IList value)
+        public override byte GetMessagePackTypeCode(System.Collections.ICollection value)
         {
             var length = value.Count;
 
@@ -41,7 +41,7 @@ namespace XmobiTea.Binary.MessagePack.Serialize.Writer
         /// </summary>
         /// <param name="value">The array for which to calculate the data length.</param>
         /// <returns>The total length of the serialized data.</returns>
-        public override int GetDataLength(System.Collections.IList value)
+        public override int GetDataLength(System.Collections.ICollection value)
         {
             var answer = 1;
 
@@ -62,7 +62,7 @@ namespace XmobiTea.Binary.MessagePack.Serialize.Writer
         /// </summary>
         /// <param name="stream">The stream to write to.</param>
         /// <param name="value">The array to serialize.</param>
-        public override void Write(System.IO.Stream stream, System.Collections.IList value)
+        public override void Write(System.IO.Stream stream, System.Collections.ICollection value)
         {
             var messagePackTypeCode = this.GetMessagePackTypeCode(value);
 

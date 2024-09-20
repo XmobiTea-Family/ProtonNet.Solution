@@ -79,9 +79,13 @@ namespace XmobiTea.Data.Converter.Models
         private void StringSerializer(IGNEnhancedObjectFieldMetadata declaredField, object value, GNHashtable gnHashtable)
         {
             if (value == null)
+            {
                 if (!declaredField.IsOptional) gnHashtable.Add(declaredField.Code, null);
-                else
+            }
+            else
+            {
                 if (value is string) gnHashtable.Add(declaredField.Code, value);
+            }
         }
 
         /// <summary>
@@ -90,9 +94,13 @@ namespace XmobiTea.Data.Converter.Models
         private void BooleanSerializer(IGNEnhancedObjectFieldMetadata declaredField, object value, GNHashtable gnHashtable)
         {
             if (value == null)
+            {
                 if (!declaredField.IsOptional) gnHashtable.Add(declaredField.Code, null);
-                else
+            }
+            else
+            {
                 if (value is bool) gnHashtable.Add(declaredField.Code, value);
+            }
         }
 
         /// <summary>
@@ -101,11 +109,15 @@ namespace XmobiTea.Data.Converter.Models
         private void GNHashtableSerializer(IGNEnhancedObjectFieldMetadata declaredField, object value, GNHashtable gnHashtable)
         {
             if (value == null)
+            {
                 if (!declaredField.IsOptional) gnHashtable.Add(declaredField.Code, null);
-                else
+            }
+            else
+            {
                 if (value is GNHashtable) gnHashtable.Add(declaredField.Code, value);
                 else if (value is System.Collections.IDictionary valueDict) gnHashtable.Add(declaredField.Code, GNHashtable.NewBuilder().AddAll(valueDict).Build());
                 else gnHashtable.Add(declaredField.Code, this.SerializeObject(value));
+            }
         }
 
         /// <summary>
@@ -114,10 +126,14 @@ namespace XmobiTea.Data.Converter.Models
         private void GNArraySerializer(IGNEnhancedObjectFieldMetadata declaredField, object value, GNHashtable gnHashtable)
         {
             if (value == null)
+            {
                 if (!declaredField.IsOptional) gnHashtable.Add(declaredField.Code, null);
-                else
+            }
+            else
+            {
                 if (value is GNArray) gnHashtable.Add(declaredField.Code, value);
                 else if (value is System.Collections.IList valueLst) gnHashtable.Add(declaredField.Code, this.SerializeArray(valueLst));
+            }
         }
 
         /// <summary>
@@ -126,10 +142,13 @@ namespace XmobiTea.Data.Converter.Models
         private void NumberSerializer(IGNEnhancedObjectFieldMetadata declaredField, object value, GNHashtable gnHashtable)
         {
             if (value == null)
+            {
                 if (!declaredField.IsOptional) gnHashtable.Add(declaredField.Code, null);
-                else
+            }
+            else
+            {
                 if (DetectSupport.isNumber(value)) gnHashtable.Add(declaredField.Code, value);
-
+            }
         }
 
         /// <summary>
@@ -159,10 +178,25 @@ namespace XmobiTea.Data.Converter.Models
 
             foreach (var declaredField in declaredFields)
             {
-                var value = declaredField.FieldInfo.GetValue(obj);
+                object value;
 
-                var serializeParser = this.serializeParserDict[declaredField.GNFieldType];
-                serializeParser.Invoke(declaredField, value, answer);
+                if (declaredField.FieldInfo != null) value = declaredField.FieldInfo.GetValue(obj);
+                else if (declaredField.PropertyInfo != null) value = declaredField.PropertyInfo.GetValue(obj);
+                else value = null;
+
+                if (value == null)
+                {
+                    if (!declaredField.IsOptional)
+                    {
+                        var serializeParser = this.serializeParserDict[declaredField.GNFieldType];
+                        serializeParser.Invoke(declaredField, value, answer);
+                    }
+                }
+                else
+                {
+                    var serializeParser = this.serializeParserDict[declaredField.GNFieldType];
+                    serializeParser.Invoke(declaredField, value, answer);
+                }
             }
 
             return answer;

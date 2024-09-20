@@ -14,6 +14,7 @@ dotnet pack .\XmobiTea.Logging.Log4Net\XmobiTea.Logging.Log4Net.csproj --configu
 dotnet pack .\XmobiTea.ProtonNet.Client\XmobiTea.ProtonNet.Client.csproj --configuration Release
 dotnet pack .\XmobiTea.ProtonNet.Networking\XmobiTea.ProtonNet.Networking.csproj --configuration Release
 dotnet pack .\XmobiTea.ProtonNet.RpcProtocol\XmobiTea.ProtonNet.RpcProtocol.csproj --configuration Release
+dotnet pack .\XmobiTea.ProtonNet.Control.Helper\XmobiTea.ProtonNet.Control.Helper.csproj --configuration Release
 dotnet pack .\XmobiTea.ProtonNet.Server\XmobiTea.ProtonNet.Server.csproj --configuration Release
 dotnet pack .\XmobiTea.ProtonNet.Server.Socket\XmobiTea.ProtonNet.Server.Socket.csproj --configuration Release
 dotnet pack .\XmobiTea.ProtonNet.Server.WebApi\XmobiTea.ProtonNet.Server.WebApi.csproj --configuration Release

@@ -15,7 +15,7 @@ namespace XmobiTea.ProtonNet.Token.Services
         /// <param name="type">The type for which properties should be retrieved.</param>
         /// <returns>An enumerable of PropertyInfo objects for the specified type.</returns>
         System.Collections.Generic.IEnumerable<PropertyInfo> GetProperties(System.Type type);
-    
+
     }
 
     /// <summary>
@@ -32,10 +32,7 @@ namespace XmobiTea.ProtonNet.Token.Services
         /// <summary>
         /// Initializes a new instance of the TokenMemberPropertyService class.
         /// </summary>
-        public TokenMemberPropertyService()
-        {
-            this.tokenMemberPropertyDict = new System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.Collections.Generic.IEnumerable<PropertyInfo>>();
-        }
+        public TokenMemberPropertyService() => this.tokenMemberPropertyDict = new System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.Collections.Generic.IEnumerable<PropertyInfo>>();
 
         /// <summary>
         /// Retrieves the properties of the specified type that are marked with the TokenMemberAttribute.

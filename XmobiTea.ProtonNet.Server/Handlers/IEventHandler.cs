@@ -26,6 +26,7 @@ namespace XmobiTea.ProtonNet.Server.Handlers
         /// <param name="userPeer">The user peer associated with the event.</param>
         /// <param name="session">The session associated with the event.</param>
         void Handle(OperationEvent operationEvent, SendParameters sendParameters, IUserPeer userPeer, ISession session);
+
     }
 
     /// <summary>
@@ -37,6 +38,11 @@ namespace XmobiTea.ProtonNet.Server.Handlers
         /// Logger instance for logging events.
         /// </summary>
         protected ILogger logger { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EventHandler"/> class.
+        /// </summary>
+        public EventHandler() => this.logger = LogManager.GetLogger(this);
 
         /// <summary>
         /// Gets the event code.
@@ -53,13 +59,6 @@ namespace XmobiTea.ProtonNet.Server.Handlers
         /// <param name="session">The session associated with the event.</param>
         public abstract void Handle(OperationEvent operationEvent, SendParameters sendParameters, IUserPeer userPeer, ISession session);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EventHandler"/> class.
-        /// </summary>
-        public EventHandler()
-        {
-            this.logger = LogManager.GetLogger(this);
-        }
     }
 
     /// <summary>

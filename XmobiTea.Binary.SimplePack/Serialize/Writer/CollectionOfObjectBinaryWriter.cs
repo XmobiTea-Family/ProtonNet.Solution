@@ -4,7 +4,7 @@ using XmobiTea.Binary.SimplePack.Types;
 
 namespace XmobiTea.Binary.SimplePack.Serialize.Writer
 {
-    class CollectionOfObjectBinaryWriter : AbstractCollectionBinaryWriter<IList>
+    class CollectionOfObjectBinaryWriter : AbstractCollectionBinaryWriter<ICollection>
     {
         public CollectionOfObjectBinaryWriter(IBinarySerializer binarySerializer) : base(binarySerializer)
         {
@@ -12,7 +12,7 @@ namespace XmobiTea.Binary.SimplePack.Serialize.Writer
 
         public override byte GetBinaryTypeCode() => BinaryTypeCode.CollectionOfObject;
 
-        public override int GetDataLength(IList value)
+        public override int GetDataLength(ICollection value)
         {
             var answer = this.GetLengthByte(value == null ? -1 : value.Count);
 
@@ -29,14 +29,14 @@ namespace XmobiTea.Binary.SimplePack.Serialize.Writer
             return answer;
         }
 
-        public override void Write(Stream stream, IList value)
+        public override void Write(Stream stream, ICollection value)
         {
             this.WriteCollectionLength(stream, value == null ? -1 : value.Count);
 
             this.WriteData(stream, value);
         }
 
-        public void WriteData(Stream stream, IList value)
+        public void WriteData(Stream stream, ICollection value)
         {
             if (value != null)
                 foreach (var elementValue in value)

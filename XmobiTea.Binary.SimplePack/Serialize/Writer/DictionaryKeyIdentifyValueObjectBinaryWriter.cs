@@ -39,8 +39,8 @@ namespace XmobiTea.Binary.SimplePack.Serialize.Writer
                 var collectionOfIdentifyBinaryWriter = (CollectionOfIdentifyBinaryWriter)this.binarySerializer.GetWriter(BinaryTypeCode.CollectionOfIdentify);
                 var collectionOfObjectBinaryWriter = (CollectionOfObjectBinaryWriter)this.binarySerializer.GetWriter(BinaryTypeCode.CollectionOfObject);
 
-                collectionOfIdentifyBinaryWriter.WriteData(stream, (IList)value.Keys, keyBinaryTypeCode);
-                collectionOfObjectBinaryWriter.WriteData(stream, (IList)value.Values);
+                collectionOfIdentifyBinaryWriter.WriteData(stream, (ICollection)value.Keys, keyBinaryTypeCode);
+                collectionOfObjectBinaryWriter.WriteData(stream, (ICollection)value.Values);
             }
 
         }

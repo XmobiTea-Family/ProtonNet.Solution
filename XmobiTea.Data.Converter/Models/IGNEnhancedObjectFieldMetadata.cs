@@ -51,12 +51,12 @@ namespace XmobiTea.Data.Converter.Models
         /// <summary>
         /// Gets or sets the minimum value of the field if applicable.
         /// </summary>
-        double? MinValue { get; set; }
+        long? MinValue { get; set; }
 
         /// <summary>
         /// Gets or sets the maximum value of the field if applicable.
         /// </summary>
-        double? MaxValue { get; set; }
+        long? MaxValue { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the field value must be an integer.
@@ -119,10 +119,10 @@ namespace XmobiTea.Data.Converter.Models
         public int? MaxLength { get; set; }
 
         /// <inheritdoc />
-        public double? MinValue { get; set; }
+        public long? MinValue { get; set; }
 
         /// <inheritdoc />
-        public double? MaxValue { get; set; }
+        public long? MaxValue { get; set; }
 
         /// <inheritdoc />
         public bool? MustInt { get; set; }

@@ -13,7 +13,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.2</Version>
+		<Version>1.0.3</Version>
 		<Description>XmobiTea.Logging.Log4Net is an implementation class that utilizes the log4net framework, providing robust logging capabilities within the XmobiTea.Logging interface. This implementation allows developers to leverage the powerful features of log4net for consistent and effective logging in their applications.</Description>
 	</PropertyGroup>
 
@@ -22,7 +22,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\XmobiTea.Logging\XmobiTea.Logging.csproj" Version="1.0.2" />
+		<ProjectReference Include="..\XmobiTea.Logging\XmobiTea.Logging.csproj" Version="1.0.3" />
 	</ItemGroup>
 
 	<ItemGroup>

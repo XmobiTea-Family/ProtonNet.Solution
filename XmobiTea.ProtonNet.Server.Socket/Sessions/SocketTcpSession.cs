@@ -20,7 +20,7 @@ namespace XmobiTea.ProtonNet.Server.Socket.Sessions
         /// Gets the controller service responsible for handling various socket events.
         /// </summary>
         protected ISocketControllerService controllerService { get; }
-        
+
         /// <summary>
         /// Gets the byte array manager service to clone byte array
         /// </summary>

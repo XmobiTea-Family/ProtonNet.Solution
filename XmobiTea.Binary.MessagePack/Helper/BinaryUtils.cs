@@ -34,8 +34,8 @@ namespace XmobiTea.Binary.MessagePack.Helper
         {
             TypeOfDictionary = typeof(System.Collections.IDictionary);
             TypeOfGenericDictionary = typeof(System.Collections.Generic.IDictionary<,>);
-            TypeOfCollection = typeof(System.Collections.IList);
-            TypeOfGenericCollection = typeof(System.Collections.Generic.IList<>);
+            TypeOfCollection = typeof(System.Collections.ICollection);
+            TypeOfGenericCollection = typeof(System.Collections.Generic.ICollection<>);
         }
 
         /// <summary>

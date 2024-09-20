@@ -5,7 +5,7 @@ using XmobiTea.Binary.SimplePack.Types;
 
 namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
 {
-    class CollectionOfIdentifyBinaryReader : AbstractCollectionBinaryReader<IList>
+    class CollectionOfIdentifyBinaryReader : AbstractCollectionBinaryReader<ICollection>
     {
         public CollectionOfIdentifyBinaryReader(IBinaryDeserializer binaryDeserializer) : base(binaryDeserializer)
         {
@@ -13,14 +13,14 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
 
         public override byte GetBinaryTypeCode() => BinaryTypeCode.CollectionOfIdentify;
 
-        public override IList Read(Stream stream)
+        public override ICollection Read(Stream stream)
         {
             var length = this.GetCollectionLength(stream);
 
             return this.ReadData(stream, length, out var _);
         }
 
-        public IList ReadData(Stream stream, int length, out byte elementBinaryTypeCode)
+        public ICollection ReadData(Stream stream, int length, out byte elementBinaryTypeCode)
         {
             if (length < 0)
             {
@@ -91,7 +91,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
         //    return answer;
         //}
 
-        private IList ReadBooleanCollection(Stream stream, int length)
+        private ICollection ReadBooleanCollection(Stream stream, int length)
         {
             var binaryReader = (BooleanBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.Boolean);
 
@@ -103,7 +103,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadCharCollection(Stream stream, int length)
+        private ICollection ReadCharCollection(Stream stream, int length)
         {
             var binaryReader = (CharBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.Char);
 
@@ -115,7 +115,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadSByteCollection(Stream stream, int length)
+        private ICollection ReadSByteCollection(Stream stream, int length)
         {
             var binaryReader = (SByteBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.SByte);
 
@@ -127,7 +127,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadByteCollection(Stream stream, int length)
+        private ICollection ReadByteCollection(Stream stream, int length)
         {
             var binaryReader = (ByteBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.Byte);
 
@@ -139,7 +139,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadShortCollection(Stream stream, int length)
+        private ICollection ReadShortCollection(Stream stream, int length)
         {
             var binaryReader = (ShortBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.Short);
 
@@ -151,7 +151,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadUShortCollection(Stream stream, int length)
+        private ICollection ReadUShortCollection(Stream stream, int length)
         {
             var binaryReader = (UShortBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.UShort);
 
@@ -163,7 +163,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadIntCollection(Stream stream, int length)
+        private ICollection ReadIntCollection(Stream stream, int length)
         {
             var binaryReader = (IntBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.Int);
 
@@ -175,7 +175,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadUIntCollection(Stream stream, int length)
+        private ICollection ReadUIntCollection(Stream stream, int length)
         {
             var binaryReader = (UIntBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.UInt);
 
@@ -187,7 +187,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadLongCollection(Stream stream, int length)
+        private ICollection ReadLongCollection(Stream stream, int length)
         {
             var binaryReader = (LongBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.Long);
 
@@ -199,7 +199,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadULongCollection(Stream stream, int length)
+        private ICollection ReadULongCollection(Stream stream, int length)
         {
             var binaryReader = (ULongBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.ULong);
 
@@ -211,7 +211,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadFloatCollection(Stream stream, int length)
+        private ICollection ReadFloatCollection(Stream stream, int length)
         {
             var binaryReader = (FloatBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.Float);
 
@@ -223,7 +223,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadDoubleCollection(Stream stream, int length)
+        private ICollection ReadDoubleCollection(Stream stream, int length)
         {
             var binaryReader = (DoubleBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.Double);
 
@@ -235,7 +235,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadDecimalCollection(Stream stream, int length)
+        private ICollection ReadDecimalCollection(Stream stream, int length)
         {
             var binaryReader = (DecimalBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.Decimal);
 
@@ -247,7 +247,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadDateTimeCollection(Stream stream, int length)
+        private ICollection ReadDateTimeCollection(Stream stream, int length)
         {
             var binaryReader = (DateTimeBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.DateTime);
 
@@ -259,7 +259,7 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
             return answer;
         }
 
-        private IList ReadStringCollection(Stream stream, int length)
+        private ICollection ReadStringCollection(Stream stream, int length)
         {
             var binaryReader = (StringBinaryReader)this.binaryDeserializer.GetReader(BinaryTypeCode.String);
 

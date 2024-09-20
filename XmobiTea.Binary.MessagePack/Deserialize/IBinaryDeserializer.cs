@@ -25,6 +25,7 @@ namespace XmobiTea.Binary.MessagePack.Deserialize
         /// <param name="data">The byte array containing the binary data.</param>
         /// <returns>The deserialized object of type <typeparamref name="T"/>.</returns>
         T Deserialize<T>(byte[] data);
+
     }
 
     /// <summary>
@@ -160,13 +161,7 @@ namespace XmobiTea.Binary.MessagePack.Deserialize
         public T Deserialize<T>(byte[] data)
         {
             using (var stream = new System.IO.MemoryStream(data))
-            {
-                var messagePackTypeCode = (byte)stream.ReadByte();
-
-                var reader = this.GetReader(messagePackTypeCode);
-
-                return (T)System.Convert.ChangeType(reader.Read(stream, messagePackTypeCode), typeof(T));
-            }
+                return this.Deserialize<T>(stream);
         }
 
         /// <summary>
@@ -181,7 +176,7 @@ namespace XmobiTea.Binary.MessagePack.Deserialize
 
             var reader = this.GetReader(messagePackTypeCode);
 
-            return (T)System.Convert.ChangeType(reader.Read(stream, messagePackTypeCode), typeof(T));
+            return (T)reader.Read(stream, messagePackTypeCode);
         }
 
     }

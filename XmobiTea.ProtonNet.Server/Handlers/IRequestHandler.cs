@@ -28,6 +28,7 @@ namespace XmobiTea.ProtonNet.Server.Handlers
         /// <param name="session">The session associated with the request.</param>
         /// <returns>A task representing the asynchronous operation, with an <see cref="OperationResponse"/> result.</returns>
         System.Threading.Tasks.Task<OperationResponse> Handle(OperationRequest operationRequest, SendParameters sendParameters, IUserPeer userPeer, ISession session);
+
     }
 
     /// <summary>
@@ -39,6 +40,11 @@ namespace XmobiTea.ProtonNet.Server.Handlers
         /// Logger instance for logging events.
         /// </summary>
         protected ILogger logger { get; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RequestHandler"/> class.
+        /// </summary>
+        public RequestHandler() => this.logger = LogManager.GetLogger(this);
 
         /// <summary>
         /// Gets the operation code.
@@ -56,13 +62,6 @@ namespace XmobiTea.ProtonNet.Server.Handlers
         /// <returns>A task representing the asynchronous operation, with an <see cref="OperationResponse"/> result.</returns>
         public abstract System.Threading.Tasks.Task<OperationResponse> Handle(OperationRequest operationRequest, SendParameters sendParameters, IUserPeer userPeer, ISession session);
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="RequestHandler"/> class.
-        /// </summary>
-        public RequestHandler()
-        {
-            this.logger = LogManager.GetLogger(this);
-        }
     }
 
     /// <summary>

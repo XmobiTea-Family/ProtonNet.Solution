@@ -2,11 +2,11 @@
 using System.IO;
 using System.Reflection;
 using XmobiTea.Logging;
-using XmobiTea.ProtonNet.Control.Helper.Models;
 using XmobiTea.ProtonNet.Control.Agent.Types;
+using XmobiTea.ProtonNet.Control.Helper;
+using XmobiTea.ProtonNet.Control.Helper.Models;
 using XmobiTea.ProtonNet.Server.Socket;
 using XmobiTea.ProtonNet.Server.WebApi;
-using XmobiTea.ProtonNet.Control.Helper;
 
 namespace XmobiTea.ProtonNet.Control.Agent.Agents
 {

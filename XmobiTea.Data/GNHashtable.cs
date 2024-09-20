@@ -162,6 +162,17 @@ namespace XmobiTea.Data
             }
 
             /// <summary>
+            /// Adds all key-value pairs from the specified dictionary to the builder's dictionary.
+            /// </summary>
+            /// <param name="dict">The dictionary of elements to add.</param>
+            /// <returns>The current <see cref="Builder"/> instance.</returns>
+            public Builder AddAll<TValue>(System.Collections.Generic.IDictionary<string, TValue> dict)
+            {
+                foreach (string key in dict.Keys) this.Add(key, dict[key]);
+                return this;
+            }
+
+            /// <summary>
             /// Builds the <see cref="GNHashtable"/> instance.
             /// </summary>
             /// <returns>A new <see cref="GNHashtable"/> instance.</returns>
@@ -171,6 +182,9 @@ namespace XmobiTea.Data
                 foreach (var entry in this._dict) result.Add(entry.Key, entry.Value);
                 return result;
             }
+
         }
+
     }
+
 }

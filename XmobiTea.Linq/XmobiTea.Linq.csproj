@@ -13,7 +13,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.2</Version>
+		<Version>1.0.3</Version>
 		<Description>XmobiTea.Linq contains functions similar to those in System.Linq, offering familiar and powerful querying capabilities for collections and data manipulation. It allows developers to perform complex data operations with ease, just like the native LINQ library in .NET.</Description>
 	</PropertyGroup>
 

@@ -28,8 +28,32 @@ namespace XmobiTea.ProtonNet.Token.Binary
         /// </summary>
         /// <param name="payload">The byte array representing the payload.</param>
         /// <returns>A dictionary where the key is a byte and the value is an object representing the deserialized payload.</returns>
-        public IDictionary<byte, object> DeserializePayload(byte[] payload) => this.binaryConverter.Deserialize<IDictionary<byte, object>>(payload);
+        public IDictionary<byte, object> DeserializePayload(byte[] payload)
+        {
+            var answer = this.binaryConverter.Deserialize<object>(payload);
 
+            if (answer is IDictionary<byte, object> answerDict)
+                return answerDict;
+
+            return this.ConvertDictionary<byte, object>((IDictionary<object, object>)answer);
+        }
+
+        private IDictionary<K, V> ConvertDictionary<K, V>(IDictionary<object, object> dict)
+        {
+            var answer = new Dictionary<K, V>();
+
+            var typeofK = typeof(K);
+            var typeofV = typeof(V);
+
+            foreach (var kvp in dict)
+            {
+                var key = (K)System.Convert.ChangeType(kvp.Key, typeofK);
+                var value = (V)System.Convert.ChangeType(kvp.Value, typeofV);
+                answer.Add(key, value);
+            }
+
+            return answer;
+        }
     }
 
 }

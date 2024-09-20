@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using XmobiTea.Collections.Generic;
 using XmobiTea.Data.Converter.Rpc;
 using XmobiTea.Data.Converter.Types;
@@ -27,15 +28,15 @@ namespace XmobiTea.Data.Converter.Models
         /// <summary>
         /// A dictionary that stores metadata for each class type.
         /// </summary>
-        private System.Collections.Generic.IDictionary<System.Type, IGNEnhancedObjectFieldMetadata[]> declaredFieldsMap;
+        private System.Collections.Generic.IDictionary<System.Type, IGNEnhancedObjectFieldMetadata[]> declaredFieldsMap { get; }
+
+        private static Type TypeOfDictionary { get; }
+        private static Type TypeOfGenericDictionary { get; }
 
         /// <summary>
         /// Initializes a new instance of the DataMemberFieldInfoTypeMapper class.
         /// </summary>
-        public DataMemberFieldInfoTypeMapper()
-        {
-            this.declaredFieldsMap = new ThreadSafeDictionary<System.Type, IGNEnhancedObjectFieldMetadata[]>();
-        }
+        public DataMemberFieldInfoTypeMapper() => this.declaredFieldsMap = new ThreadSafeDictionary<System.Type, IGNEnhancedObjectFieldMetadata[]>();
 
         /// <summary>
         /// Retrieves metadata for the fields of a specified class.
@@ -122,9 +123,19 @@ namespace XmobiTea.Data.Converter.Models
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.String, field.FieldType, field, null);
 
                     gnEnhancedObjectFieldMetadata.DefaultValue = stringDataMemberAnno.DefaultValue;
+
+                    if (stringDataMemberAnno.MustNonNull || stringDataMemberAnno.MinLength != -1 || stringDataMemberAnno.MaxLength != -1)
+                    {
+                        gnEnhancedObjectFieldMetadata.ActiveConditionValid = true;
+
+                        if (stringDataMemberAnno.MinLength == -1) stringDataMemberAnno.MinLength = 0;
+                        if (stringDataMemberAnno.MaxLength == -1) stringDataMemberAnno.MaxLength = 256;
+                    }
+
                     gnEnhancedObjectFieldMetadata.MustNonNull = stringDataMemberAnno.MustNonNull;
                     gnEnhancedObjectFieldMetadata.MinLength = stringDataMemberAnno.MinLength;
                     gnEnhancedObjectFieldMetadata.MaxLength = stringDataMemberAnno.MaxLength;
+
                 }
                 else if (dataMemberAnno is BooleanDataMemberAttribute booleanDataMemberAnno)
                 {
@@ -137,32 +148,69 @@ namespace XmobiTea.Data.Converter.Models
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.Object, field.FieldType, field, null);
 
                     gnEnhancedObjectFieldMetadata.DefaultValue = gnHashtableDataMemberAnno.DefaultValue;
+
+                    if (gnHashtableDataMemberAnno.MustNonNull || gnHashtableDataMemberAnno.MinLength != -1 || gnHashtableDataMemberAnno.MaxLength != -1)
+                    {
+                        gnEnhancedObjectFieldMetadata.ActiveConditionValid = true;
+
+                        if (gnHashtableDataMemberAnno.MinLength == -1) gnHashtableDataMemberAnno.MinLength = 0;
+                        if (gnHashtableDataMemberAnno.MaxLength == -1) gnHashtableDataMemberAnno.MaxLength = 256;
+                    }
+
                     gnEnhancedObjectFieldMetadata.MustNonNull = gnHashtableDataMemberAnno.MustNonNull;
                     gnEnhancedObjectFieldMetadata.MinLength = gnHashtableDataMemberAnno.MinLength;
                     gnEnhancedObjectFieldMetadata.MaxLength = gnHashtableDataMemberAnno.MaxLength;
+
                 }
                 else if (dataMemberAnno is GNArrayDataMemberAttribute gnArrayDataMemberAnno)
                 {
-                    gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.Array, gnArrayDataMemberAnno.ElementCls == null ? field.FieldType : gnArrayDataMemberAnno.ElementCls, field, null);
+                    var elementCls = gnArrayDataMemberAnno.ElementCls;
+
+                    if (elementCls == null) elementCls = field.FieldType.IsGenericType ? field.FieldType.GetGenericArguments()[0]
+                                                            : field.FieldType.IsArray ? field.FieldType.GetElementType()
+                                                            : field.FieldType;
+
+                    gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.Array, elementCls, field, null);
 
                     gnEnhancedObjectFieldMetadata.DefaultValue = gnArrayDataMemberAnno.DefaultValue;
+
+                    if (gnArrayDataMemberAnno.MustNonNull || gnArrayDataMemberAnno.MinLength != -1 || gnArrayDataMemberAnno.MaxLength != -1)
+                    {
+                        gnEnhancedObjectFieldMetadata.ActiveConditionValid = true;
+
+                        if (gnArrayDataMemberAnno.MinLength == -1) gnArrayDataMemberAnno.MinLength = 0;
+                        if (gnArrayDataMemberAnno.MaxLength == -1) gnArrayDataMemberAnno.MaxLength = 256;
+                    }
+
                     gnEnhancedObjectFieldMetadata.MustNonNull = gnArrayDataMemberAnno.MustNonNull;
                     gnEnhancedObjectFieldMetadata.MinLength = gnArrayDataMemberAnno.MinLength;
                     gnEnhancedObjectFieldMetadata.MaxLength = gnArrayDataMemberAnno.MaxLength;
+
                 }
                 else if (dataMemberAnno is NumberDataMemberAttribute numberDataMemberAnno)
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.Number, field.FieldType, field, null);
 
                     gnEnhancedObjectFieldMetadata.DefaultValue = numberDataMemberAnno.DefaultValue;
+
+                    if (numberDataMemberAnno.MustInt || numberDataMemberAnno.MinValue != -1 || numberDataMemberAnno.MaxValue != -1)
+                    {
+                        gnEnhancedObjectFieldMetadata.ActiveConditionValid = true;
+
+                        if (numberDataMemberAnno.MinValue == -1) numberDataMemberAnno.MinValue = long.MinValue;
+                        if (numberDataMemberAnno.MaxValue == -1) numberDataMemberAnno.MaxValue = long.MaxValue;
+                    }
+
                     gnEnhancedObjectFieldMetadata.MinValue = numberDataMemberAnno.MinValue;
                     gnEnhancedObjectFieldMetadata.MaxValue = numberDataMemberAnno.MaxValue;
                     gnEnhancedObjectFieldMetadata.MustInt = numberDataMemberAnno.MustInt;
+
                 }
                 else
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.Object, field.FieldType, field, null);
                     gnEnhancedObjectFieldMetadata.DefaultValue = dataMemberAnno.DefaultValue;
+
                 }
 
                 gnEnhancedObjectFieldMetadata.Code = dataMemberAnno.Code;
@@ -194,9 +242,19 @@ namespace XmobiTea.Data.Converter.Models
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.String, property.PropertyType, null, property);
 
                     gnEnhancedObjectFieldMetadata.DefaultValue = stringDataMemberAnno.DefaultValue;
+
+                    if (!stringDataMemberAnno.MustNonNull || stringDataMemberAnno.MinLength != -1 || stringDataMemberAnno.MaxLength != -1)
+                    {
+                        gnEnhancedObjectFieldMetadata.ActiveConditionValid = true;
+
+                        if (stringDataMemberAnno.MinLength == -1) stringDataMemberAnno.MinLength = 0;
+                        if (stringDataMemberAnno.MaxLength == -1) stringDataMemberAnno.MaxLength = 256;
+                    }
+
                     gnEnhancedObjectFieldMetadata.MustNonNull = stringDataMemberAnno.MustNonNull;
                     gnEnhancedObjectFieldMetadata.MinLength = stringDataMemberAnno.MinLength;
                     gnEnhancedObjectFieldMetadata.MaxLength = stringDataMemberAnno.MaxLength;
+
                 }
                 else if (dataMemberAnno is BooleanDataMemberAttribute booleanDataMemberAnno)
                 {
@@ -209,32 +267,69 @@ namespace XmobiTea.Data.Converter.Models
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.Object, property.PropertyType, null, property);
 
                     gnEnhancedObjectFieldMetadata.DefaultValue = gnHashtableDataMemberAnno.DefaultValue;
+
+                    if (!gnHashtableDataMemberAnno.MustNonNull || gnHashtableDataMemberAnno.MinLength != -1 || gnHashtableDataMemberAnno.MaxLength != -1)
+                    {
+                        gnEnhancedObjectFieldMetadata.ActiveConditionValid = true;
+
+                        if (gnHashtableDataMemberAnno.MinLength == -1) gnHashtableDataMemberAnno.MinLength = 0;
+                        if (gnHashtableDataMemberAnno.MaxLength == -1) gnHashtableDataMemberAnno.MaxLength = 256;
+                    }
+
                     gnEnhancedObjectFieldMetadata.MustNonNull = gnHashtableDataMemberAnno.MustNonNull;
                     gnEnhancedObjectFieldMetadata.MinLength = gnHashtableDataMemberAnno.MinLength;
                     gnEnhancedObjectFieldMetadata.MaxLength = gnHashtableDataMemberAnno.MaxLength;
+
                 }
                 else if (dataMemberAnno is GNArrayDataMemberAttribute gnArrayDataMemberAnno)
                 {
-                    gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.Array, gnArrayDataMemberAnno.ElementCls == null ? property.PropertyType : gnArrayDataMemberAnno.ElementCls, null, property);
+                    var elementCls = gnArrayDataMemberAnno.ElementCls;
+
+                    if (elementCls == null) elementCls = property.PropertyType.IsGenericType ? property.PropertyType.GetGenericArguments()[0]
+                                                            : property.PropertyType.IsArray ? property.PropertyType.GetElementType()
+                                                            : property.PropertyType;
+
+                    gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.Array, elementCls, null, property);
 
                     gnEnhancedObjectFieldMetadata.DefaultValue = gnArrayDataMemberAnno.DefaultValue;
+
+                    if (!gnArrayDataMemberAnno.MustNonNull || gnArrayDataMemberAnno.MinLength != -1 || gnArrayDataMemberAnno.MaxLength != -1)
+                    {
+                        gnEnhancedObjectFieldMetadata.ActiveConditionValid = true;
+
+                        if (gnArrayDataMemberAnno.MinLength == -1) gnArrayDataMemberAnno.MinLength = 0;
+                        if (gnArrayDataMemberAnno.MaxLength == -1) gnArrayDataMemberAnno.MaxLength = 256;
+                    }
+
                     gnEnhancedObjectFieldMetadata.MustNonNull = gnArrayDataMemberAnno.MustNonNull;
                     gnEnhancedObjectFieldMetadata.MinLength = gnArrayDataMemberAnno.MinLength;
                     gnEnhancedObjectFieldMetadata.MaxLength = gnArrayDataMemberAnno.MaxLength;
+
                 }
                 else if (dataMemberAnno is NumberDataMemberAttribute numberDataMemberAnno)
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.Number, property.PropertyType, null, property);
 
                     gnEnhancedObjectFieldMetadata.DefaultValue = numberDataMemberAnno.DefaultValue;
+
+                    if (!numberDataMemberAnno.MustInt || numberDataMemberAnno.MinValue != -1 || numberDataMemberAnno.MaxValue != -1)
+                    {
+                        gnEnhancedObjectFieldMetadata.ActiveConditionValid = true;
+
+                        if (numberDataMemberAnno.MinValue == -1) numberDataMemberAnno.MinValue = long.MinValue;
+                        if (numberDataMemberAnno.MaxValue == -1) numberDataMemberAnno.MaxValue = long.MaxValue;
+                    }
+
                     gnEnhancedObjectFieldMetadata.MinValue = numberDataMemberAnno.MinValue;
                     gnEnhancedObjectFieldMetadata.MaxValue = numberDataMemberAnno.MaxValue;
                     gnEnhancedObjectFieldMetadata.MustInt = numberDataMemberAnno.MustInt;
+
                 }
                 else
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.Object, property.PropertyType, null, property);
                     gnEnhancedObjectFieldMetadata.DefaultValue = dataMemberAnno.DefaultValue;
+
                 }
 
                 gnEnhancedObjectFieldMetadata.Code = dataMemberAnno.Code;

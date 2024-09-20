@@ -15,8 +15,8 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.2</Version>
-		<Description>XmobiTea.ProtonNet.Control.Helper assists in managing services, providing the tools necessary for overseeing and controlling the lifecycle and operations of various ProtonNet services. It plays a crucial role in ensuring the efficient and effective management of services within the ProtonNet ecosystem.</Description>
+		<Version>1.0.3</Version>
+		<Description>XmobiTea.ProtonNet.Control.Helper for helper ProtonNet ecosystem.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>

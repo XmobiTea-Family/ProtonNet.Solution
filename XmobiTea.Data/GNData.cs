@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace XmobiTea.Data
+﻿namespace XmobiTea.Data
 {
     /// <summary>
     /// Abstract class representing generic data operations.
@@ -28,6 +26,12 @@ namespace XmobiTea.Data
                 var answer = new GNHashtable.Builder().AddAll(dict).Build();
                 return answer;
             }
+
+            if (value is GNArray.Builder gnArrayBuilder)
+                return gnArrayBuilder.Build();
+
+            if (value is GNHashtable.Builder gnHashtableBuilder)
+                return gnHashtableBuilder.Build();
 
             return value;
         }
@@ -249,7 +253,7 @@ namespace XmobiTea.Data
         /// <param name="k">The key to retrieve the list.</param>
         /// <param name="defaultValue">The default list if the key does not exist.</param>
         /// <returns>A list of the specified type.</returns>
-        public IList<T> GetList<T>(TKey k, IList<T> defaultValue = null)
+        public System.Collections.Generic.IList<T> GetList<T>(TKey k, System.Collections.Generic.IList<T> defaultValue = null)
         {
             var value0 = this.GetGNArray(k);
             if (value0 != null)
@@ -266,7 +270,7 @@ namespace XmobiTea.Data
         /// <param name="k">The key to retrieve the dictionary.</param>
         /// <param name="defaultValue">The default dictionary if the key does not exist.</param>
         /// <returns>A dictionary with string keys and values of the specified type.</returns>
-        public IDictionary<string, TObject> GetDictionary<TObject>(TKey k, IDictionary<string, TObject> defaultValue = null)
+        public System.Collections.Generic.IDictionary<string, TObject> GetDictionary<TObject>(TKey k, System.Collections.Generic.IDictionary<string, TObject> defaultValue = null)
         {
             var value0 = this.GetGNHashtable(k);
             if (value0 != null)

@@ -5,7 +5,7 @@ namespace XmobiTea.Binary.MessagePack.Deserialize.Reader
     /// <summary>
     /// Implements a binary reader for deserializing array types from a binary stream.
     /// </summary>
-    class ArrayBinaryReader : AbstractCollectionBinaryReader<System.Collections.IList>
+    class ArrayBinaryReader : AbstractCollectionBinaryReader<System.Collections.ICollection>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ArrayBinaryReader"/> class.
@@ -27,7 +27,7 @@ namespace XmobiTea.Binary.MessagePack.Deserialize.Reader
         /// <param name="stream">The stream to read from.</param>
         /// <param name="messagePackTypeCode">The type code used to interpret the binary data as an array.</param>
         /// <returns>A list representing the deserialized array.</returns>
-        public override System.Collections.IList Read(System.IO.Stream stream, byte messagePackTypeCode)
+        public override System.Collections.ICollection Read(System.IO.Stream stream, byte messagePackTypeCode)
         {
             if (!this.IsMasked(MessagePackTypeCode.ArrayFix, messagePackTypeCode, 0x0F, out var length))
             {

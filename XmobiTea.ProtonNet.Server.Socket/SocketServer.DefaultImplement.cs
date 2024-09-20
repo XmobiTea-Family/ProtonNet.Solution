@@ -212,11 +212,11 @@ namespace XmobiTea.ProtonNet.Server.Socket
                     continue;
                 }
 
-                var isAllowAmmonius = requestHandlerType.GetCustomAttributes(typeof(AllowAnonymousAttribute), false).Length != 0;
+                var isAllowAnonymous = requestHandlerType.GetCustomAttributes(typeof(AllowAnonymousAttribute), false).Length != 0;
                 var isOnlyServer = requestHandlerType.GetCustomAttributes(typeof(OnlyServerAttribute), false).Length != 0;
 
                 var srvMsg = this.beanContext.CreateSingleton(requestHandlerType) as IRequestHandler;
-                answer.AddHandler(srvMsg, isAllowAmmonius, isOnlyServer);
+                answer.AddHandler(srvMsg, isAllowAnonymous, isOnlyServer);
 
                 this.logger.Info("BeanContext - auto create RequestHandler: " + requestHandlerType.FullName);
             }
@@ -247,11 +247,11 @@ namespace XmobiTea.ProtonNet.Server.Socket
                     continue;
                 }
 
-                var isAllowAmmonius = eventHandlerType.GetCustomAttributes(typeof(AllowAnonymousAttribute), false).Length != 0;
+                var isAllowAnonymous = eventHandlerType.GetCustomAttributes(typeof(AllowAnonymousAttribute), false).Length != 0;
                 var isOnlyServer = eventHandlerType.GetCustomAttributes(typeof(OnlyServerAttribute), false).Length != 0;
 
                 var srvMsg = this.beanContext.CreateSingleton(eventHandlerType) as IEventHandler;
-                answer.AddHandler(srvMsg, isAllowAmmonius, isOnlyServer);
+                answer.AddHandler(srvMsg, isAllowAnonymous, isOnlyServer);
 
                 this.logger.Info("BeanContext - auto create EventHandler: " + eventHandlerType.FullName);
             }

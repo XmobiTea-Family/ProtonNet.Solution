@@ -39,10 +39,7 @@ namespace XmobiTea.ProtonNet.Client.Socket.Handlers
         /// <summary>
         /// Initializes a new instance of the <see cref="EventHandler"/> class.
         /// </summary>
-        public EventHandler()
-        {
-            this.logger = LogManager.GetLogger(this);
-        }
+        public EventHandler() => this.logger = LogManager.GetLogger(this);
 
         /// <summary>
         /// Gets the code associated with this event handler, used to identify the event type.
