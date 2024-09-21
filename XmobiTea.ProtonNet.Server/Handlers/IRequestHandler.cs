@@ -1,5 +1,4 @@
-﻿using System;
-using XmobiTea.Bean.Attributes;
+﻿using XmobiTea.Bean.Attributes;
 using XmobiTea.Data.Converter;
 using XmobiTea.Logging;
 using XmobiTea.ProtonNet.Networking;
@@ -86,10 +85,17 @@ namespace XmobiTea.ProtonNet.Server.Handlers
         /// <returns>A task representing the asynchronous operation, with an <see cref="OperationResponse"/> result.</returns>
         public override async System.Threading.Tasks.Task<OperationResponse> Handle(OperationRequest operationRequest, SendParameters sendParameters, IUserPeer userPeer, ISession session)
         {
-            var requestModel = this.ConvertToRequestModel(operationRequest);
+            TRequestModel requestModel;
 
-            if (requestModel == null)
+            try
+            {
+                requestModel = this.ConvertToRequestModel(operationRequest);
+            }
+            catch (System.Exception ex)
+            {
+                this.logger.Fatal("Error while convert to TRequestModel", ex);
                 return OperationHelper.HandleOperationInvalid(operationRequest, "requestModel invalid");
+            }
 
             return await this.Handle(requestModel, operationRequest, sendParameters, userPeer, session);
         }
@@ -98,20 +104,8 @@ namespace XmobiTea.ProtonNet.Server.Handlers
         /// Converts the operation request to the specific request model.
         /// </summary>
         /// <param name="operationRequest">The operation request to convert.</param>
-        /// <returns>The request model, or default value if conversion fails.</returns>
-        private TRequestModel ConvertToRequestModel(OperationRequest operationRequest)
-        {
-            try
-            {
-                return this.dataConverter.DeserializeObject<TRequestModel>(operationRequest.Parameters);
-            }
-            catch (Exception ex)
-            {
-                this.logger.Fatal(ex);
-            }
-
-            return default;
-        }
+        /// <returns>The request model.</returns>
+        private TRequestModel ConvertToRequestModel(OperationRequest operationRequest) => this.dataConverter.DeserializeObject<TRequestModel>(operationRequest.Parameters);
 
         /// <summary>
         /// Handles the operation request with the specified request model.

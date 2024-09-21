@@ -96,7 +96,7 @@
         public object CreateSingleton(System.Type type, params object[] args)
         {
             if (this.singletonDict.ContainsKey(type))
-                throw new System.Exception("Cannot create singleton, type " + type + " already has a singleton.");
+                throw new System.ArgumentException("Cannot create singleton, type " + type + " already has a singleton.");
 
             var singletonObj = System.Activator.CreateInstance(type, args);
             this.SetSingleton(type, singletonObj);

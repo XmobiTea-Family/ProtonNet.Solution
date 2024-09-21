@@ -65,11 +65,11 @@ namespace XmobiTea.ProtonNet.RpcProtocol
         /// </summary>
         /// <param name="protocolProviderType">The type of the protocol provider.</param>
         /// <returns>The binary converter instance.</returns>
-        /// <exception cref="System.Exception">Thrown when the protocol provider is not found.</exception>
+        /// <exception cref="System.ArgumentException">Thrown when the protocol provider is not found.</exception>
         private IBinaryConverter GetProtocolProvider(ProtocolProviderType protocolProviderType)
         {
             if (!this.protocolProviderDict.ContainsKey(protocolProviderType))
-                throw new System.Exception("ProtocolProvider for type " + protocolProviderType + " not found.");
+                throw new System.ArgumentException("ProtocolProvider for type " + protocolProviderType + " not found.");
 
             return this.protocolProviderDict[protocolProviderType];
         }
@@ -79,11 +79,11 @@ namespace XmobiTea.ProtonNet.RpcProtocol
         /// </summary>
         /// <param name="cryptoProviderType">The type of the crypto provider.</param>
         /// <returns>The crypto provider instance.</returns>
-        /// <exception cref="System.Exception">Thrown when the crypto provider is not found.</exception>
+        /// <exception cref="System.ArgumentException">Thrown when the crypto provider is not found.</exception>
         private ICryptoProvider GetCryptoProvider(CryptoProviderType cryptoProviderType)
         {
             if (!this.cryptoProviderDict.ContainsKey(cryptoProviderType))
-                throw new System.Exception("CryptoProvider for type " + cryptoProviderType + " not found.");
+                throw new System.ArgumentException("CryptoProvider for type " + cryptoProviderType + " not found.");
 
             return this.cryptoProviderDict[cryptoProviderType];
         }

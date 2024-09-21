@@ -79,11 +79,11 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers.Render.Factory
         /// </summary>
         /// <param name="partial">The name of the partial content to retrieve.</param>
         /// <returns>The partial content if found; otherwise, an exception is thrown.</returns>
-        /// <exception cref="Exception">Thrown when the partial content is not found.</exception>
+        /// <exception cref="ArgumentException">Thrown when the partial content is not found.</exception>
         public override IPartialContent GetContent(string partial)
         {
             if (!this.contentDict.TryGetValue(partial.ToLower(), out var content))
-                throw new Exception($"Partial '{partial}' not found in partials path.");
+                throw new ArgumentException($"Partial '{partial}' not found in partials path.");
 
             return content;
         }

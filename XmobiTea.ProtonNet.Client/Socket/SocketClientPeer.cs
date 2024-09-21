@@ -246,14 +246,14 @@ namespace XmobiTea.ProtonNet.Client.Socket
         /// <returns>An instance of <see cref="ISocketClient"/> representing the socket client.</returns>
         private ISocketClient NewSocketClient(TransportProtocol protocol)
         {
-            if (!Uri.TryCreate(this.serverAddress, UriKind.Absolute, out var url)) throw new Exception("server address " + this.serverAddress + " does not create uri, please check again.");
+            if (!Uri.TryCreate(this.serverAddress, UriKind.Absolute, out var url)) throw new ArgumentException("server address " + this.serverAddress + " does not create uri, please check again.");
 
             ISocketClient answer;
 
             if (protocol == TransportProtocol.Tcp) answer = this.NewTcpClient(url.Host, url.Port, this.tcpClientOptions);
             else if (protocol == TransportProtocol.Udp) answer = this.NewUdpClient(url.Host, url.Port, this.udpClientOptions);
             else if (protocol == TransportProtocol.Ws) answer = this.NewWsClient(url.Host, url.Port, this.tcpClientOptions);
-            else throw new Exception("Type " + protocol + " not support.");
+            else throw new ArgumentException("Type " + protocol + " not support.");
 
             ((ISetEncryptKey)answer).SetEncryptKey(this.encryptKey);
             return answer;
@@ -267,13 +267,13 @@ namespace XmobiTea.ProtonNet.Client.Socket
         /// <returns>An instance of <see cref="ISocketClient"/> representing the SSL socket client.</returns>
         private ISocketClient NewSslSocketClient(SslTransportProtocol sslProtocol, SslOptions sslOptions)
         {
-            if (!Uri.TryCreate(this.serverAddress, UriKind.Absolute, out var url)) throw new Exception("server address " + this.serverAddress + " does not create uri, please check again.");
+            if (!Uri.TryCreate(this.serverAddress, UriKind.Absolute, out var url)) throw new ArgumentException("server address " + this.serverAddress + " does not create uri, please check again.");
 
             ISocketClient answer;
 
             if (sslProtocol == SslTransportProtocol.Ssl) answer = this.NewSslClient(url.Host, url.Port, this.tcpClientOptions, sslOptions);
             else if (sslProtocol == SslTransportProtocol.Wss) answer = this.NewWssClient(url.Host, url.Port, this.tcpClientOptions, sslOptions);
-            else throw new Exception("Type " + sslProtocol + " not support.");
+            else throw new ArgumentException("Type " + sslProtocol + " not support.");
 
             ((ISetEncryptKey)answer).SetEncryptKey(this.encryptKey);
             return answer;
@@ -637,9 +637,9 @@ namespace XmobiTea.ProtonNet.Client.Socket
                     this.eventService.Handle(operationEvent, pendingOperationEvent.GetSendParameters(), this);
                     this.OnOperationEvent?.Invoke(operationEvent);
                 }
-                catch (Exception ex)
+                catch (Exception exception)
                 {
-                    this.logger.Fatal(ex);
+                    this.logger.Fatal(exception);
                 }
             }
         }

@@ -216,6 +216,9 @@ namespace XmobiTea.Bean
 
             while (true)
             {
+                if (currentCls == null)
+                    break;
+
                 var allDeclaredFields = currentCls
                     .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                     .Where(field => field.GetCustomAttribute<AutoBindAttribute>(true) != null);

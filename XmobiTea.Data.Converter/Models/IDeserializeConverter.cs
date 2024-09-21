@@ -1,4 +1,5 @@
-﻿using XmobiTea.Data.Converter.Helper;
+﻿using System.Linq;
+using XmobiTea.Data.Converter.Helper;
 using XmobiTea.Data.Converter.Types;
 
 namespace XmobiTea.Data.Converter.Models
@@ -58,6 +59,7 @@ namespace XmobiTea.Data.Converter.Models
         private System.Type typeOfGNArray { get; }
         private System.Type typeOfGNHashtable { get; }
         private System.Type typeOfDictionary { get; }
+        private System.Type typeOfDictionaryStringObject { get; }
         private System.Type typeOfGenericDictionary { get; }
         private System.Type typeOfCollection { get; }
         private System.Type typeOfGenericCollection { get; }
@@ -82,8 +84,8 @@ namespace XmobiTea.Data.Converter.Models
             this.typeOfGNHashtable = typeof(GNHashtable);
             this.typeOfDictionary = typeof(System.Collections.IDictionary);
             this.typeOfGenericDictionary = typeof(System.Collections.Generic.IDictionary<,>);
-            this.typeOfCollection = typeof(System.Collections.IList);
-            this.typeOfGenericCollection = typeof(System.Collections.Generic.IList<>);
+            this.typeOfCollection = typeof(System.Collections.ICollection);
+            this.typeOfGenericCollection = typeof(System.Collections.Generic.ICollection<>);
             this.typeOfObject = typeof(object);
 
             this.dataMemberFieldInfoMapper = dataMemberFieldInfoMapper;
@@ -115,28 +117,30 @@ namespace XmobiTea.Data.Converter.Models
 
         private void StringDeserializer(IGNEnhancedObjectFieldMetadata declaredField, object value, object answer, bool containsKey)
         {
-            if (!declaredField.IsOptional && !containsKey) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: DataRequired");
+            if (!declaredField.IsOptional && !containsKey) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: DataRequired, missing input this data");
 
             object lastValue;
 
             if (value == null) lastValue = declaredField.DefaultValue;
             else if (value is string) lastValue = value;
-            else throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: TypeInvalid");
+            else throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: TypeInvalid, this data must is string, but this data is {value.GetType()}");
 
             if (declaredField.ActiveConditionValid)
             {
                 if (declaredField.MustNonNull.GetValueOrDefault())
                 {
-                    if (lastValue == null) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: StringNull");
+                    if (lastValue == null) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: StringNull, this data must not null");
                 }
 
                 if (lastValue != null)
                 {
                     var lastValueStr = (string)lastValue;
 
-                    if (declaredField.MinLength.GetValueOrDefault() > lastValueStr.Length) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: StringMinLength");
+                    var requireMinLength = declaredField.MinLength.GetValueOrDefault();
+                    var requireMaxLength = declaredField.MaxLength.GetValueOrDefault();
 
-                    if (declaredField.MaxLength.GetValueOrDefault() < lastValueStr.Length) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: StringMaxLength");
+                    if (requireMinLength > lastValueStr.Length) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: StringMinLength, minLength is {requireMinLength} but this dataLength is {lastValueStr.Length}");
+                    if (requireMaxLength < lastValueStr.Length) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: StringMaxLength, maxLength is {requireMaxLength} but this dataLength is {lastValueStr.Length}");
                 }
             }
 
@@ -149,13 +153,13 @@ namespace XmobiTea.Data.Converter.Models
 
         private void BooleanDeserializer(IGNEnhancedObjectFieldMetadata declaredField, object value, object answer, bool containsKey)
         {
-            if (!declaredField.IsOptional && !containsKey) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: DataRequired");
+            if (!declaredField.IsOptional && !containsKey) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: DataRequired, missing input this data");
 
             object lastValue;
 
             if (value == null) lastValue = declaredField.DefaultValue;
             else if (value is bool) lastValue = value;
-            else throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: TypeInvalid");
+            else throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: TypeInvalid, this data must is boolean, but this data is {value.GetType()}");
 
             if (lastValue != null)
             {
@@ -166,28 +170,32 @@ namespace XmobiTea.Data.Converter.Models
 
         private void GNHashtableDeserializer(IGNEnhancedObjectFieldMetadata declaredField, object value, object answer, bool containsKey)
         {
-            if (!declaredField.IsOptional && !containsKey) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: DataRequired");
+            if (!declaredField.IsOptional && !containsKey) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: DataRequired, missing input this data");
 
             object lastValue;
 
             if (value == null) lastValue = declaredField.DefaultValue;
             else if (value is GNHashtable) lastValue = value;
-            else throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: TypeInvalid");
+            else if (value.GetType() == declaredField.Cls) lastValue = value;
+            else throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: TypeInvalid, this data must is GNHashtable, but this data is {value.GetType()}");
 
             if (declaredField.ActiveConditionValid)
             {
                 if (declaredField.MustNonNull.GetValueOrDefault())
                 {
-                    if (lastValue == null) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: GNHashtableNull");
+                    if (lastValue == null) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: GNHashtableNull, this data must not null");
                 }
 
                 if (lastValue != null)
                 {
-                    var lastValueHashtable = (GNHashtable)lastValue;
+                    if (value is GNHashtable lastValueGNHashtable)
+                    {
+                        var requireMinLength = declaredField.MinLength.GetValueOrDefault();
+                        var requireMaxLength = declaredField.MaxLength.GetValueOrDefault();
 
-                    if (declaredField.MinLength.GetValueOrDefault() > lastValueHashtable.Count()) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: GNHashtableMinLength");
-
-                    if (declaredField.MaxLength.GetValueOrDefault() < lastValueHashtable.Count()) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: GNHashtableMaxLength");
+                        if (requireMinLength > lastValueGNHashtable.Count()) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: GNHashtableMinLength, minLength is {requireMinLength} but this dataLength is {lastValueGNHashtable.Count()}");
+                        if (requireMaxLength < lastValueGNHashtable.Count()) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: GNHashtableMaxLength, maxLength is {requireMaxLength} but this dataLength is {lastValueGNHashtable.Count()}");
+                    }
                 }
             }
 
@@ -196,13 +204,19 @@ namespace XmobiTea.Data.Converter.Models
                 if (declaredField.FieldInfo != null)
                 {
                     if (declaredField.Cls == this.typeOfGNHashtable) declaredField.FieldInfo.SetValue(answer, lastValue);
-                    else if (this.typeOfDictionary.IsAssignableFrom(declaredField.FieldInfo.FieldType) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.FieldInfo.FieldType)) declaredField.FieldInfo.SetValue(answer, ((IGNData)lastValue).ToData());
+                    else if ((this.typeOfDictionary.IsAssignableFrom(declaredField.FieldInfo.FieldType) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.FieldInfo.FieldType))
+                        || (declaredField.FieldInfo.FieldType.IsGenericType && (declaredField.FieldInfo.FieldType.GetGenericTypeDefinition() == this.typeOfGenericDictionary || declaredField.FieldInfo.FieldType.GetGenericTypeDefinition() == this.typeOfDictionary))
+                        || (declaredField.FieldInfo.FieldType.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericDictionary || x.GetGenericTypeDefinition() == this.typeOfDictionary))))
+                        declaredField.FieldInfo.SetValue(answer, ((GNHashtable)lastValue).ToData());
                     else declaredField.FieldInfo.SetValue(answer, this.DeserializeObject((GNHashtable)lastValue, declaredField.Cls));
                 }
                 else if (declaredField.PropertyInfo != null)
                 {
                     if (declaredField.Cls == this.typeOfGNHashtable) declaredField.PropertyInfo.SetValue(answer, lastValue);
-                    else if (this.typeOfDictionary.IsAssignableFrom(declaredField.PropertyInfo.PropertyType) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.PropertyInfo.PropertyType)) declaredField.PropertyInfo.SetValue(answer, ((IGNData)lastValue).ToData());
+                    else if ((this.typeOfDictionary.IsAssignableFrom(declaredField.PropertyInfo.PropertyType) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.PropertyInfo.PropertyType))
+                        || (declaredField.PropertyInfo.PropertyType.IsGenericType && (declaredField.PropertyInfo.PropertyType.GetGenericTypeDefinition() == this.typeOfGenericDictionary || declaredField.PropertyInfo.PropertyType.GetGenericTypeDefinition() == this.typeOfDictionary))
+                        || (declaredField.PropertyInfo.PropertyType.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericDictionary || x.GetGenericTypeDefinition() == this.typeOfDictionary))))
+                        declaredField.PropertyInfo.SetValue(answer, ((GNHashtable)lastValue).ToData());
                     else declaredField.PropertyInfo.SetValue(answer, this.DeserializeObject((GNHashtable)lastValue, declaredField.Cls));
                 }
             }
@@ -210,28 +224,37 @@ namespace XmobiTea.Data.Converter.Models
 
         private void GNArrayDeserializer(IGNEnhancedObjectFieldMetadata declaredField, object value, object answer, bool containsKey)
         {
-            if (!declaredField.IsOptional && !containsKey) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: DataRequired");
+            if (!declaredField.IsOptional && !containsKey) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: DataRequired, missing input this data");
 
             object lastValue;
 
             if (value == null) lastValue = declaredField.DefaultValue;
             else if (value is GNArray) lastValue = value;
-            else throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: TypeInvalid");
+            else if (value is System.Collections.ICollection) lastValue = value;
+            else throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: TypeInvalid, this data must is GNArray, but this data is {value.GetType()}");
 
             if (declaredField.ActiveConditionValid)
             {
                 if (declaredField.MustNonNull.GetValueOrDefault())
                 {
-                    if (lastValue == null) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: GNArrayNull");
+                    if (lastValue == null) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: GNArrayNull, this data must not null");
                 }
 
                 if (lastValue != null)
                 {
-                    var lastValueArray = (GNArray)lastValue;
+                    var requireMinLength = declaredField.MinLength.GetValueOrDefault();
+                    var requireMaxLength = declaredField.MaxLength.GetValueOrDefault();
 
-                    if (declaredField.MinLength.GetValueOrDefault() > lastValueArray.Count()) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: GNArrayMinLength");
-
-                    if (declaredField.MaxLength.GetValueOrDefault() < lastValueArray.Count()) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: GNArrayMaxLength");
+                    if (lastValue is GNArray lastValueGNArray)
+                    {
+                        if (requireMinLength > lastValueGNArray.Count()) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: GNArrayMinLength, minLength is {requireMinLength} but this dataLength is {lastValueGNArray.Count()}");
+                        if (requireMaxLength < lastValueGNArray.Count()) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: GNArrayMaxLength, maxLength is {requireMaxLength} but this dataLength is {lastValueGNArray.Count()}");
+                    }
+                    else if (lastValue is System.Collections.ICollection lastValueCollection)
+                    {
+                        if (requireMinLength > lastValueCollection.Count) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: GNArrayMinLength, minLength is {requireMinLength} but this dataLength is {lastValueCollection.Count}");
+                        if (requireMaxLength < lastValueCollection.Count) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: GNArrayMaxLength, maxLength is {requireMaxLength} but this dataLength is {lastValueCollection.Count}");
+                    }
                 }
             }
 
@@ -240,13 +263,17 @@ namespace XmobiTea.Data.Converter.Models
                 if (declaredField.FieldInfo != null)
                 {
                     if (declaredField.Cls == this.typeOfGNArray) declaredField.FieldInfo.SetValue(answer, lastValue);
-                    else if (this.typeOfCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType))
+                    else if ((this.typeOfCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType))
+                        || (declaredField.FieldInfo.FieldType.IsGenericType && (declaredField.FieldInfo.FieldType.GetGenericTypeDefinition() == this.typeOfGenericCollection || declaredField.FieldInfo.FieldType.GetGenericTypeDefinition() == this.typeOfCollection))
+                        || (declaredField.FieldInfo.FieldType.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericCollection || x.GetGenericTypeDefinition() == this.typeOfCollection))))
                         declaredField.FieldInfo.SetValue(answer, this.CastList(this.DeserializeArray((GNArray)lastValue, declaredField.Cls), declaredField.Cls, declaredField.FieldInfo.FieldType.IsArray));
                 }
                 else if (declaredField.PropertyInfo != null)
                 {
                     if (declaredField.Cls == this.typeOfGNArray) declaredField.PropertyInfo.SetValue(answer, lastValue);
-                    else if (this.typeOfCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType))
+                    else if ((this.typeOfCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType))
+                        || (declaredField.PropertyInfo.PropertyType.IsGenericType && (declaredField.PropertyInfo.PropertyType.GetGenericTypeDefinition() == this.typeOfGenericCollection || declaredField.PropertyInfo.PropertyType.GetGenericTypeDefinition() == this.typeOfCollection))
+                        || (declaredField.PropertyInfo.PropertyType.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericCollection || x.GetGenericTypeDefinition() == this.typeOfCollection))))
                         declaredField.PropertyInfo.SetValue(answer, this.CastList(this.DeserializeArray((GNArray)lastValue, declaredField.Cls), declaredField.Cls, declaredField.PropertyInfo.PropertyType.IsArray));
                 }
             }
@@ -254,82 +281,75 @@ namespace XmobiTea.Data.Converter.Models
 
         private void NumberDeserializer(IGNEnhancedObjectFieldMetadata declaredField, object value, object answer, bool containsKey)
         {
-            if (!declaredField.IsOptional && !containsKey) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: DataRequired");
+            if (!declaredField.IsOptional && !containsKey) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: DataRequired, missing input this data");
 
             object lastValue;
 
             if (value == null) lastValue = declaredField.DefaultValue;
             else if (DetectSupport.isNumber(value)) lastValue = value;
-            else throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: TypeInvalid");
+            else throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: TypeInvalid, this data must is number, but this data is {value.GetType()}");
 
             if (declaredField.ActiveConditionValid)
             {
                 if (declaredField.MustInt.GetValueOrDefault())
                 {
-                    if (lastValue != null && !DetectSupport.IsInt(lastValue)) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMustInt");
+                    if (lastValue != null && !DetectSupport.IsInt(lastValue)) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMustInt, this data must is integer number, not single");
                 }
 
                 if (lastValue != null)
                 {
+                    var requireMinValue = declaredField.MinValue.GetValueOrDefault();
+                    var requireMaxValue = declaredField.MaxValue.GetValueOrDefault();
+
                     if (lastValue is int lastValueInt)
                     {
-                        if (declaredField.MinValue.GetValueOrDefault() > lastValueInt) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue");
-
-                        if (declaredField.MaxValue.GetValueOrDefault() < lastValueInt) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue");
+                        if (requireMinValue > lastValueInt) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue, minValue is {requireMinValue} but this data is {lastValue}");
+                        if (requireMaxValue < lastValueInt) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue, maxValue is {requireMaxValue} but this data is {lastValue}");
                     }
                     else if (lastValue is long lastValueLong)
                     {
-                        if (declaredField.MinValue.GetValueOrDefault() > lastValueLong) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue");
-
-                        if (declaredField.MaxValue.GetValueOrDefault() < lastValueLong) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue");
+                        if (requireMinValue > lastValueLong) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue, minValue is {requireMinValue} but this data is {lastValue}");
+                        if (requireMaxValue < lastValueLong) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue, maxValue is {requireMaxValue} but this data is {lastValue}");
                     }
                     else if (lastValue is byte lastValueByte)
                     {
-                        if (declaredField.MinValue.GetValueOrDefault() > lastValueByte) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue");
-
-                        if (declaredField.MaxValue.GetValueOrDefault() < lastValueByte) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue");
+                        if (requireMinValue > lastValueByte) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue, minValue is {requireMinValue} but this data is {lastValue}");
+                        if (requireMaxValue < lastValueByte) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue, maxValue is {requireMaxValue} but this data is {lastValue}");
                     }
                     else if (lastValue is sbyte lastValueSByte)
                     {
-                        if (declaredField.MinValue.GetValueOrDefault() > lastValueSByte) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue");
-
-                        if (declaredField.MaxValue.GetValueOrDefault() < lastValueSByte) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue");
+                        if (requireMinValue > lastValueSByte) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue, minValue is {requireMinValue} but this data is {lastValue}");
+                        if (requireMaxValue < lastValueSByte) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue, maxValue is {requireMaxValue} but this data is {lastValue}");
                     }
                     else if (lastValue is short lastValueShort)
                     {
-                        if (declaredField.MinValue.GetValueOrDefault() > lastValueShort) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue");
-
-                        if (declaredField.MaxValue.GetValueOrDefault() < lastValueShort) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue");
+                        if (requireMinValue > lastValueShort) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue, minValue is {requireMinValue} but this data is {lastValue}");
+                        if (requireMaxValue < lastValueShort) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue, maxValue is {requireMaxValue} but this data is {lastValue}");
                     }
                     else if (lastValue is ushort lastValueUShort)
                     {
-                        if (declaredField.MinValue.GetValueOrDefault() > lastValueUShort) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue");
-
-                        if (declaredField.MaxValue.GetValueOrDefault() < lastValueUShort) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue");
+                        if (requireMinValue > lastValueUShort) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue, minValue is {requireMinValue} but this data is {lastValue}");
+                        if (requireMaxValue < lastValueUShort) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue, maxValue is {requireMaxValue} but this data is {lastValue}");
                     }
                     else if (lastValue is uint lastValueUInt)
                     {
-                        if (declaredField.MinValue.GetValueOrDefault() > lastValueUInt) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue");
-
-                        if (declaredField.MaxValue.GetValueOrDefault() < lastValueUInt) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue");
+                        if (requireMinValue > lastValueUInt) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue, minValue is {requireMinValue} but this data is {lastValue}");
+                        if (requireMaxValue < lastValueUInt) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue, maxValue is {requireMaxValue} but this data is {lastValue}");
                     }
                     else if (lastValue is float lastValueFloat)
                     {
-                        if (declaredField.MinValue.GetValueOrDefault() > lastValueFloat) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue");
-
-                        if (declaredField.MaxValue.GetValueOrDefault() < lastValueFloat) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue");
+                        if (requireMinValue > lastValueFloat) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue, minValue is {requireMinValue} but this data is {lastValue}");
+                        if (requireMaxValue < lastValueFloat) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue, maxValue is {requireMaxValue} but this data is {lastValue}");
                     }
                     else if (lastValue is ulong lastValueULong)
                     {
-                        if (declaredField.MinValue.GetValueOrDefault() > (long)lastValueULong) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue");
-
-                        if (declaredField.MaxValue.GetValueOrDefault() < (long)lastValueULong) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue");
+                        if (requireMinValue > (long)lastValueULong) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue, minValue is {requireMinValue} but this data is {lastValue}");
+                        if (requireMaxValue < (long)lastValueULong) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue, maxValue is {requireMaxValue} but this data is {lastValue}");
                     }
                     else if (lastValue is double lastValueDouble)
                     {
-                        if (declaredField.MinValue.GetValueOrDefault() > lastValueDouble) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue");
-
-                        if (declaredField.MaxValue.GetValueOrDefault() < lastValueDouble) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue");
+                        if (requireMinValue > lastValueDouble) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMinValue, minValue is {requireMinValue} but this data is {lastValue}");
+                        if (requireMaxValue < lastValueDouble) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: NumberMaxValue, maxValue is {requireMaxValue} but this data is {lastValue}");
                     }
                 }
             }
@@ -343,7 +363,7 @@ namespace XmobiTea.Data.Converter.Models
 
         private void OtherDeserializer(IGNEnhancedObjectFieldMetadata declaredField, object value, object answer, bool containsKey)
         {
-            if (!declaredField.IsOptional && !containsKey) throw new System.Exception($"can not deserialize data, code: {declaredField.Code}, reason: DataRequired");
+            if (!declaredField.IsOptional && !containsKey) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: DataRequired, missing input this data");
 
             object lastValue;
 
@@ -364,11 +384,18 @@ namespace XmobiTea.Data.Converter.Models
                     else if (declaredField.Cls == this.typeOfBool) declaredField.FieldInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfString) declaredField.FieldInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfGNArray) declaredField.FieldInfo.SetValue(answer, lastValue);
-                    else if (this.typeOfCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType))
-                        declaredField.FieldInfo.SetValue(answer, this.CastList(this.DeserializeArray((GNArray)lastValue, declaredField.Cls), declaredField.Cls, declaredField.FieldInfo.FieldType.IsArray));
                     else if (declaredField.Cls == this.typeOfGNHashtable) declaredField.FieldInfo.SetValue(answer, lastValue);
-                    else if (this.typeOfDictionary.IsAssignableFrom(declaredField.FieldInfo.FieldType) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.FieldInfo.FieldType)) declaredField.FieldInfo.SetValue(answer, ((IGNData)lastValue).ToData());
+                    else if ((this.typeOfDictionary.IsAssignableFrom(declaredField.FieldInfo.FieldType) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.FieldInfo.FieldType))
+                        || (declaredField.FieldInfo.FieldType.IsGenericType && (declaredField.FieldInfo.FieldType.GetGenericTypeDefinition() == this.typeOfGenericDictionary || declaredField.FieldInfo.FieldType.GetGenericTypeDefinition() == this.typeOfDictionary))
+                        || (declaredField.FieldInfo.FieldType.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericDictionary || x.GetGenericTypeDefinition() == this.typeOfDictionary))))
+                        declaredField.FieldInfo.SetValue(answer, ((GNHashtable)lastValue).ToData());
+                    else if ((this.typeOfCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType))
+                        || (declaredField.FieldInfo.FieldType.IsGenericType && (declaredField.FieldInfo.FieldType.GetGenericTypeDefinition() == this.typeOfGenericCollection || declaredField.FieldInfo.FieldType.GetGenericTypeDefinition() == this.typeOfCollection))
+                        || (declaredField.FieldInfo.FieldType.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericCollection || x.GetGenericTypeDefinition() == this.typeOfCollection))))
+                        declaredField.FieldInfo.SetValue(answer, this.CastList(this.DeserializeArray((GNArray)lastValue, declaredField.Cls), declaredField.Cls, declaredField.FieldInfo.FieldType.IsArray));
+
                     else declaredField.FieldInfo.SetValue(answer, this.DeserializeObject((GNHashtable)lastValue, declaredField.Cls));
+
                 }
                 else if (declaredField.PropertyInfo != null)
                 {
@@ -382,11 +409,18 @@ namespace XmobiTea.Data.Converter.Models
                     else if (declaredField.Cls == this.typeOfBool) declaredField.PropertyInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfString) declaredField.PropertyInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfGNArray) declaredField.PropertyInfo.SetValue(answer, lastValue);
-                    else if (this.typeOfCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType))
-                        declaredField.PropertyInfo.SetValue(answer, this.CastList(this.DeserializeArray((GNArray)lastValue, declaredField.Cls), declaredField.Cls, declaredField.PropertyInfo.PropertyType.IsArray));
                     else if (declaredField.Cls == this.typeOfGNHashtable) declaredField.PropertyInfo.SetValue(answer, lastValue);
-                    else if (this.typeOfDictionary.IsAssignableFrom(declaredField.PropertyInfo.PropertyType) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.PropertyInfo.PropertyType)) declaredField.PropertyInfo.SetValue(answer, ((IGNData)lastValue).ToData());
+                    else if ((this.typeOfDictionary.IsAssignableFrom(declaredField.PropertyInfo.PropertyType) || this.typeOfGenericDictionary.IsAssignableFrom(declaredField.PropertyInfo.PropertyType))
+                        || (declaredField.PropertyInfo.PropertyType.IsGenericType && (declaredField.PropertyInfo.PropertyType.GetGenericTypeDefinition() == this.typeOfGenericDictionary || declaredField.PropertyInfo.PropertyType.GetGenericTypeDefinition() == this.typeOfDictionary))
+                        || (declaredField.PropertyInfo.PropertyType.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericDictionary || x.GetGenericTypeDefinition() == this.typeOfDictionary))))
+                        declaredField.PropertyInfo.SetValue(answer, ((GNHashtable)lastValue).ToData());
+                    else if ((this.typeOfCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType))
+                        || (declaredField.PropertyInfo.PropertyType.IsGenericType && (declaredField.PropertyInfo.PropertyType.GetGenericTypeDefinition() == this.typeOfGenericCollection || declaredField.PropertyInfo.PropertyType.GetGenericTypeDefinition() == this.typeOfCollection))
+                        || (declaredField.PropertyInfo.PropertyType.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericCollection || x.GetGenericTypeDefinition() == this.typeOfCollection))))
+                        declaredField.PropertyInfo.SetValue(answer, this.CastList(this.DeserializeArray((GNArray)lastValue, declaredField.Cls), declaredField.Cls, declaredField.PropertyInfo.PropertyType.IsArray));
+
                     else declaredField.PropertyInfo.SetValue(answer, this.DeserializeObject((GNHashtable)lastValue, declaredField.Cls));
+
                 }
             }
         }
@@ -450,7 +484,13 @@ namespace XmobiTea.Data.Converter.Models
                     else if (cls == this.typeOfString) answer.Add(value);
                     else if (cls == this.typeOfGNArray) answer.Add(value);
                     else if (cls == this.typeOfGNHashtable) answer.Add(value);
-                    else if (this.typeOfCollection.IsAssignableFrom(typeOfValue) || this.typeOfGenericCollection.IsAssignableFrom(typeOfValue))
+                    else if ((this.typeOfDictionary.IsAssignableFrom(typeOfValue) || this.typeOfGenericDictionary.IsAssignableFrom(typeOfValue))
+                        || (typeOfValue.IsGenericType && (typeOfValue.GetGenericTypeDefinition() == this.typeOfGenericDictionary || typeOfValue.GetGenericTypeDefinition() == this.typeOfDictionary))
+                        || (typeOfValue.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericDictionary || x.GetGenericTypeDefinition() == this.typeOfDictionary))))
+                        answer.Add(((GNHashtable)value).ToData());
+                    else if ((this.typeOfCollection.IsAssignableFrom(typeOfValue) || this.typeOfGenericCollection.IsAssignableFrom(typeOfValue))
+                        || (typeOfValue.IsGenericType && (typeOfValue.GetGenericTypeDefinition() == this.typeOfGenericCollection || typeOfValue.GetGenericTypeDefinition() == this.typeOfCollection))
+                        || (typeOfValue.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericCollection || x.GetGenericTypeDefinition() == this.typeOfCollection))))
                         answer.Add(this.DeserializeArray((GNArray)value, cls));
                     else
                         answer.Add(this.DeserializeObject((GNHashtable)value, cls));
@@ -460,28 +500,33 @@ namespace XmobiTea.Data.Converter.Models
             return answer;
         }
 
-        private System.Collections.IList CastList(System.Collections.IList list, System.Type cls, bool isArray)
+        /// <summary>
+        /// Cast the originObjectList to other List with other type.
+        /// </summary>
+        /// <param name="objectLst">The origin object list to cast.</param>
+        /// <param name="cls">The type of value want to cast.</param>
+        /// <param name="isArray">This is Array or List</param>
+        /// <returns>The IList after cast success.</returns>
+        private System.Collections.IList CastList(System.Collections.IList objectLst, System.Type cls, bool isArray)
         {
             if (isArray)
             {
-                var answer = System.Array.CreateInstance(cls, list.Count);
+                var answer = System.Array.CreateInstance(cls, objectLst.Count);
 
-                for (int i = 0; i < list.Count; i++)
-                {
-                    answer.SetValue(System.Convert.ChangeType(list[i], cls), i);
-                }
+                for (int i = 0; i < objectLst.Count; i++)
+                    answer.SetValue(System.Convert.ChangeType(objectLst[i], cls), i);
 
                 return answer;
             }
             else
             {
+                if (cls == this.typeOfObject) return objectLst;
+
                 var typeOfList = typeof(System.Collections.Generic.List<>).MakeGenericType(cls);
                 var answer = (System.Collections.IList)System.Activator.CreateInstance(typeOfList);
 
-                foreach (var item in list)
-                {
+                foreach (var item in objectLst)
                     answer.Add(System.Convert.ChangeType(item, cls));
-                }
 
                 return answer;
             }

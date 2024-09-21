@@ -249,11 +249,11 @@ namespace XmobiTea.ProtonNetCommon
         /// Reserves additional capacity for the buffer.
         /// </summary>
         /// <param name="capacity">The new capacity to reserve.</param>
-        /// <exception cref="Exception">Thrown when the capacity is less than 0.</exception>
+        /// <exception cref="ArgumentException">Thrown when the capacity is less than 0.</exception>
         public void Reserve(int capacity)
         {
             if (capacity < 0)
-                throw new Exception("Capacity parameters must be greater than 0");
+                throw new ArgumentException("Capacity parameters must be greater than 0");
 
             if (capacity > this.Capacity)
             {

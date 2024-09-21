@@ -1,5 +1,4 @@
-﻿using System;
-using XmobiTea.Bean.Attributes;
+﻿using XmobiTea.Bean.Attributes;
 using XmobiTea.Data.Converter;
 using XmobiTea.Logging;
 using XmobiTea.ProtonNet.Networking;
@@ -82,10 +81,17 @@ namespace XmobiTea.ProtonNet.Server.Handlers
         /// <param name="session">The session associated with the event.</param>
         public override void Handle(OperationEvent operationEvent, SendParameters sendParameters, IUserPeer userPeer, ISession session)
         {
-            var eventModel = this.ConvertToRequestModel(operationEvent);
+            TEventModel eventModel;
 
-            if (eventModel == null)
+            try
+            {
+                eventModel = this.ConvertToEventModel(operationEvent);
+            }
+            catch (System.Exception ex)
+            {
+                this.logger.Fatal("Error while convert to TEventModel", ex);
                 return;
+            }
 
             this.Handle(eventModel, operationEvent, sendParameters, userPeer, session);
         }
@@ -94,20 +100,8 @@ namespace XmobiTea.ProtonNet.Server.Handlers
         /// Converts the operation event to the specific event model.
         /// </summary>
         /// <param name="operationEvent">The operation event to convert.</param>
-        /// <returns>The event model, or default value if conversion fails.</returns>
-        private TEventModel ConvertToRequestModel(OperationEvent operationEvent)
-        {
-            try
-            {
-                return this.dataConverter.DeserializeObject<TEventModel>(operationEvent.Parameters);
-            }
-            catch (Exception ex)
-            {
-                this.logger.Fatal(ex);
-            }
-
-            return default;
-        }
+        /// <returns>The event model.</returns>
+        private TEventModel ConvertToEventModel(OperationEvent operationEvent) => this.dataConverter.DeserializeObject<TEventModel>(operationEvent.Parameters);
 
         /// <summary>
         /// Handles the event with the specified event model.

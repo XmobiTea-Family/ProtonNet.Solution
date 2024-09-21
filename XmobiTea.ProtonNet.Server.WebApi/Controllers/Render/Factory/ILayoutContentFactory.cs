@@ -73,11 +73,11 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers.Render.Factory
         /// </summary>
         /// <param name="layout">The name of the layout to retrieve.</param>
         /// <returns>The layout content if found; otherwise, an exception is thrown.</returns>
-        /// <exception cref="Exception">Thrown when the layout content is not found.</exception>
+        /// <exception cref="ArgumentException">Thrown when the layout content is not found.</exception>
         public override ILayoutContent GetContent(string layout)
         {
             if (!this.contentDict.TryGetValue(layout.ToLower(), out var content))
-                throw new Exception($"Layout '{layout}' not found in layouts path.");
+                throw new ArgumentException($"Layout '{layout}' not found in layouts path.");
 
             return content;
         }

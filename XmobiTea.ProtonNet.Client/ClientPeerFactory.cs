@@ -368,9 +368,9 @@ namespace XmobiTea.ProtonNet.Client
                 foreach (var clientPeer in cloneClientPeers)
                     clientPeer?.Service();
             }
-            catch (System.Exception ex)
+            catch (System.Exception exception)
             {
-                this.logger.Error("Service ClientPeerFactory", ex);
+                this.logger.Error("Service ClientPeerFactory", exception);
             }
         }
 
