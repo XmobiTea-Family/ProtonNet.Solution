@@ -96,8 +96,8 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers.Render.Factory
                     }
                 }
 
-                // Store the processed view content
-                viewContent.Content = originContent;
+
+                viewContent.Content = this.partialContentFactory.ReplacePartial(originContent);
                 this.contentDict[view.ToLower()] = viewContent;
             }
         }
