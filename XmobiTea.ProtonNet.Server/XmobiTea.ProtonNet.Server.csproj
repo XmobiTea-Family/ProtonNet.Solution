@@ -13,26 +13,26 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Description>XmobiTea.ProtonNet.Server is core of both SocketServer and WebApiServer.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\XmobiTea.Bean\XmobiTea.Bean.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Binary.MessagePack\XmobiTea.Binary.MessagePack.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Binary.SimplePack\XmobiTea.Binary.SimplePack.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Binary\XmobiTea.Binary.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Collections.Generic\XmobiTea.Collections.Generic.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Crypto\XmobiTea.Crypto.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Data.Converter\XmobiTea.Data.Converter.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Data\XmobiTea.Data.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Logging\XmobiTea.Logging.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.ProtonNetCommon\XmobiTea.ProtonNetCommon.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.ProtonNetServer\XmobiTea.ProtonNetServer.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.ProtonNet.Networking\XmobiTea.ProtonNet.Networking.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.ProtonNet.RpcProtocol\XmobiTea.ProtonNet.RpcProtocol.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.ProtonNet.Token\XmobiTea.ProtonNet.Token.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Threading\XmobiTea.Threading.csproj" Version="1.0.3" />
+		<ProjectReference Include="..\XmobiTea.Bean\XmobiTea.Bean.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Binary.MessagePack\XmobiTea.Binary.MessagePack.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Binary.SimplePack\XmobiTea.Binary.SimplePack.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Binary\XmobiTea.Binary.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Collections.Generic\XmobiTea.Collections.Generic.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Crypto\XmobiTea.Crypto.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Data.Converter\XmobiTea.Data.Converter.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Data\XmobiTea.Data.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Logging\XmobiTea.Logging.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.ProtonNetCommon\XmobiTea.ProtonNetCommon.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.ProtonNetServer\XmobiTea.ProtonNetServer.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Networking\XmobiTea.ProtonNet.Networking.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.RpcProtocol\XmobiTea.ProtonNet.RpcProtocol.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Token\XmobiTea.ProtonNet.Token.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Threading\XmobiTea.Threading.csproj" Version="1.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>

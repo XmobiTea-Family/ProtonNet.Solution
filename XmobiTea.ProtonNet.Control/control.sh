@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Get the first command-line argument
 INPUT_COMMAND="$1"
@@ -10,12 +10,12 @@ if [ -z "$INPUT_COMMAND" ]; then
 fi
 
 # Define the configuration file path
-SERVER_SETTINGS_FILE_PATH="ProtonServerSettings.json"
+SERVER_SETTINGS_FILE_PATH="ProtonNetServerSettings.json"
 
 # Check if the configuration file exists
 if [ ! -e "$SERVER_SETTINGS_FILE_PATH" ]; then
-    echo "Error: Configuration file '$SERVER_SETTINGS_FILE_PATH' not found. Please verify the file's existence."
-    exit 1
+  echo "Error: Configuration file '$SERVER_SETTINGS_FILE_PATH' not found. Please verify the file's existence."
+  exit 1
 fi
 
 # Extract values from the configuration file
@@ -32,14 +32,14 @@ fi
 CONTROL_SUPPORT_FILE_PATH="./control/${TARGET_FRAMEWORK}/${TARGET_RUNTIME}/XmobiTea.ProtonNet.Control"
 
 # Add the .exe extension if needed
-if [[ "$TARGET_RUNTIME" == win* ]]; then
-  CONTROL_SUPPORT_FILE_PATH="$CONTROL_SUPPORT_FILE_PATH.exe"
-fi
+case "$TARGET_RUNTIME" in
+  win*) CONTROL_SUPPORT_FILE_PATH="$CONTROL_SUPPORT_FILE_PATH.exe" ;;
+esac
 
 # Check if the control file exists
 if [ ! -e "$CONTROL_SUPPORT_FILE_PATH" ]; then
-    echo "Error: Control file '$CONTROL_SUPPORT_FILE_PATH' not found. Please check the path and try again."
-    exit 1
+  echo "Error: Control file '$CONTROL_SUPPORT_FILE_PATH' not found. Please check the path and try again."
+  exit 1
 fi
 
 # Get the project name from the second argument
@@ -55,3 +55,7 @@ fi
 
 # Execute the command
 "$CONTROL_SUPPORT_FILE_PATH" $FINAL_INPUT_PARAMETERS
+if [ $? -ne 0 ]; then
+  echo "Error: Failed to execute the control file."
+  exit 1
+fi

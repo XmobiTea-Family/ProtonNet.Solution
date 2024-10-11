@@ -13,12 +13,12 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Description>XmobiTea.Binary.MessagePack serves as an implement dedicated to the serialization and deserialization of data using the MessagePack format.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\XmobiTea.Binary\XmobiTea.Binary.csproj" Version="1.0.3" />
+		<ProjectReference Include="..\XmobiTea.Binary\XmobiTea.Binary.csproj" Version="1.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>

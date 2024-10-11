@@ -1,12 +1,12 @@
 ﻿namespace XmobiTea.ProtonNet.Control.Models
 {
     /// <summary>
-    /// Represents a configuration instance for a Proton server.
+    /// Represents a configuration instance for a ProtonNet server.
     /// </summary>
-    class ProtonInstance
+    class ProtonNetInstance
     {
         /// <summary>
-        /// Gets or sets the name of the Proton instance.
+        /// Gets or sets the name of the ProtonNet instance.
         /// </summary>
         public string Name { get; set; }
 

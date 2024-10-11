@@ -13,7 +13,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Description>XmobiTea.Collections.Generic offers a robust suite of thread-safe data structures, including ThreadSafeArray, ThreadSafeDictionary, and ThreadSafeList, specifically designed to ensure safe and efficient multithreading operations.</Description>
 	</PropertyGroup>
 	

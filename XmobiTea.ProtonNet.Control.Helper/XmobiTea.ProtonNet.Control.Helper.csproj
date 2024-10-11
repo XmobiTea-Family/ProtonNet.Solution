@@ -15,7 +15,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Description>XmobiTea.ProtonNet.Control.Helper for helper ProtonNet ecosystem.</Description>
 	</PropertyGroup>
 
