@@ -88,12 +88,12 @@ namespace XmobiTea.ProtonNet.Server.Services
 
                 return true;
             }
-            catch (System.Exception ex)
+            catch (System.Exception exception)
             {
                 header = null;
                 userPeerTokenPayload = null;
 
-                this.logger.Fatal(ex);
+                this.logger.Fatal(exception);
                 return false;
             }
         }

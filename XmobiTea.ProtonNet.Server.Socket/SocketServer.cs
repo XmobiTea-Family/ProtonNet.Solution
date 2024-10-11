@@ -223,7 +223,7 @@ namespace XmobiTea.ProtonNet.Server.Socket
 #else
             System.Security.Authentication.SslProtocols.Tls12
 #endif
-            , new X509Certificate2(sslConfig.CerFilePath, sslConfig.CerPassword));
+            , new X509Certificate2(sslConfig.CertFilePath, sslConfig.CertPassword));
 
         /// <summary>
         /// Creates and initializes the server context containing session-related services.
@@ -241,10 +241,14 @@ namespace XmobiTea.ProtonNet.Server.Socket
             var initRequestProviderService = this.CreateInitRequestProviderService(startupSettings);
             this.beanContext.SetSingleton(initRequestProviderService);
 
+            var byteArrayManagerService = this.CreateByteArrayManagerService(startupSettings);
+            this.beanContext.SetSingleton(byteArrayManagerService);
+
             var answer = SocketServerContext.NewBuilder()
                 .SetSessionService(sessionService)
                 .SetUserPeerSessionService(userPeerSessionService)
                 .SetInitRequestProviderService(initRequestProviderService)
+                .SetByteArrayManagerService(byteArrayManagerService)
                 .Build();
 
             return answer;
@@ -361,7 +365,7 @@ namespace XmobiTea.ProtonNet.Server.Socket
         private void ShowBanner()
         {
             var banner =
-                "\r\n██████╗ ██████╗  ██████╗ ████████╗ ██████╗ ███╗   ██╗    ███╗   ██╗███████╗████████╗\r\n██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝██╔═══██╗████╗  ██║    ████╗  ██║██╔════╝╚══██╔══╝\r\n██████╔╝██████╔╝██║   ██║   ██║   ██║   ██║██╔██╗ ██║    ██╔██╗ ██║█████╗     ██║   \r\n██╔═══╝ ██╔══██╗██║   ██║   ██║   ██║   ██║██║╚██╗██║    ██║╚██╗██║██╔══╝     ██║   \r\n██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║ ╚████║    ██║ ╚████║███████╗   ██║   \r\n╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝  ╚═══╝    ╚═╝  ╚═══╝╚══════╝   ╚═╝   \r\n\r\n  ____   ___   ____ _  _______ _____   ____  _____ ______     _______ ____  \r\n / ___| / _ \\ / ___| |/ / ____|_   _| / ___|| ____|  _ \\ \\   / / ____|  _ \\ \r\n \\___ \\| | | | |   | ' /|  _|   | |   \\___ \\|  _| | |_) \\ \\ / /|  _| | |_) |\r\n  ___) | |_| | |___| . \\| |___  | |    ___) | |___|  _ < \\ V / | |___|  _ < \r\n |____/ \\___/ \\____|_|\\_\\_____| |_|   |____/|_____|_| \\_\\ \\_/  |_____|_| \\_\\\r\n                                                                            \r\n\r\n                Powed by XmobiTea Family\r\n                https://xmobitea.com\r\n";
+                "\r\n██████╗ ██████╗  ██████╗ ████████╗ ██████╗ ███╗   ██╗    ███╗   ██╗███████╗████████╗\r\n██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝██╔═══██╗████╗  ██║    ████╗  ██║██╔════╝╚══██╔══╝\r\n██████╔╝██████╔╝██║   ██║   ██║   ██║   ██║██╔██╗ ██║    ██╔██╗ ██║█████╗     ██║   \r\n██╔═══╝ ██╔══██╗██║   ██║   ██║   ██║   ██║██║╚██╗██║    ██║╚██╗██║██╔══╝     ██║   \r\n██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║ ╚████║    ██║ ╚████║███████╗   ██║   \r\n╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝  ╚═══╝    ╚═╝  ╚═══╝╚══════╝   ╚═╝   \r\n\r\n  ____   ___   ____ _  _______ _____   ____  _____ ______     _______ ____  \r\n / ___| / _ \\ / ___| |/ / ____|_   _| / ___|| ____|  _ \\ \\   / / ____|  _ \\ \r\n \\___ \\| | | | |   | ' /|  _|   | |   \\___ \\|  _| | |_) \\ \\ / /|  _| | |_) |\r\n  ___) | |_| | |___| . \\| |___  | |    ___) | |___|  _ < \\ V / | |___|  _ < \r\n |____/ \\___/ \\____|_|\\_\\_____| |_|   |____/|_____|_| \\_\\ \\_/  |_____|_| \\_\\\r\n                                                                            \r\n\r\n                Powered by XmobiTea Family\r\n                https://xmobitea.com\r\n";
 
             this.logger.Info($"\n\n{banner}\n");
         }

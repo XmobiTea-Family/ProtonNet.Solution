@@ -65,11 +65,11 @@ namespace XmobiTea.ProtonNet.RpcProtocol
         /// </summary>
         /// <param name="protocolProviderType">The type of the protocol provider.</param>
         /// <returns>The binary converter instance.</returns>
-        /// <exception cref="System.Exception">Thrown when the protocol provider is not found.</exception>
+        /// <exception cref="System.ArgumentException">Thrown when the protocol provider is not found.</exception>
         private IBinaryConverter GetProtocolProvider(ProtocolProviderType protocolProviderType)
         {
             if (!this.protocolProviderDict.ContainsKey(protocolProviderType))
-                throw new System.Exception("ProtocolProvider for type " + protocolProviderType + " not found.");
+                throw new System.ArgumentException("ProtocolProvider for type " + protocolProviderType + " not found.");
 
             return this.protocolProviderDict[protocolProviderType];
         }
@@ -79,11 +79,11 @@ namespace XmobiTea.ProtonNet.RpcProtocol
         /// </summary>
         /// <param name="cryptoProviderType">The type of the crypto provider.</param>
         /// <returns>The crypto provider instance.</returns>
-        /// <exception cref="System.Exception">Thrown when the crypto provider is not found.</exception>
+        /// <exception cref="System.ArgumentException">Thrown when the crypto provider is not found.</exception>
         private ICryptoProvider GetCryptoProvider(CryptoProviderType cryptoProviderType)
         {
             if (!this.cryptoProviderDict.ContainsKey(cryptoProviderType))
-                throw new System.Exception("CryptoProvider for type " + cryptoProviderType + " not found.");
+                throw new System.ArgumentException("CryptoProvider for type " + cryptoProviderType + " not found.");
 
             return this.cryptoProviderDict[cryptoProviderType];
         }
@@ -322,13 +322,14 @@ namespace XmobiTea.ProtonNet.RpcProtocol
                 header.OperationType = (OperationType)operationType;
                 header.ProtocolProviderType = (ProtocolProviderType)protocolProviderType;
 
+                var sendParameters = new SendParameters();
+                header.SendParameters = sendParameters;
+
                 if (header.OperationType == OperationType.OperationRequest
                     || header.OperationType == OperationType.OperationResponse
                     || header.OperationType == OperationType.OperationEvent)
                 {
                     var byte1 = (byte)stream.ReadByte();
-
-                    var sendParameters = new SendParameters();
 
                     sendParameters.Unreliable = (byte1 & 1 << 4) != 0;
                     sendParameters.Encrypted = (byte1 & 1 << 3) != 0;
@@ -345,7 +346,6 @@ namespace XmobiTea.ProtonNet.RpcProtocol
 
                         header.CryptoProviderType = (CryptoProviderType)cryptoProviderType;
                     }
-                    header.SendParameters = sendParameters;
                 }
 
                 if (lengthByte == 0)
@@ -374,8 +374,10 @@ namespace XmobiTea.ProtonNet.RpcProtocol
 
                 return true;
             }
-            catch
+            catch (System.Exception ex)
             {
+                System.Console.WriteLine(ex);
+
                 header = null;
                 payload = null;
 

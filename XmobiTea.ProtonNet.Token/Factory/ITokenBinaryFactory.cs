@@ -52,12 +52,12 @@ namespace XmobiTea.ProtonNet.Token.Factory
         /// </summary>
         /// <param name="binaryType">The type of binary encoding and decoding.</param>
         /// <returns>A tuple containing the encoder and decoder for the binary type.</returns>
-        /// <exception cref="Exception">Thrown when the specified binary type is not registered.</exception>
+        /// <exception cref="ArgumentException">Thrown when the specified binary type is not registered.</exception>
         private Tuple<ITokenBinaryEncode, ITokenBinaryDecode> GetBinaryPair(TokenBinaryType binaryType)
         {
             if (!this.binaryPairDict.TryGetValue(binaryType, out var binary))
             {
-                throw new Exception("Missing binaryType for " + binaryType);
+                throw new ArgumentException("Missing binaryType for " + binaryType);
             }
 
             return binary;

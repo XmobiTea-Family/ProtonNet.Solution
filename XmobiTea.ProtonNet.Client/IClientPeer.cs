@@ -319,6 +319,7 @@ namespace XmobiTea.ProtonNet.Client
                         };
 
                         operationRequestPending.SetOperationResponse(response);
+                        operationRequestPending.SetResponseSendParameters(operationRequestPending.GetSendParameters());
                     }
                 }
                 else
@@ -361,9 +362,9 @@ namespace XmobiTea.ProtonNet.Client
                 {
                     operationRequestPending.GetCallback()?.Invoke(operationRequestPending.GetOperationResponse());
                 }
-                catch (Exception ex)
+                catch (Exception exception)
                 {
-                    this.logger.Fatal(ex);
+                    this.logger.Fatal(exception);
                 }
 
                 lock (this._lockWaitingResponseOperationRequestPendings)

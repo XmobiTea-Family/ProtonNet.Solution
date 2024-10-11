@@ -74,7 +74,7 @@ namespace XmobiTea.ProtonNet.Token
                 options = new TokenOptions()
                 {
                     AlgorithmType = TokenAlgorithmType.SHA256,
-                    BinaryType = TokenBinaryType.SimplePack,
+                    BinaryType = TokenBinaryType.MessagePack,
                     ExpiredAfterSeconds = 24 * 60 * 60,
                 };
 
@@ -186,10 +186,14 @@ namespace XmobiTea.ProtonNet.Token
             {
                 binaryType = (TokenBinaryType)(byte)mStream.ReadByte();
 
-                var headerLength = System.BitConverter.ToUInt16(this.ReadBytes(mStream, 2), 0);
+                var headerDataBytes = this.ReadBytes(mStream, 2);
+                BinaryUtils.SwapIfLittleEndian(ref headerDataBytes);
+                var headerLength = System.BitConverter.ToUInt16(headerDataBytes, 0);
                 headerBytes = this.ReadBytes(mStream, headerLength);
 
-                var payloadLength = System.BitConverter.ToUInt16(this.ReadBytes(mStream, 2), 0);
+                var payloadDataBytes = this.ReadBytes(mStream, 2);
+                BinaryUtils.SwapIfLittleEndian(ref payloadDataBytes);
+                var payloadLength = System.BitConverter.ToUInt16(payloadDataBytes, 0);
                 payloadBytes = this.ReadBytes(mStream, payloadLength);
 
                 signatureMd5Bytes = this.ReadBytes(mStream, (int)(mStream.Length - mStream.Position));
@@ -231,9 +235,7 @@ namespace XmobiTea.ProtonNet.Token
         protected byte[] ReadBytes(Stream stream, int length)
         {
             var answer = new byte[length];
-
             stream.Read(answer, 0, length);
-
             return answer;
         }
 

@@ -112,6 +112,8 @@ namespace XmobiTea.ProtonNet.Client.WebApi
                                     ReturnCode = ReturnCode.OperationInvalid,
                                     DebugMessage = "Cannot read data body",
                                 };
+
+                                operationRequestPending.SetResponseSendParameters(sendParameters);
                             }
                             else
                             {
@@ -145,13 +147,16 @@ namespace XmobiTea.ProtonNet.Client.WebApi
                                         operationResponse = (OperationResponse)operationModel;
                                     }
                                 }
+
+                                operationRequestPending.SetResponseSendParameters(header.SendParameters);
+
                             }
                         }
 
                         operationRequestPending.SetOperationResponse(operationResponse);
                     }
                 }
-                catch (System.Net.Http.HttpRequestException e)
+                catch (System.Net.Http.HttpRequestException exception)
                 {
                     operationRequestPending.OnRecv();
 
@@ -159,14 +164,15 @@ namespace XmobiTea.ProtonNet.Client.WebApi
                     {
                         ReturnCode = ReturnCode.OperationInvalid,
                         ResponseId = operationRequest.RequestId,
-                        DebugMessage = e.Message,
+                        DebugMessage = exception.Message,
                     };
 
                     operationRequestPending.SetOperationResponse(response);
+                    operationRequestPending.SetResponseSendParameters(sendParameters);
 
-                    this.logger.Error("Exception", e);
+                    this.logger.Fatal("Exception", exception);
                 }
-                catch (System.Exception e)
+                catch (System.Exception exception)
                 {
                     operationRequestPending.OnRecv();
 
@@ -174,12 +180,13 @@ namespace XmobiTea.ProtonNet.Client.WebApi
                     {
                         ReturnCode = ReturnCode.OperationInvalid,
                         ResponseId = operationRequest.RequestId,
-                        DebugMessage = e.Message,
+                        DebugMessage = exception.Message,
                     };
 
                     operationRequestPending.SetOperationResponse(response);
+                    operationRequestPending.SetResponseSendParameters(sendParameters);
 
-                    this.logger.Error("Exception", e);
+                    this.logger.Fatal("Exception", exception);
                 }
             }
         }
@@ -204,17 +211,17 @@ namespace XmobiTea.ProtonNet.Client.WebApi
                         onResponse?.Invoke(responseMessage.StatusCode == System.Net.HttpStatusCode.OK);
                     }
                 }
-                catch (System.Net.Http.HttpRequestException e)
+                catch (System.Net.Http.HttpRequestException exception)
                 {
                     onResponse?.Invoke(false);
 
-                    this.logger.Error("Exception", e);
+                    this.logger.Error("Exception", exception);
                 }
-                catch (System.Exception e)
+                catch (System.Exception exception)
                 {
                     onResponse?.Invoke(false);
 
-                    this.logger.Error("Exception", e);
+                    this.logger.Error("Exception", exception);
                 }
             }
         }
@@ -239,17 +246,17 @@ namespace XmobiTea.ProtonNet.Client.WebApi
                         onResponse?.Invoke(long.Parse(await responseMessage.Content.ReadAsStringAsync()));
                     }
                 }
-                catch (System.Net.Http.HttpRequestException e)
+                catch (System.Net.Http.HttpRequestException exception)
                 {
                     onResponse?.Invoke(System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
 
-                    this.logger.Error("Exception", e);
+                    this.logger.Error("Exception", exception);
                 }
-                catch (System.Exception e)
+                catch (System.Exception exception)
                 {
                     onResponse?.Invoke(System.DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
 
-                    this.logger.Error("Exception", e);
+                    this.logger.Error("Exception", exception);
                 }
             }
         }

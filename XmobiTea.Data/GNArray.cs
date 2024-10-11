@@ -16,36 +16,24 @@ namespace XmobiTea.Data
         /// <summary>
         /// Initializes a new instance of the <see cref="GNArray"/> class.
         /// </summary>
-        public GNArray()
-        {
-            this._array = new List<object>();
-        }
+        public GNArray() => this._array = new List<object>();
 
         /// <summary>
         /// Adds an object to the array.
         /// </summary>
         /// <param name="value">The value to add.</param>
-        public void Add(object value)
-        {
-            this._array.Add(this.CreateUseDataFromOriginData(value));
-        }
+        public void Add(object value) => this._array.Add(this.CreateUseDataFromOriginData(value));
 
         /// <summary>
         /// Gets the collection of values in the array.
         /// </summary>
         /// <returns>A collection of objects in the array.</returns>
-        public ICollection<object> Values()
-        {
-            return this._array;
-        }
+        public ICollection<object> Values() => this._array;
 
         /// <summary>
         /// Clears all elements from the array.
         /// </summary>
-        public void Clear()
-        {
-            this._array.Clear();
-        }
+        public void Clear() => this._array.Clear();
 
         /// <summary>
         /// Removes an element at the specified index.
@@ -62,10 +50,7 @@ namespace XmobiTea.Data
         /// Gets the number of elements in the array.
         /// </summary>
         /// <returns>The count of elements in the array.</returns>
-        public int Count()
-        {
-            return this._array.Count;
-        }
+        public int Count() => this._array.Count;
 
         /// <summary>
         /// Converts the array to an array of the specified type.
@@ -213,7 +198,9 @@ namespace XmobiTea.Data
             /// Initializes a new instance of the <see cref="Builder"/> class.
             /// </summary>
             internal Builder() => this._array = new List<object>();
+
         }
 
     }
+
 }

@@ -26,6 +26,25 @@
                     || value is double;
         }
 
+        /// <summary>
+        /// Determines whether the specified value is a integer numeric type.
+        /// </summary>
+        /// <param name="value">The value to check.</param>
+        /// <returns>
+        /// <c>true</c> if the value is an integer numeric type; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool IsInt(object value)
+        {
+            return value is byte
+                    || value is sbyte
+                    || value is short
+                    || value is ushort
+                    || value is int
+                    || value is uint
+                    || value is long
+                    || value is ulong;
+        }
+
     }
 
 }

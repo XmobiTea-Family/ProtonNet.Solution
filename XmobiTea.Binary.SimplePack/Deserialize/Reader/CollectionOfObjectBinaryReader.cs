@@ -4,7 +4,7 @@ using XmobiTea.Binary.SimplePack.Types;
 
 namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
 {
-    class CollectionOfObjectBinaryReader : AbstractCollectionBinaryReader<IList>
+    class CollectionOfObjectBinaryReader : AbstractCollectionBinaryReader<ICollection>
     {
         public CollectionOfObjectBinaryReader(IBinaryDeserializer binaryDeserializer) : base(binaryDeserializer)
         {
@@ -12,14 +12,14 @@ namespace XmobiTea.Binary.SimplePack.Deserialize.Reader
 
         public override byte GetBinaryTypeCode() => BinaryTypeCode.CollectionOfObject;
 
-        public override IList Read(Stream stream)
+        public override ICollection Read(Stream stream)
         {
             var length = this.GetCollectionLength(stream);
 
             return this.ReadData(stream, length);
         }
 
-        public IList ReadData(Stream stream, int length)
+        public ICollection ReadData(Stream stream, int length)
         {
             if (length < 0) return null;
 

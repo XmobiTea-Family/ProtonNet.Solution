@@ -57,6 +57,13 @@ namespace XmobiTea.ProtonNet.Server.WebApi
         protected virtual IInitRequestProviderService CreateInitRequestProviderService(StartupSettings startupSettings) => new WebApiInitRequestProviderService();
 
         /// <summary>
+        /// Creates and initializes the byte array manager service.
+        /// </summary>
+        /// <param name="startupSettings">The startup settings configuration.</param>
+        /// <returns>An instance of <see cref="IInitRequestProviderService"/>.</returns>
+        protected virtual IByteArrayManagerService CreateByteArrayManagerService(StartupSettings startupSettings) => new ByteArrayManagerService();
+
+        /// <summary>
         /// Creates and returns a new IChannelService instance based on the provided startup settings.
         /// </summary>
         /// <param name="startupSettings">The startup settings for configuring the channel service.</param>
@@ -107,10 +114,14 @@ namespace XmobiTea.ProtonNet.Server.WebApi
             var initRequestProviderService = this.CreateInitRequestProviderService(startupSettings);
             this.beanContext.SetSingleton(initRequestProviderService);
 
+            var byteArrayManagerService = this.CreateByteArrayManagerService(startupSettings);
+            this.beanContext.SetSingleton(byteArrayManagerService);
+
             var answer = WebApiServerContext.NewBuilder()
                 .SetUserPeerSessionService(userPeerSessionService)
                 .SetSessionService(sessionService)
                 .SetInitRequestProviderService(initRequestProviderService)
+                .SetByteArrayManagerService(byteArrayManagerService)
                 .Build();
 
             return answer;
@@ -172,11 +183,11 @@ namespace XmobiTea.ProtonNet.Server.WebApi
                     continue;
                 }
 
-                var isAllowAmmonius = requestHandlerType.GetCustomAttributes(typeof(AllowAnonymousAttribute), false).Length != 0;
+                var isAllowAnonymous = requestHandlerType.GetCustomAttributes(typeof(AllowAnonymousAttribute), false).Length != 0;
                 var isOnlyServer = requestHandlerType.GetCustomAttributes(typeof(OnlyServerAttribute), false).Length != 0;
 
                 var srvMsg = this.beanContext.CreateSingleton(requestHandlerType) as IRequestHandler;
-                answer.AddHandler(srvMsg, isAllowAmmonius, isOnlyServer);
+                answer.AddHandler(srvMsg, isAllowAnonymous, isOnlyServer);
 
                 this.logger.Info("BeanContext - auto create RequestHandler: " + requestHandlerType.FullName);
             }

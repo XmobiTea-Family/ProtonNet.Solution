@@ -37,7 +37,7 @@ namespace XmobiTea.ProtonNet.Server.Services
         private ILogger logger { get; }
 
         private System.Collections.Generic.IDictionary<string, IEventHandler> handlerDict { get; }
-        private System.Collections.Generic.IList<string> eventAllowAmmoniusCodeLst { get; }
+        private System.Collections.Generic.IList<string> eventAllowAnonymousCodeLst { get; }
         private System.Collections.Generic.IList<string> eventOnlyServerCodeLst { get; }
 
         /// <summary>
@@ -48,7 +48,7 @@ namespace XmobiTea.ProtonNet.Server.Services
             this.logger = LogManager.GetLogger(this);
 
             this.handlerDict = new System.Collections.Generic.Dictionary<string, IEventHandler>();
-            this.eventAllowAmmoniusCodeLst = new System.Collections.Generic.List<string>();
+            this.eventAllowAnonymousCodeLst = new System.Collections.Generic.List<string>();
             this.eventOnlyServerCodeLst = new System.Collections.Generic.List<string>();
         }
 
@@ -56,9 +56,9 @@ namespace XmobiTea.ProtonNet.Server.Services
         /// Adds an event handler to the service.
         /// </summary>
         /// <param name="eventHandler">The event handler to add.</param>
-        /// <param name="allowAmmonius">Indicates whether Ammonius is allowed for this event.</param>
+        /// <param name="allowAnonymous">Indicates whether anonymous is allowed for this event.</param>
         /// <param name="onlyServer">Indicates whether the event is only for server-side handling.</param>
-        public void AddHandler(IEventHandler eventHandler, bool allowAmmonius = false, bool onlyServer = false)
+        public void AddHandler(IEventHandler eventHandler, bool allowAnonymous = false, bool onlyServer = false)
         {
             var eventCode = eventHandler.GetEventCode();
 
@@ -67,7 +67,7 @@ namespace XmobiTea.ProtonNet.Server.Services
 
             this.handlerDict[eventCode] = eventHandler;
 
-            if (allowAmmonius) this.eventAllowAmmoniusCodeLst.Add(eventCode);
+            if (allowAnonymous) this.eventAllowAnonymousCodeLst.Add(eventCode);
             if (onlyServer) this.eventOnlyServerCodeLst.Add(eventCode);
         }
 
@@ -103,7 +103,7 @@ namespace XmobiTea.ProtonNet.Server.Services
         {
             var eventCode = operationEvent.EventCode;
 
-            if (!this.eventAllowAmmoniusCodeLst.Contains(eventCode) && !userPeer.IsAuthenticated())
+            if (!this.eventAllowAnonymousCodeLst.Contains(eventCode) && !userPeer.IsAuthenticated())
                 return;
 
             if ((userPeer.GetPeerType() == PeerType.SocketClient || userPeer.GetPeerType() == PeerType.WebApiClient) && this.eventOnlyServerCodeLst.Contains(eventCode))

@@ -106,7 +106,7 @@ namespace XmobiTea.ProtonNet.Client.Socket.Handlers
         /// </summary>
         public override void Handle(ISocketClientPeer socketClientPeer, OperationResponse operationResponse, SendParameters sendParameters, ProtocolProviderType protocolProviderType, CryptoProviderType? cryptoProviderType)
         {
-            ((SocketClientPeer)socketClientPeer).OnReceiveOperationResponseInternal(operationResponse);
+            ((SocketClientPeer)socketClientPeer).OnReceiveOperationResponseInternal(operationResponse, sendParameters);
         }
 
     }
@@ -121,7 +121,7 @@ namespace XmobiTea.ProtonNet.Client.Socket.Handlers
         /// </summary>
         public override void Handle(ISocketClientPeer socketClientPeer, OperationEvent operationEvent, SendParameters sendParameters, ProtocolProviderType protocolProviderType, CryptoProviderType? cryptoProviderType)
         {
-            ((SocketClientPeer)socketClientPeer).OnReceiveOperationEventInternal(operationEvent);
+            ((SocketClientPeer)socketClientPeer).OnReceiveOperationEventInternal(operationEvent, sendParameters);
         }
 
     }

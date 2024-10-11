@@ -252,6 +252,8 @@ namespace XmobiTea.ProtonNet.Client.Socket.Services
             if (client == null) return SendResult.SessionNull;
             if (!client.IsConnected()) return SendResult.Disconnected;
 
+            if (sendParameters == null) sendParameters = new SendParameters();
+
             byte[] buffer;
 
             using (var mStream = new MemoryStream())

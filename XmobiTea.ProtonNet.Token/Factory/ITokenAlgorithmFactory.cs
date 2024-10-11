@@ -41,7 +41,7 @@ namespace XmobiTea.ProtonNet.Token.Factory
         /// </summary>
         /// <param name="algorithmType">The type of algorithm encoding.</param>
         /// <returns>An object implementing ITokenAlgorithmEncode.</returns>
-        /// <exception cref="System.Exception">Thrown when the specified algorithm type is not supported.</exception>
+        /// <exception cref="System.ArgumentException">Thrown when the specified algorithm type is not supported.</exception>
         private ITokenAlgorithmEncode GetAlgorithmEncode(TokenAlgorithmType algorithmType)
         {
             if (!this.algorithmEncodeDict.TryGetValue(algorithmType, out var binary))
@@ -71,7 +71,7 @@ namespace XmobiTea.ProtonNet.Token.Factory
                         binary = new KeyedHashAlgorithmTokenAlgorithmEncode();
                         break;
                     default:
-                        throw new System.Exception("AlgorithmType not support " + algorithmType);
+                        throw new System.ArgumentException("AlgorithmType not support " + algorithmType);
                 }
 
                 this.algorithmEncodeDict[algorithmType] = binary;

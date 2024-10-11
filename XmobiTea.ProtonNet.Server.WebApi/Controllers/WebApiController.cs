@@ -89,11 +89,11 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers
 
                 answer.MakeGetResponse(v.Html, "text/html");
             }
-            catch (System.Exception ex)
+            catch (System.Exception exception)
             {
-                this.logger.Fatal(ex);
+                this.logger.Fatal(exception);
 
-                answer.MakeErrorResponse(StatusCode.InternalServerError, $"Message: {ex.Message}\nStackTrace: {ex.StackTrace}");
+                answer.MakeErrorResponse(StatusCode.InternalServerError, $"Message: {exception.Message}\nStackTrace: {exception.StackTrace}");
             }
 
             return answer;

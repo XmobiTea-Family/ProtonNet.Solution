@@ -71,6 +71,11 @@ namespace XmobiTea.ProtonNet.Server.Socket.Context
             public IInitRequestProviderService InitRequestProviderService { get; set; }
 
             /// <summary>
+            /// Gets or sets the byte array manager service used by the server.
+            /// </summary>
+            public IByteArrayManagerService ByteArrayManagerService { get; set; }
+
+            /// <summary>
             /// Sets the session service to be used by the server.
             /// </summary>
             /// <param name="sessionService">The session service to set.</param>
@@ -104,6 +109,17 @@ namespace XmobiTea.ProtonNet.Server.Socket.Context
             }
 
             /// <summary>
+            /// Sets the byte array manager service to be used by the server.
+            /// </summary>
+            /// <param name="byteArrayManagerService">The byte array manager service to set.</param>
+            /// <returns>The current <see cref="Builder"/> instance.</returns>
+            public Builder SetByteArrayManagerService(IByteArrayManagerService byteArrayManagerService)
+            {
+                this.ByteArrayManagerService = byteArrayManagerService;
+                return this;
+            }
+
+            /// <summary>
             /// Builds and returns a new instance of <see cref="SocketServerContext"/> using the provided services.
             /// </summary>
             /// <returns>A new <see cref="SocketServerContext"/> instance.</returns>
@@ -114,6 +130,7 @@ namespace XmobiTea.ProtonNet.Server.Socket.Context
                 answer.sessionService = this.SessionService;
                 answer.userPeerSessionService = this.UserPeerSessionService;
                 answer.initRequestProviderService = this.InitRequestProviderService;
+                answer.byteArrayManagerService = this.ByteArrayManagerService;
 
                 return answer;
             }

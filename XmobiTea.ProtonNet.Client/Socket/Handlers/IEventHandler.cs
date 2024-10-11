@@ -39,10 +39,7 @@ namespace XmobiTea.ProtonNet.Client.Socket.Handlers
         /// <summary>
         /// Initializes a new instance of the <see cref="EventHandler"/> class.
         /// </summary>
-        public EventHandler()
-        {
-            this.logger = LogManager.GetLogger(this);
-        }
+        public EventHandler() => this.logger = LogManager.GetLogger(this);
 
         /// <summary>
         /// Gets the code associated with this event handler, used to identify the event type.
@@ -80,10 +77,17 @@ namespace XmobiTea.ProtonNet.Client.Socket.Handlers
         /// <param name="clientPeer">The client peer that received the event.</param>
         public override void Handle(OperationEvent operationEvent, SendParameters sendParameters, ISocketClientPeer clientPeer)
         {
-            var eventModel = this.ConvertToRequestModel(operationEvent);
+            TEventModel eventModel;
 
-            if (eventModel == null)
+            try
+            {
+                eventModel = this.ConvertToEventModel(operationEvent);
+            }
+            catch (System.Exception exception)
+            {
+                this.logger.Fatal("Error while convert to TEventModel", exception);
                 return;
+            }
 
             this.Handle(eventModel, operationEvent, sendParameters, clientPeer);
         }
@@ -92,20 +96,8 @@ namespace XmobiTea.ProtonNet.Client.Socket.Handlers
         /// Converts the operation event's parameters to the specific event model.
         /// </summary>
         /// <param name="operationEvent">The operation event containing the parameters to convert.</param>
-        /// <returns>An instance of <typeparamref name="TEventModel"/> representing the event model, or default if conversion fails.</returns>
-        private TEventModel ConvertToRequestModel(OperationEvent operationEvent)
-        {
-            try
-            {
-                return this.dataConverter.DeserializeObject<TEventModel>(operationEvent.Parameters);
-            }
-            catch (System.Exception ex)
-            {
-                this.logger.Fatal(ex);
-            }
-
-            return default;
-        }
+        /// <returns>An instance of <typeparamref name="TEventModel"/> representing the event model.</returns>
+        private TEventModel ConvertToEventModel(OperationEvent operationEvent) => this.dataConverter.DeserializeObject<TEventModel>(operationEvent.Parameters);
 
         /// <summary>
         /// Abstract method for handling the specific event model after conversion.

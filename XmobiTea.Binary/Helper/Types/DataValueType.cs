@@ -42,6 +42,7 @@
         ULong,
 
         /// <summary>Represents a 16-bit unsigned integer value.</summary>
-        UShort
+        UShort,
+
     }
 }

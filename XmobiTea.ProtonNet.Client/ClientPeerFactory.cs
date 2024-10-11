@@ -368,9 +368,9 @@ namespace XmobiTea.ProtonNet.Client
                 foreach (var clientPeer in cloneClientPeers)
                     clientPeer?.Service();
             }
-            catch (System.Exception ex)
+            catch (System.Exception exception)
             {
-                this.logger.Error("Service ClientPeerFactory", ex);
+                this.logger.Error("Service ClientPeerFactory", exception);
             }
         }
 
@@ -592,7 +592,7 @@ namespace XmobiTea.ProtonNet.Client
             /// </summary>
             /// <param name="sslOptions">The sslOptions to set.</param>
             /// <returns>The current Builder instance.</returns>
-            public Builder SetWsSslContext(SslOptions sslOptions)
+            public Builder SetWsSslOptions(SslOptions sslOptions)
             {
                 this.WsSslOptions = sslOptions;
                 return this;

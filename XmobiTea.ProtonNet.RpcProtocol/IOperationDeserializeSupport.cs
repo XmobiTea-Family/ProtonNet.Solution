@@ -74,11 +74,11 @@ namespace XmobiTea.ProtonNet.RpcProtocol
         /// <param name="binaryConverter">The binary converter to use for deserialization.</param>
         /// <param name="payload">The payload to deserialize.</param>
         /// <returns>An instance of IOperationModel representing the deserialized operation model.</returns>
-        /// <exception cref="Exception">Thrown when the operation type is not supported.</exception>
+        /// <exception cref="ArgumentException">Thrown when the operation type is not supported.</exception>
         public IOperationModel Deserialize(OperationType operationType, IBinaryConverter binaryConverter, byte[] payload)
         {
             if (!this.operationModelDeserializeDict.TryGetValue(operationType, out var handler))
-                throw new Exception("OperationType " + operationType + " not supported.");
+                throw new ArgumentException("OperationType " + operationType + " not supported.");
 
             return handler.Invoke(binaryConverter, payload);
         }

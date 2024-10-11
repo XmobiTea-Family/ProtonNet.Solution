@@ -444,8 +444,8 @@ namespace XmobiTea.ProtonNet.Server.Socket.Services
         /// <returns>An enumerable of the selected sessions.</returns>
         private IEnumerable<ISocketSession> GetSessions(SendOperationEventOptions options)
         {
-            if (options.Receiver == null) throw new System.Exception("Receiver must have data");
-            if (options.ReceiverProtocol == null) throw new System.Exception("ReceiverProtocol must have data");
+            if (options.Receiver == null) throw new System.MissingMemberException("Receiver must have data");
+            if (options.ReceiverProtocol == null) throw new System.MissingMemberException("ReceiverProtocol must have data");
 
             var answer = new List<ISocketSession>();
 

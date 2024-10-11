@@ -98,6 +98,7 @@ namespace XmobiTea.Binary.Helper.Parsers
         /// <param name="obj">The object to convert.</param>
         /// <returns>The ushort value represented by the object.</returns>
         ushort ToUShort(object obj);
+
     }
 
     /// <summary>

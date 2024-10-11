@@ -1,6 +1,7 @@
 ﻿using XmobiTea.Bean.Attributes;
 using XmobiTea.Logging;
 using XmobiTea.ProtonNet.Networking;
+using XmobiTea.ProtonNet.Server.Services;
 using XmobiTea.ProtonNet.Server.Socket.Controllers;
 using XmobiTea.ProtonNet.Server.Socket.Sessions;
 using XmobiTea.Threading;
@@ -93,6 +94,12 @@ namespace XmobiTea.ProtonNet.Server.Socket.Services
         /// </summary>
         [AutoBind]
         private ISocketSessionEmitService socketSessionEmitService { get; set; }
+
+        /// <summary>
+        /// Automatically binds the byte array manager service using the <see cref="AutoBindAttribute"/>.
+        /// </summary>
+        [AutoBind]
+        private IByteArrayManagerService byteArrayManagerService { get; set; }
 
         /// <summary>
         /// The maximum number of concurrent sessions allowed on the server.
@@ -246,6 +253,8 @@ namespace XmobiTea.ProtonNet.Server.Socket.Services
             {
                 System.Threading.Interlocked.Decrement(ref this.pendingRequest);
                 this.logger.Warn($"buffer drop because max pending request, current: {pendingRequest}, maxPendingRequest: {this.maxPendingRequest}");
+                this.byteArrayManagerService.Return(buffer);
+
                 return;
             }
 
@@ -267,6 +276,7 @@ namespace XmobiTea.ProtonNet.Server.Socket.Services
             if (sessionAmountInCurrentSecond > this.maxSessionRequestPerSecond)
             {
                 this.logger.Warn($"buffer drop because max request per session per second, current: {sessionAmountInCurrentSecond}, maxSessionRequestPerSecond: {this.maxSessionRequestPerSecond}");
+                this.byteArrayManagerService.Return(buffer);
                 return;
             }
 
@@ -276,6 +286,7 @@ namespace XmobiTea.ProtonNet.Server.Socket.Services
             {
                 sessionPendingRequest = System.Threading.Interlocked.Decrement(ref sessionPerSecondAmount.PendingRequest);
                 this.logger.Warn($"buffer drop because max pending request, current: {sessionPendingRequest}, maxSessionPendingRequest: {this.maxSessionPendingRequest}");
+                this.byteArrayManagerService.Return(buffer);
                 return;
             }
 
@@ -290,6 +301,10 @@ namespace XmobiTea.ProtonNet.Server.Socket.Services
                     catch (System.Exception ex)
                     {
                         this.logger.Fatal($"handle at {socketController} exception", ex);
+                    }
+                    finally
+                    {
+                        this.byteArrayManagerService.Return(buffer);
                     }
                 }
 

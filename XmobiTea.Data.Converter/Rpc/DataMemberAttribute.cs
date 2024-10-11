@@ -6,7 +6,7 @@ namespace XmobiTea.Data.Converter.Rpc
     /// Base attribute for marking fields that represent data members in an object.
     /// Provides common properties for specifying metadata such as field type, code, and default value.
     /// </summary>
-    [System.AttributeUsage(System.AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
+    [System.AttributeUsage(System.AttributeTargets.Field | System.AttributeTargets.Property, Inherited = true, AllowMultiple = false)]
     public class DataMemberAttribute : System.Attribute
     {
         /// <summary>

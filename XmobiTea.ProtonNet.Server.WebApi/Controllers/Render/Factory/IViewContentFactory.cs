@@ -96,8 +96,8 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers.Render.Factory
                     }
                 }
 
-                // Store the processed view content
-                viewContent.Content = originContent;
+
+                viewContent.Content = this.partialContentFactory.ReplacePartial(originContent);
                 this.contentDict[view.ToLower()] = viewContent;
             }
         }
@@ -107,11 +107,11 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Controllers.Render.Factory
         /// </summary>
         /// <param name="view">The name of the view to retrieve.</param>
         /// <returns>The view content if found; otherwise, an exception is thrown.</returns>
-        /// <exception cref="Exception">Thrown when the view content is not found.</exception>
+        /// <exception cref="ArgumentException">Thrown when the view content is not found.</exception>
         public override IViewContent GetContent(string view)
         {
             if (!this.contentDict.TryGetValue(view.ToLower(), out var content))
-                throw new Exception($"View '{view}' not found in views path.");
+                throw new ArgumentException($"View '{view}' not found in views path.");
 
             return content;
         }

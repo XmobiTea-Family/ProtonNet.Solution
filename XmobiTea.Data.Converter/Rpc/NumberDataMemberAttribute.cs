@@ -22,12 +22,12 @@ namespace XmobiTea.Data.Converter.Rpc
         /// <summary>
         /// Gets or sets the minimum value for the field.
         /// </summary>
-        public double MinValue { get; set; } = -1;
+        public long MinValue { get; set; } = -1;
 
         /// <summary>
         /// Gets or sets the maximum value for the field.
         /// </summary>
-        public double MaxValue { get; set; } = -1;
+        public long MaxValue { get; set; } = -1;
 
         /// <summary>
         /// Gets or sets a value indicating whether the field must represent an integer.

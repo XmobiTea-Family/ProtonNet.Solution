@@ -49,7 +49,7 @@ namespace XmobiTea.Binary.SimplePack.Serialize.Writer
                 return;
             }
 
-            throw new Exception("Length too long > 268435456, length is " + length);
+            throw new ArgumentException("Length too long > 268435456, length is " + length);
         }
 
         private void WriteCollectionNull(Stream stream, int length)

@@ -5,46 +5,40 @@ using XmobiTea.ProtonNet.Token.Attributes;
 namespace XmobiTea.ProtonNet.Token.Services
 {
     /// <summary>
-    /// Interface cung cấp các phương thức để lấy thông tin thuộc tính của các đối tượng token.
+    /// This interface defines a service that retrieves properties for a given type.
     /// </summary>
     interface ITokenMemberPropertyService
     {
         /// <summary>
-        /// Lấy danh sách các thuộc tính của một loại (type).
+        /// Gets properties of the specified type that meet specific criteria.
         /// </summary>
-        /// <param name="type">Loại (type) cần lấy thuộc tính.</param>
-        /// <returns>
-        /// Trả về một IEnumerable chứa các thuộc tính của loại (type) được chỉ định.
-        /// </returns>
+        /// <param name="type">The type for which properties should be retrieved.</param>
+        /// <returns>An enumerable of PropertyInfo objects for the specified type.</returns>
         System.Collections.Generic.IEnumerable<PropertyInfo> GetProperties(System.Type type);
 
     }
 
     /// <summary>
-    /// Lớp triển khai dịch vụ lấy thông tin thuộc tính của các đối tượng token.
+    /// A concrete implementation of the ITokenMemberPropertyService.
+    /// This class caches the properties of types that have the TokenMemberAttribute applied.
     /// </summary>
     class TokenMemberPropertyService : ITokenMemberPropertyService
     {
         /// <summary>
-        /// Bộ từ điển lưu trữ thông tin về các thuộc tính của các loại (type).
+        /// A thread-safe dictionary to store and cache the properties of types.
         /// </summary>
-        private System.Collections.Generic.IDictionary<System.Type, System.Collections.Generic.IEnumerable<PropertyInfo>> tokenMemberPropertyDict { get; }
+        private System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.Collections.Generic.IEnumerable<PropertyInfo>> tokenMemberPropertyDict { get; }
 
         /// <summary>
-        /// Khởi tạo một đối tượng mới của TokenMemberPropertyService.
+        /// Initializes a new instance of the TokenMemberPropertyService class.
         /// </summary>
-        public TokenMemberPropertyService()
-        {
-            this.tokenMemberPropertyDict = new System.Collections.Generic.Dictionary<System.Type, System.Collections.Generic.IEnumerable<PropertyInfo>>();
-        }
+        public TokenMemberPropertyService() => this.tokenMemberPropertyDict = new System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.Collections.Generic.IEnumerable<PropertyInfo>>();
 
         /// <summary>
-        /// Lấy danh sách các thuộc tính của một loại (type).
+        /// Retrieves the properties of the specified type that are marked with the TokenMemberAttribute.
         /// </summary>
-        /// <param name="type">Loại (type) cần lấy thuộc tính.</param>
-        /// <returns>
-        /// Trả về một IEnumerable chứa các thuộc tính của loại (type) được chỉ định.
-        /// </returns>
+        /// <param name="type">The type for which to retrieve the properties.</param>
+        /// <returns>An enumerable of PropertyInfo objects representing the properties of the type.</returns>
         public System.Collections.Generic.IEnumerable<PropertyInfo> GetProperties(System.Type type)
         {
             if (!this.tokenMemberPropertyDict.TryGetValue(type, out var answer))
@@ -52,7 +46,7 @@ namespace XmobiTea.ProtonNet.Token.Services
                 answer = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
                     .Where(x => x.GetCustomAttribute<TokenMemberAttribute>() != null);
 
-                this.tokenMemberPropertyDict[type] = answer;
+                this.tokenMemberPropertyDict.TryAdd(type, answer);
             }
 
             return answer;

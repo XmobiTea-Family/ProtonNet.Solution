@@ -40,8 +40,8 @@ client.Connect();
 using XmobiTea.ProtonNet.Client.Socket.Clients;
 using XmobiTea.ProtonNetCommon;
 
-var sslContext = new SslContext(/* SSL parameters */);
-var client = new SocketWssClient("wss://example.com", 443, new TcpClientOptions(), sslContext);
+var sslOptions = new SslOptions(/* SSL parameters */);
+var client = new SocketWssClient("wss://example.com", 443, new TcpClientOptions(), sslOptions);
 client.SetEncryptKey(new byte[] { /* encryption key bytes */ });
 
 client.onConnected += () => Console.WriteLine("Connected to the server.");
@@ -56,7 +56,7 @@ client.Connect();
 
 - **TcpClientOptions**: Configuration options for TCP clients.
 - **UdpClientOptions**: Configuration options for UDP clients.
-- **SslContext**: SSL context used for secure communication in WSS clients.
+- **SslOptions**: SSL options used for secure communication in WSS clients.
 - **SendParameters**: Parameters controlling the sending of data, including synchronous or asynchronous modes and encryption options.
 
 ## Extensibility

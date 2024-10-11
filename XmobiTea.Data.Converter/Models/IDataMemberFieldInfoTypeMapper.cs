@@ -17,6 +17,7 @@ namespace XmobiTea.Data.Converter.Models
         /// <param name="cls">The class type to retrieve metadata for.</param>
         /// <returns>An array of field metadata information.</returns>
         IGNEnhancedObjectFieldMetadata[] GetGNEnhancedObjectFieldMetadata(System.Type cls);
+
     }
 
     /// <summary>
@@ -27,15 +28,12 @@ namespace XmobiTea.Data.Converter.Models
         /// <summary>
         /// A dictionary that stores metadata for each class type.
         /// </summary>
-        private System.Collections.Generic.IDictionary<System.Type, IGNEnhancedObjectFieldMetadata[]> declaredFieldsMap;
+        private System.Collections.Generic.IDictionary<System.Type, IGNEnhancedObjectFieldMetadata[]> declaredFieldsMap { get; }
 
         /// <summary>
         /// Initializes a new instance of the DataMemberFieldInfoTypeMapper class.
         /// </summary>
-        public DataMemberFieldInfoTypeMapper()
-        {
-            this.declaredFieldsMap = new ThreadSafeDictionary<System.Type, IGNEnhancedObjectFieldMetadata[]>();
-        }
+        public DataMemberFieldInfoTypeMapper() => this.declaredFieldsMap = new ThreadSafeDictionary<System.Type, IGNEnhancedObjectFieldMetadata[]>();
 
         /// <summary>
         /// Retrieves metadata for the fields of a specified class.
@@ -67,6 +65,9 @@ namespace XmobiTea.Data.Converter.Models
 
             while (true)
             {
+                if (currentCls == null)
+                    break;
+
                 var allDeclaredFields = currentCls
                     .GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly)
                     .Where(field => field.GetCustomAttribute<DataMemberAttribute>(true) != null);
@@ -121,53 +122,46 @@ namespace XmobiTea.Data.Converter.Models
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.String, field.FieldType, field, null);
 
-                    gnEnhancedObjectFieldMetadata.DefaultValue = stringDataMemberAnno.DefaultValue;
-                    gnEnhancedObjectFieldMetadata.MustNonNull = stringDataMemberAnno.MustNonNull;
-                    gnEnhancedObjectFieldMetadata.MinLength = stringDataMemberAnno.MinLength;
-                    gnEnhancedObjectFieldMetadata.MaxLength = stringDataMemberAnno.MaxLength;
+                    this.SetStringDataMemberAttribute(gnEnhancedObjectFieldMetadata, stringDataMemberAnno);
                 }
                 else if (dataMemberAnno is BooleanDataMemberAttribute booleanDataMemberAnno)
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.Boolean, field.FieldType, field, null);
 
-                    gnEnhancedObjectFieldMetadata.DefaultValue = booleanDataMemberAnno.DefaultValue;
+                    this.SetBooleanDataMemberAttribute(gnEnhancedObjectFieldMetadata, booleanDataMemberAnno);
                 }
                 else if (dataMemberAnno is GNHashtableDataMemberAttribute gnHashtableDataMemberAnno)
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.Object, field.FieldType, field, null);
 
-                    gnEnhancedObjectFieldMetadata.DefaultValue = gnHashtableDataMemberAnno.DefaultValue;
-                    gnEnhancedObjectFieldMetadata.MustNonNull = gnHashtableDataMemberAnno.MustNonNull;
-                    gnEnhancedObjectFieldMetadata.MinLength = gnHashtableDataMemberAnno.MinLength;
-                    gnEnhancedObjectFieldMetadata.MaxLength = gnHashtableDataMemberAnno.MaxLength;
+                    this.SetGNHashtableDataMemberAttribute(gnEnhancedObjectFieldMetadata, gnHashtableDataMemberAnno);
                 }
                 else if (dataMemberAnno is GNArrayDataMemberAttribute gnArrayDataMemberAnno)
                 {
-                    gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.Array, gnArrayDataMemberAnno.ElementCls == null ? field.FieldType : gnArrayDataMemberAnno.ElementCls, field, null);
+                    var elementCls = gnArrayDataMemberAnno.ElementCls;
 
-                    gnEnhancedObjectFieldMetadata.DefaultValue = gnArrayDataMemberAnno.DefaultValue;
-                    gnEnhancedObjectFieldMetadata.MustNonNull = gnArrayDataMemberAnno.MustNonNull;
-                    gnEnhancedObjectFieldMetadata.MinLength = gnArrayDataMemberAnno.MinLength;
-                    gnEnhancedObjectFieldMetadata.MaxLength = gnArrayDataMemberAnno.MaxLength;
+                    if (elementCls == null) elementCls = field.FieldType.IsGenericType ? field.FieldType.GetGenericArguments()[0]
+                                                            : field.FieldType.IsArray ? field.FieldType.GetElementType()
+                                                            : field.FieldType;
+
+                    gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.Array, elementCls, field, null);
+
+                    this.SetGNArrayDataMemberAttribute(gnEnhancedObjectFieldMetadata, gnArrayDataMemberAnno);
                 }
                 else if (dataMemberAnno is NumberDataMemberAttribute numberDataMemberAnno)
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.Number, field.FieldType, field, null);
 
-                    gnEnhancedObjectFieldMetadata.DefaultValue = numberDataMemberAnno.DefaultValue;
-                    gnEnhancedObjectFieldMetadata.MinValue = numberDataMemberAnno.MinValue;
-                    gnEnhancedObjectFieldMetadata.MaxValue = numberDataMemberAnno.MaxValue;
-                    gnEnhancedObjectFieldMetadata.MustInt = numberDataMemberAnno.MustInt;
+                    this.SetNumberDataMemberAttribute(gnEnhancedObjectFieldMetadata, numberDataMemberAnno);
                 }
                 else
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.Object, field.FieldType, field, null);
-                    gnEnhancedObjectFieldMetadata.DefaultValue = dataMemberAnno.DefaultValue;
+
+                    this.SetOtherDataMemberAttribute(gnEnhancedObjectFieldMetadata, dataMemberAnno);
                 }
 
-                gnEnhancedObjectFieldMetadata.Code = dataMemberAnno.Code;
-                gnEnhancedObjectFieldMetadata.IsOptional = dataMemberAnno.IsOptional;
-                gnEnhancedObjectFieldMetadata.GNFieldType = dataMemberAnno.GNFieldType;
+                this.SetupGNEnhancedObjectFieldMetadata(gnEnhancedObjectFieldMetadata, dataMemberAnno);
 
                 metadatas[i + offset] = gnEnhancedObjectFieldMetadata;
             }
@@ -193,56 +187,170 @@ namespace XmobiTea.Data.Converter.Models
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.String, property.PropertyType, null, property);
 
-                    gnEnhancedObjectFieldMetadata.DefaultValue = stringDataMemberAnno.DefaultValue;
-                    gnEnhancedObjectFieldMetadata.MustNonNull = stringDataMemberAnno.MustNonNull;
-                    gnEnhancedObjectFieldMetadata.MinLength = stringDataMemberAnno.MinLength;
-                    gnEnhancedObjectFieldMetadata.MaxLength = stringDataMemberAnno.MaxLength;
+                    this.SetStringDataMemberAttribute(gnEnhancedObjectFieldMetadata, stringDataMemberAnno);
+
                 }
                 else if (dataMemberAnno is BooleanDataMemberAttribute booleanDataMemberAnno)
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.Boolean, property.PropertyType, null, property);
 
-                    gnEnhancedObjectFieldMetadata.DefaultValue = booleanDataMemberAnno.DefaultValue;
+                    this.SetBooleanDataMemberAttribute(gnEnhancedObjectFieldMetadata, booleanDataMemberAnno);
                 }
                 else if (dataMemberAnno is GNHashtableDataMemberAttribute gnHashtableDataMemberAnno)
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.Object, property.PropertyType, null, property);
 
-                    gnEnhancedObjectFieldMetadata.DefaultValue = gnHashtableDataMemberAnno.DefaultValue;
-                    gnEnhancedObjectFieldMetadata.MustNonNull = gnHashtableDataMemberAnno.MustNonNull;
-                    gnEnhancedObjectFieldMetadata.MinLength = gnHashtableDataMemberAnno.MinLength;
-                    gnEnhancedObjectFieldMetadata.MaxLength = gnHashtableDataMemberAnno.MaxLength;
+                    this.SetGNHashtableDataMemberAttribute(gnEnhancedObjectFieldMetadata, gnHashtableDataMemberAnno);
                 }
                 else if (dataMemberAnno is GNArrayDataMemberAttribute gnArrayDataMemberAnno)
                 {
-                    gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.Array, gnArrayDataMemberAnno.ElementCls == null ? property.PropertyType : gnArrayDataMemberAnno.ElementCls, null, property);
+                    var elementCls = gnArrayDataMemberAnno.ElementCls;
 
-                    gnEnhancedObjectFieldMetadata.DefaultValue = gnArrayDataMemberAnno.DefaultValue;
-                    gnEnhancedObjectFieldMetadata.MustNonNull = gnArrayDataMemberAnno.MustNonNull;
-                    gnEnhancedObjectFieldMetadata.MinLength = gnArrayDataMemberAnno.MinLength;
-                    gnEnhancedObjectFieldMetadata.MaxLength = gnArrayDataMemberAnno.MaxLength;
+                    if (elementCls == null) elementCls = property.PropertyType.IsGenericType ? property.PropertyType.GetGenericArguments()[0]
+                                                            : property.PropertyType.IsArray ? property.PropertyType.GetElementType()
+                                                            : property.PropertyType;
+
+                    gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.Array, elementCls, null, property);
+
+                    this.SetGNArrayDataMemberAttribute(gnEnhancedObjectFieldMetadata, gnArrayDataMemberAnno);
                 }
                 else if (dataMemberAnno is NumberDataMemberAttribute numberDataMemberAnno)
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.Number, property.PropertyType, null, property);
 
-                    gnEnhancedObjectFieldMetadata.DefaultValue = numberDataMemberAnno.DefaultValue;
-                    gnEnhancedObjectFieldMetadata.MinValue = numberDataMemberAnno.MinValue;
-                    gnEnhancedObjectFieldMetadata.MaxValue = numberDataMemberAnno.MaxValue;
-                    gnEnhancedObjectFieldMetadata.MustInt = numberDataMemberAnno.MustInt;
+                    this.SetNumberDataMemberAttribute(gnEnhancedObjectFieldMetadata, numberDataMemberAnno);
                 }
                 else
                 {
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.Object, property.PropertyType, null, property);
-                    gnEnhancedObjectFieldMetadata.DefaultValue = dataMemberAnno.DefaultValue;
+
+                    this.SetOtherDataMemberAttribute(gnEnhancedObjectFieldMetadata, dataMemberAnno);
                 }
 
-                gnEnhancedObjectFieldMetadata.Code = dataMemberAnno.Code;
-                gnEnhancedObjectFieldMetadata.IsOptional = dataMemberAnno.IsOptional;
-                gnEnhancedObjectFieldMetadata.GNFieldType = dataMemberAnno.GNFieldType;
+                this.SetupGNEnhancedObjectFieldMetadata(gnEnhancedObjectFieldMetadata, dataMemberAnno);
 
                 metadatas[i + offset] = gnEnhancedObjectFieldMetadata;
             }
+        }
+
+        /// <summary>
+        /// Set the metadata for GNEnhancedObjectField using StringDataMemberAttribute.
+        /// </summary>
+        /// <param name="gnEnhancedObjectFieldMetadata">The metadata object to be updated.</param>
+        /// <param name="dataMemberAnno">The StringDataMemberAttribute providing the field data.</param>
+        private void SetStringDataMemberAttribute(GNEnhancedObjectFieldMetadata gnEnhancedObjectFieldMetadata, StringDataMemberAttribute dataMemberAnno)
+        {
+            gnEnhancedObjectFieldMetadata.DefaultValue = dataMemberAnno.DefaultValue;
+
+            if (dataMemberAnno.MustNonNull || dataMemberAnno.MinLength != -1 || dataMemberAnno.MaxLength != -1)
+            {
+                gnEnhancedObjectFieldMetadata.ActiveConditionValid = true;
+
+                if (dataMemberAnno.MinLength == -1) dataMemberAnno.MinLength = 0;
+                if (dataMemberAnno.MaxLength == -1) dataMemberAnno.MaxLength = 256;
+            }
+
+            gnEnhancedObjectFieldMetadata.MustNonNull = dataMemberAnno.MustNonNull;
+            gnEnhancedObjectFieldMetadata.MinLength = dataMemberAnno.MinLength;
+            gnEnhancedObjectFieldMetadata.MaxLength = dataMemberAnno.MaxLength;
+        }
+
+        /// <summary>
+        /// Set the metadata for GNEnhancedObjectField using BooleanDataMemberAttribute.
+        /// </summary>
+        /// <param name="gnEnhancedObjectFieldMetadata">The metadata object to be updated.</param>
+        /// <param name="dataMemberAnno">The BooleanDataMemberAttribute providing the field data.</param>
+        private void SetBooleanDataMemberAttribute(GNEnhancedObjectFieldMetadata gnEnhancedObjectFieldMetadata, BooleanDataMemberAttribute dataMemberAnno)
+        {
+            gnEnhancedObjectFieldMetadata.DefaultValue = dataMemberAnno.DefaultValue;
+        }
+
+        /// <summary>
+        /// Set the metadata for GNEnhancedObjectField using GNHashtableDataMemberAttribute.
+        /// </summary>
+        /// <param name="gnEnhancedObjectFieldMetadata">The metadata object to be updated.</param>
+        /// <param name="dataMemberAnno">The GNHashtableDataMemberAttribute providing the field data.</param>
+        private void SetGNHashtableDataMemberAttribute(GNEnhancedObjectFieldMetadata gnEnhancedObjectFieldMetadata, GNHashtableDataMemberAttribute dataMemberAnno)
+        {
+            gnEnhancedObjectFieldMetadata.DefaultValue = dataMemberAnno.DefaultValue;
+
+            if (dataMemberAnno.MustNonNull || dataMemberAnno.MinLength != -1 || dataMemberAnno.MaxLength != -1)
+            {
+                gnEnhancedObjectFieldMetadata.ActiveConditionValid = true;
+
+                if (dataMemberAnno.MinLength == -1) dataMemberAnno.MinLength = 0;
+                if (dataMemberAnno.MaxLength == -1) dataMemberAnno.MaxLength = 256;
+            }
+
+            gnEnhancedObjectFieldMetadata.MustNonNull = dataMemberAnno.MustNonNull;
+            gnEnhancedObjectFieldMetadata.MinLength = dataMemberAnno.MinLength;
+            gnEnhancedObjectFieldMetadata.MaxLength = dataMemberAnno.MaxLength;
+        }
+
+        /// <summary>
+        /// Set the metadata for GNEnhancedObjectField using GNArrayDataMemberAttribute.
+        /// </summary>
+        /// <param name="gnEnhancedObjectFieldMetadata">The metadata object to be updated.</param>
+        /// <param name="dataMemberAnno">The GNArrayDataMemberAttribute providing the field data.</param>
+        private void SetGNArrayDataMemberAttribute(GNEnhancedObjectFieldMetadata gnEnhancedObjectFieldMetadata, GNArrayDataMemberAttribute dataMemberAnno)
+        {
+            gnEnhancedObjectFieldMetadata.DefaultValue = dataMemberAnno.DefaultValue;
+
+            if (dataMemberAnno.MustNonNull || dataMemberAnno.MinLength != -1 || dataMemberAnno.MaxLength != -1)
+            {
+                gnEnhancedObjectFieldMetadata.ActiveConditionValid = true;
+
+                if (dataMemberAnno.MinLength == -1) dataMemberAnno.MinLength = 0;
+                if (dataMemberAnno.MaxLength == -1) dataMemberAnno.MaxLength = 256;
+            }
+
+            gnEnhancedObjectFieldMetadata.MustNonNull = dataMemberAnno.MustNonNull;
+            gnEnhancedObjectFieldMetadata.MinLength = dataMemberAnno.MinLength;
+            gnEnhancedObjectFieldMetadata.MaxLength = dataMemberAnno.MaxLength;
+        }
+
+        /// <summary>
+        /// Set the metadata for GNEnhancedObjectField using NumberDataMemberAttribute.
+        /// </summary>
+        /// <param name="gnEnhancedObjectFieldMetadata">The metadata object to be updated.</param>
+        /// <param name="dataMemberAnno">The NumberDataMemberAttribute providing the field data.</param>
+        private void SetNumberDataMemberAttribute(GNEnhancedObjectFieldMetadata gnEnhancedObjectFieldMetadata, NumberDataMemberAttribute dataMemberAnno)
+        {
+            gnEnhancedObjectFieldMetadata.DefaultValue = dataMemberAnno.DefaultValue;
+
+            if (dataMemberAnno.MustInt || dataMemberAnno.MinValue != -1 || dataMemberAnno.MaxValue != -1)
+            {
+                gnEnhancedObjectFieldMetadata.ActiveConditionValid = true;
+
+                if (dataMemberAnno.MinValue == -1) dataMemberAnno.MinValue = long.MinValue;
+                if (dataMemberAnno.MaxValue == -1) dataMemberAnno.MaxValue = long.MaxValue;
+            }
+
+            gnEnhancedObjectFieldMetadata.MinValue = dataMemberAnno.MinValue;
+            gnEnhancedObjectFieldMetadata.MaxValue = dataMemberAnno.MaxValue;
+            gnEnhancedObjectFieldMetadata.MustInt = dataMemberAnno.MustInt;
+        }
+
+        /// <summary>
+        /// Set the metadata for GNEnhancedObjectField using a generic DataMemberAttribute.
+        /// </summary>
+        /// <param name="gnEnhancedObjectFieldMetadata">The metadata object to be updated.</param>
+        /// <param name="dataMemberAnno">The DataMemberAttribute providing the field data.</param>
+        private void SetOtherDataMemberAttribute(GNEnhancedObjectFieldMetadata gnEnhancedObjectFieldMetadata, DataMemberAttribute dataMemberAnno)
+        {
+            gnEnhancedObjectFieldMetadata.DefaultValue = dataMemberAnno.DefaultValue;
+        }
+
+        /// <summary>
+        /// Sets up the basic metadata for GNEnhancedObjectField using DataMemberAttribute.
+        /// </summary>
+        /// <param name="gnEnhancedObjectFieldMetadata">The metadata object to be updated.</param>
+        /// <param name="dataMemberAnno">The DataMemberAttribute providing the initial field data.</param>
+        private void SetupGNEnhancedObjectFieldMetadata(GNEnhancedObjectFieldMetadata gnEnhancedObjectFieldMetadata, DataMemberAttribute dataMemberAnno)
+        {
+            gnEnhancedObjectFieldMetadata.Code = dataMemberAnno.Code;
+            gnEnhancedObjectFieldMetadata.IsOptional = dataMemberAnno.IsOptional;
+            gnEnhancedObjectFieldMetadata.GNFieldType = dataMemberAnno.GNFieldType;
         }
 
     }

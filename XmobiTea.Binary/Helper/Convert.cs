@@ -15,10 +15,7 @@ namespace XmobiTea.Binary.Helper
         /// <summary>
         /// Initializes static members of the <see cref="Convert"/> class.
         /// </summary>
-        static Convert()
-        {
-            dataParser = new DataParser();
-        }
+        static Convert() => dataParser = new DataParser();
 
         /// <summary>
         /// Converts the specified object to a Boolean value.

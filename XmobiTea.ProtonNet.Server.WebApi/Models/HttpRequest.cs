@@ -22,7 +22,10 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Models
             this.bodySize = originRequest.BodySize;
             this.bodyLength = originRequest.BodyLength;
             this.bodyLengthProvided = originRequest.BodyLengthProvided;
-            this.cache = new MemoryBuffer(originRequest.Cache.Buffer);
+
+            var buffer = new byte[originRequest.Cache.Buffer.Length];
+            Array.Copy(originRequest.Cache.Buffer, 0, buffer, 0, originRequest.Cache.Buffer.Length);
+            this.cache = new MemoryBuffer(buffer);
             this.cacheSize = originRequest.CacheSize;
         }
 

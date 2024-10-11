@@ -35,8 +35,8 @@ namespace XmobiTea.Binary.SimplePack.Serialize.Writer
             {
                 var collectionOfObjectBinaryWriter = (CollectionOfObjectBinaryWriter)this.binarySerializer.GetWriter(BinaryTypeCode.CollectionOfObject);
 
-                collectionOfObjectBinaryWriter.WriteData(stream, (IList)value.Keys);
-                collectionOfObjectBinaryWriter.WriteData(stream, (IList)value.Values);
+                collectionOfObjectBinaryWriter.WriteData(stream, (ICollection)value.Keys);
+                collectionOfObjectBinaryWriter.WriteData(stream, (ICollection)value.Values);
             }
         }
 

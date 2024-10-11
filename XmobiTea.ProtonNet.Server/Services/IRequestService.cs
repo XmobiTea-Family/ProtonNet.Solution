@@ -38,7 +38,7 @@ namespace XmobiTea.ProtonNet.Server.Services
         private ILogger logger { get; }
 
         private System.Collections.Generic.IDictionary<string, IRequestHandler> handlerDict { get; }
-        private System.Collections.Generic.IList<string> requestAllowAmmoniusCodeLst { get; }
+        private System.Collections.Generic.IList<string> requestAllowAnonymousCodeLst { get; }
         private System.Collections.Generic.IList<string> requestOnlyServerCodeLst { get; }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace XmobiTea.ProtonNet.Server.Services
             this.logger = LogManager.GetLogger(this);
 
             this.handlerDict = new System.Collections.Generic.Dictionary<string, IRequestHandler>();
-            this.requestAllowAmmoniusCodeLst = new System.Collections.Generic.List<string>();
+            this.requestAllowAnonymousCodeLst = new System.Collections.Generic.List<string>();
             this.requestOnlyServerCodeLst = new System.Collections.Generic.List<string>();
         }
 
@@ -57,9 +57,9 @@ namespace XmobiTea.ProtonNet.Server.Services
         /// Adds a new request handler to the service.
         /// </summary>
         /// <param name="requestHandler">The request handler to add.</param>
-        /// <param name="allowAmmonius">Specifies whether ammonius is allowed for this handler.</param>
+        /// <param name="allowAnonymous">Specifies whether anonymous is allowed for this handler.</param>
         /// <param name="onlyServer">Specifies whether this handler is only for server-side requests.</param>
-        public void AddHandler(IRequestHandler requestHandler, bool allowAmmonius = false, bool onlyServer = false)
+        public void AddHandler(IRequestHandler requestHandler, bool allowAnonymous = false, bool onlyServer = false)
         {
             var operationCode = requestHandler.GetOperationCode();
 
@@ -68,7 +68,7 @@ namespace XmobiTea.ProtonNet.Server.Services
 
             this.handlerDict[operationCode] = requestHandler;
 
-            if (allowAmmonius) this.requestAllowAmmoniusCodeLst.Add(operationCode);
+            if (allowAnonymous) this.requestAllowAnonymousCodeLst.Add(operationCode);
             if (onlyServer) this.requestOnlyServerCodeLst.Add(operationCode);
         }
 
@@ -105,7 +105,7 @@ namespace XmobiTea.ProtonNet.Server.Services
         {
             var operationCode = operationRequest.OperationCode;
 
-            if (!this.requestAllowAmmoniusCodeLst.Contains(operationCode) && !userPeer.IsAuthenticated())
+            if (!this.requestAllowAnonymousCodeLst.Contains(operationCode) && !userPeer.IsAuthenticated())
                 return OperationHelper.HandleOperationNotAuthorized(operationRequest);
 
             if ((userPeer.GetPeerType() == PeerType.SocketClient || userPeer.GetPeerType() == PeerType.WebApiClient) && this.requestOnlyServerCodeLst.Contains(operationCode))

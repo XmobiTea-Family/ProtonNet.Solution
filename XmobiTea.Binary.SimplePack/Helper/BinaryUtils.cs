@@ -14,8 +14,8 @@ namespace XmobiTea.Binary.SimplePack.Helper
         {
             TypeOfDictionary = typeof(System.Collections.IDictionary);
             TypeOfGenericDictionary = typeof(System.Collections.Generic.IDictionary<,>);
-            TypeOfCollection = typeof(System.Collections.IList);
-            TypeOfGenericCollection = typeof(System.Collections.Generic.IList<>);
+            TypeOfCollection = typeof(System.Collections.ICollection);
+            TypeOfGenericCollection = typeof(System.Collections.Generic.ICollection<>);
         }
 
         public static bool IsIdentifyBinaryTypeCode(byte binaryTypeCode)
@@ -60,24 +60,28 @@ namespace XmobiTea.Binary.SimplePack.Helper
             if (typeCode == TypeCode.Object)
                 if (TypeOfDictionary.IsAssignableFrom(type) || TypeOfGenericDictionary.IsAssignableFrom(type))
                 {
-                    var genericArguments = type.GetGenericArguments();
-
-                    var keyType = genericArguments[0];
-                    var valueType = genericArguments[1];
-
-                    var keyTypeCode = GetBinaryTypeCode(keyType);
-                    var valueTypeCode = GetBinaryTypeCode(valueType);
-
-                    var isIdentifyKey = IsIdentifyBinaryTypeCode(keyTypeCode);
-                    var isIdentifyValue = IsIdentifyBinaryTypeCode(valueTypeCode);
-
-                    if (isIdentifyKey)
+                    if (type.IsGenericType)
                     {
-                        if (isIdentifyValue) return BinaryTypeCode.DictionaryKeyIdentifyValueIdentify;
-                        return BinaryTypeCode.DictionaryKeyIdentifyValueObject;
+                        var genericArguments = type.GetGenericArguments();
+
+                        var keyType = genericArguments[0];
+                        var valueType = genericArguments[1];
+
+                        var keyTypeCode = GetBinaryTypeCode(keyType);
+                        var valueTypeCode = GetBinaryTypeCode(valueType);
+
+                        var isIdentifyKey = IsIdentifyBinaryTypeCode(keyTypeCode);
+                        var isIdentifyValue = IsIdentifyBinaryTypeCode(valueTypeCode);
+
+                        if (isIdentifyKey)
+                        {
+                            if (isIdentifyValue) return BinaryTypeCode.DictionaryKeyIdentifyValueIdentify;
+                            return BinaryTypeCode.DictionaryKeyIdentifyValueObject;
+                        }
+
+                        if (isIdentifyValue) return BinaryTypeCode.DictionaryKeyObjectValueIdentify;
                     }
 
-                    if (isIdentifyValue) return BinaryTypeCode.DictionaryKeyObjectValueIdentify;
                     return BinaryTypeCode.DictionaryKeyObjectValueObject;
                 }
                 else if (TypeOfCollection.IsAssignableFrom(type) || TypeOfGenericCollection.IsAssignableFrom(type))

@@ -24,6 +24,13 @@ namespace XmobiTea.ProtonNet.Server.Context
         /// </summary>
         /// <returns>The initialization request provider service instance.</returns>
         IInitRequestProviderService GetInitRequestProviderService();
+
+        /// <summary>
+        /// Gets the byte array manager service.
+        /// </summary>
+        /// <returns>The byte array manager service instance.</returns>
+        IByteArrayManagerService GetByteArrayManagerService();
+
     }
 
     /// <summary>
@@ -47,6 +54,11 @@ namespace XmobiTea.ProtonNet.Server.Context
         protected IInitRequestProviderService initRequestProviderService { get; set; }
 
         /// <summary>
+        /// The byte array manager service instance.
+        /// </summary>
+        protected IByteArrayManagerService byteArrayManagerService { get; set; }
+
+        /// <summary>
         /// Gets the session service.
         /// </summary>
         /// <returns>The session service instance.</returns>
@@ -65,8 +77,15 @@ namespace XmobiTea.ProtonNet.Server.Context
         public IInitRequestProviderService GetInitRequestProviderService() => this.initRequestProviderService;
 
         /// <summary>
+        /// Gets the byte array manager service.
+        /// </summary>
+        /// <returns>The byte array manager service instance.</returns>
+        public IByteArrayManagerService GetByteArrayManagerService() => this.byteArrayManagerService;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ServerContext"/> class.
         /// </summary>
         protected ServerContext() { }
+
     }
 }
