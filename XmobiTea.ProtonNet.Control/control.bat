@@ -11,7 +11,7 @@ if "%INPUT_COMMAND%"=="" (
 )
 
 REM Define the configuration file path
-set SERVER_SETTINGS_FILE_PATH=ProtonServerSettings.json
+set SERVER_SETTINGS_FILE_PATH=ProtonNetServerSettings.json
 
 REM Check if the configuration file exists
 if not exist "%SERVER_SETTINGS_FILE_PATH%" (

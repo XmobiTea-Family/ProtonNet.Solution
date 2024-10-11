@@ -34,6 +34,7 @@ namespace XmobiTea.ProtonNet.Server.WebApi
             this.logger = LogManager.GetLogger(this);
 
             this.logger.Info($"Try run Proton WebApi Server name: {startupSettings.Name}");
+            this.ShowPort(startupSettings);
             this.ShowBanner();
 
             this.beanContext = this.CreateBeanContext(startupSettings);
@@ -210,8 +211,6 @@ namespace XmobiTea.ProtonNet.Server.WebApi
         /// <returns>Returns a configured ISubServer instance for HTTPS, or null if disabled.</returns>
         private ISubServer CreateHttpsServer(StartupSettings startupSettings)
         {
-            if (!startupSettings.HttpServer.Enable) return null;
-
             if (!startupSettings.HttpServer.SslConfig.Enable) return null;
 
             return new WebApiHttpsServer(startupSettings.HttpServer.Address, startupSettings.HttpServer.SslConfig.Port, this.GetTcpServerOptions(startupSettings.HttpServer.SessionConfig), this.GetSslOptions(startupSettings.HttpServer.SslConfig), this.context);
@@ -263,12 +262,34 @@ namespace XmobiTea.ProtonNet.Server.WebApi
         }
 
         /// <summary>
+        /// Display the port information in the logs.
+        /// </summary>
+        /// <param name="startupSettings"></param>
+        private void ShowPort(StartupSettings startupSettings)
+        {
+            var stringBuilder = new System.Text.StringBuilder();
+            stringBuilder.AppendLine("\tPort informations:");
+
+            {
+                stringBuilder.AppendLine("\t\tHttpServer");
+
+                if (startupSettings.HttpServer.Enable) stringBuilder.AppendLine($"\t\t\tPort: {startupSettings.HttpServer.Port}");
+                else stringBuilder.AppendLine($"\t\t\tPort: disabled");
+
+                if (startupSettings.HttpServer.SslConfig.Enable) stringBuilder.AppendLine($"\t\t\tSslPort: {startupSettings.HttpServer.SslConfig.Port}");
+                else stringBuilder.AppendLine($"\t\t\tSslPort: disabled");
+            }
+
+            this.logger.Info(stringBuilder.ToString());
+        }
+
+        /// <summary>
         /// Displays the startup banner in the logs.
         /// </summary>
         private void ShowBanner()
         {
             var banner =
-                "\r\n██████╗ ██████╗  ██████╗ ████████╗ ██████╗ ███╗   ██╗    ███╗   ██╗███████╗████████╗\r\n██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝██╔═══██╗████╗  ██║    ████╗  ██║██╔════╝╚══██╔══╝\r\n██████╔╝██████╔╝██║   ██║   ██║   ██║   ██║██╔██╗ ██║    ██╔██╗ ██║█████╗     ██║   \r\n██╔═══╝ ██╔══██╗██║   ██║   ██║   ██║   ██║██║╚██╗██║    ██║╚██╗██║██╔══╝     ██║   \r\n██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║ ╚████║    ██║ ╚████║███████╗   ██║   \r\n╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝  ╚═══╝    ╚═╝  ╚═══╝╚══════╝   ╚═╝   \r\n\r\n __        _______ ____    _    ____ ___   ____  _____ ______     _______ ____  \r\n \\ \\      / / ____| __ )  / \\  |  _ \\_ _| / ___|| ____|  _ \\ \\   / / ____|  _ \\ \r\n  \\ \\ /\\ / /|  _| |  _ \\ / _ \\ | |_) | |  \\___ \\|  _| | |_) \\ \\ / /|  _| | |_) |\r\n   \\ V  V / | |___| |_) / ___ \\|  __/| |   ___) | |___|  _ < \\ V / | |___|  _ < \r\n    \\_/\\_/  |_____|____/_/   \\_\\_|  |___| |____/|_____|_| \\_\\ \\_/  |_____|_| \\_\\\r\n                                                                                \r\n\r\n                Powered by XmobiTea Family\r\n                https://xmobitea.com\r\n";
+                "\r\n██████╗ ██████╗  ██████╗ ████████╗ ██████╗ ███╗   ██╗    ███╗   ██╗███████╗████████╗\r\n██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝██╔═══██╗████╗  ██║    ████╗  ██║██╔════╝╚══██╔══╝\r\n██████╔╝██████╔╝██║   ██║   ██║   ██║   ██║██╔██╗ ██║    ██╔██╗ ██║█████╗     ██║   \r\n██╔═══╝ ██╔══██╗██║   ██║   ██║   ██║   ██║██║╚██╗██║    ██║╚██╗██║██╔══╝     ██║   \r\n██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║ ╚████║    ██║ ╚████║███████╗   ██║   \r\n╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝  ╚═══╝    ╚═╝  ╚═══╝╚══════╝   ╚═╝   \r\n\r\n __        _______ ____    _    ____ ___   ____  _____ ______     _______ ____  \r\n \\ \\      / / ____| __ )  / \\  |  _ \\_ _| / ___|| ____|  _ \\ \\   / / ____|  _ \\ \r\n  \\ \\ /\\ / /|  _| |  _ \\ / _ \\ | |_) | |  \\___ \\|  _| | |_) \\ \\ / /|  _| | |_) |\r\n   \\ V  V / | |___| |_) / ___ \\|  __/| |   ___) | |___|  _ < \\ V / | |___|  _ < \r\n    \\_/\\_/  |_____|____/_/   \\_\\_|  |___| |____/|_____|_| \\_\\ \\_/  |_____|_| \\_\\\r\n                                                                                \r\n\r\n                Powered by ProtonNet\r\n                https://protonnetserver.com\r\n";
 
             this.logger.Info($"\n\n{banner}\n");
 

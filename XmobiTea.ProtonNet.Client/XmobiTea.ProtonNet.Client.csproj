@@ -13,23 +13,23 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Description>XmobiTea.ProtonNet.Client is the client-side implementation for .NET, providing the necessary tools and functionality to interact with ProtonNet services. It allows .NET applications to efficiently communicate with ProtonNet servers, facilitating seamless client-server integration.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\XmobiTea.Bean\XmobiTea.Bean.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Binary.MessagePack\XmobiTea.Binary.MessagePack.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Binary.SimplePack\XmobiTea.Binary.SimplePack.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Binary\XmobiTea.Binary.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Crypto\XmobiTea.Crypto.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Data.Converter\XmobiTea.Data.Converter.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Data\XmobiTea.Data.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Logging\XmobiTea.Logging.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.ProtonNetClient\XmobiTea.ProtonNetClient.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.ProtonNetCommon\XmobiTea.ProtonNetCommon.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.ProtonNet.Networking\XmobiTea.ProtonNet.Networking.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.ProtonNet.RpcProtocol\XmobiTea.ProtonNet.RpcProtocol.csproj" Version="1.0.3" />
+		<ProjectReference Include="..\XmobiTea.Bean\XmobiTea.Bean.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Binary.MessagePack\XmobiTea.Binary.MessagePack.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Binary.SimplePack\XmobiTea.Binary.SimplePack.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Binary\XmobiTea.Binary.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Crypto\XmobiTea.Crypto.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Data.Converter\XmobiTea.Data.Converter.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Data\XmobiTea.Data.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Logging\XmobiTea.Logging.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.ProtonNetClient\XmobiTea.ProtonNetClient.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.ProtonNetCommon\XmobiTea.ProtonNetCommon.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Networking\XmobiTea.ProtonNet.Networking.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.RpcProtocol\XmobiTea.ProtonNet.RpcProtocol.csproj" Version="1.0.4" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net46' Or '$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or '$(TargetFramework)' == 'net47' Or '$(TargetFramework)' == 'net471' Or '$(TargetFramework)' == 'net472' Or '$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'net481'">

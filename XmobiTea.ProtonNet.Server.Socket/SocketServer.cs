@@ -36,6 +36,7 @@ namespace XmobiTea.ProtonNet.Server.Socket
             this.logger = LogManager.GetLogger(this);
 
             this.logger.Info($"Try run Proton Socket Server name: {startupSettings.Name}");
+            this.ShowPort(startupSettings);
             this.ShowBanner();
 
             this.beanContext = this.CreateBeanContext(startupSettings);
@@ -261,6 +262,8 @@ namespace XmobiTea.ProtonNet.Server.Socket
         /// <returns>An instance of <see cref="IServer"/> representing the TCP server, or null if not enabled.</returns>
         private IServer CreateSocketTcpServer(StartupSettings startupSettings)
         {
+            if (startupSettings.TcpServer == null) return null;
+
             if (!startupSettings.TcpServer.Enable) return null;
 
             return new SocketTcpServer(startupSettings.TcpServer.Address, startupSettings.TcpServer.Port, this.GetTcpServerOptions(startupSettings.TcpServer.SessionConfig), this.context);
@@ -273,7 +276,8 @@ namespace XmobiTea.ProtonNet.Server.Socket
         /// <returns>An instance of <see cref="IServer"/> representing the SSL TCP server, or null if not enabled.</returns>
         private IServer CreateSocketSslServer(StartupSettings startupSettings)
         {
-            if (!startupSettings.TcpServer.Enable) return null;
+            if (startupSettings.TcpServer == null) return null;
+
             if (!startupSettings.TcpServer.SslConfig.Enable) return null;
 
             return new SocketSslServer(startupSettings.TcpServer.Address, startupSettings.TcpServer.SslConfig.Port, this.GetTcpServerOptions(startupSettings.TcpServer.SessionConfig), this.GetSslOptions(startupSettings.TcpServer.SslConfig), this.context);
@@ -286,6 +290,8 @@ namespace XmobiTea.ProtonNet.Server.Socket
         /// <returns>An instance of <see cref="IServer"/> representing the UDP server, or null if not enabled.</returns>
         private IServer CreateSocketUdpServer(StartupSettings startupSettings)
         {
+            if (startupSettings.UdpServer == null) return null;
+
             if (!startupSettings.UdpServer.Enable) return null;
 
             return new SocketUdpServer(startupSettings.UdpServer.Address, startupSettings.UdpServer.Port, this.GetUdpServerOptions(startupSettings.UdpServer.SessionConfig), this.context);
@@ -298,6 +304,8 @@ namespace XmobiTea.ProtonNet.Server.Socket
         /// <returns>An instance of <see cref="IServer"/> representing the WebSocket server, or null if not enabled.</returns>
         private IServer CreateSocketWsServer(StartupSettings startupSettings)
         {
+            if (startupSettings.WebSocketServer == null) return null;
+
             if (!startupSettings.WebSocketServer.Enable) return null;
 
             return new SocketWsServer(startupSettings.WebSocketServer.Address, startupSettings.WebSocketServer.Port, this.GetTcpServerOptions(startupSettings.WebSocketServer.SessionConfig), this.context);
@@ -310,6 +318,8 @@ namespace XmobiTea.ProtonNet.Server.Socket
         /// <returns>An instance of <see cref="IServer"/> representing the SSL WebSocket server, or null if not enabled.</returns>
         private IServer CreateSocketWssServer(StartupSettings startupSettings)
         {
+            if (startupSettings.WebSocketServer == null) return null;
+
             if (!startupSettings.WebSocketServer.Enable) return null;
             if (!startupSettings.WebSocketServer.SslConfig.Enable) return null;
 
@@ -360,12 +370,51 @@ namespace XmobiTea.ProtonNet.Server.Socket
         }
 
         /// <summary>
+        /// Display the port information in the logs.
+        /// </summary>
+        /// <param name="startupSettings"></param>
+        private void ShowPort(StartupSettings startupSettings)
+        {
+            var stringBuilder = new System.Text.StringBuilder();
+            stringBuilder.AppendLine("\tPort informations:");
+
+            {
+                stringBuilder.AppendLine("\t\tTcpServer");
+
+                if (startupSettings.TcpServer.Enable) stringBuilder.AppendLine($"\t\t\tPort: {startupSettings.TcpServer.Port}");
+                else stringBuilder.AppendLine($"\t\t\tPort: disabled");
+
+                if (startupSettings.TcpServer.SslConfig.Enable) stringBuilder.AppendLine($"\t\t\tSslPort: {startupSettings.TcpServer.SslConfig.Port}");
+                else stringBuilder.AppendLine($"\t\t\tSslPort: disabled");
+            }
+
+            {
+                stringBuilder.AppendLine("\t\tUdpServer");
+
+                if (startupSettings.UdpServer.Enable) stringBuilder.AppendLine($"\t\t\tPort: {startupSettings.UdpServer.Port}");
+                else stringBuilder.AppendLine($"\t\t\tPort: disabled");
+            }
+
+            {
+                stringBuilder.AppendLine("\t\tWebSocketServer");
+
+                if (startupSettings.WebSocketServer.Enable) stringBuilder.AppendLine($"\t\t\tPort: {startupSettings.WebSocketServer.Port}");
+                else stringBuilder.AppendLine($"\t\t\tPort: disabled");
+
+                if (startupSettings.WebSocketServer.SslConfig.Enable) stringBuilder.AppendLine($"\t\t\tSslPort: {startupSettings.WebSocketServer.SslConfig.Port}");
+                else stringBuilder.AppendLine($"\t\t\tSslPort: disabled");
+            }
+
+            this.logger.Info(stringBuilder.ToString());
+        }
+
+        /// <summary>
         /// Displays the server banner in the logs.
         /// </summary>
         private void ShowBanner()
         {
             var banner =
-                "\r\n██████╗ ██████╗  ██████╗ ████████╗ ██████╗ ███╗   ██╗    ███╗   ██╗███████╗████████╗\r\n██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝██╔═══██╗████╗  ██║    ████╗  ██║██╔════╝╚══██╔══╝\r\n██████╔╝██████╔╝██║   ██║   ██║   ██║   ██║██╔██╗ ██║    ██╔██╗ ██║█████╗     ██║   \r\n██╔═══╝ ██╔══██╗██║   ██║   ██║   ██║   ██║██║╚██╗██║    ██║╚██╗██║██╔══╝     ██║   \r\n██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║ ╚████║    ██║ ╚████║███████╗   ██║   \r\n╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝  ╚═══╝    ╚═╝  ╚═══╝╚══════╝   ╚═╝   \r\n\r\n  ____   ___   ____ _  _______ _____   ____  _____ ______     _______ ____  \r\n / ___| / _ \\ / ___| |/ / ____|_   _| / ___|| ____|  _ \\ \\   / / ____|  _ \\ \r\n \\___ \\| | | | |   | ' /|  _|   | |   \\___ \\|  _| | |_) \\ \\ / /|  _| | |_) |\r\n  ___) | |_| | |___| . \\| |___  | |    ___) | |___|  _ < \\ V / | |___|  _ < \r\n |____/ \\___/ \\____|_|\\_\\_____| |_|   |____/|_____|_| \\_\\ \\_/  |_____|_| \\_\\\r\n                                                                            \r\n\r\n                Powered by XmobiTea Family\r\n                https://xmobitea.com\r\n";
+                "\r\n██████╗ ██████╗  ██████╗ ████████╗ ██████╗ ███╗   ██╗    ███╗   ██╗███████╗████████╗\r\n██╔══██╗██╔══██╗██╔═══██╗╚══██╔══╝██╔═══██╗████╗  ██║    ████╗  ██║██╔════╝╚══██╔══╝\r\n██████╔╝██████╔╝██║   ██║   ██║   ██║   ██║██╔██╗ ██║    ██╔██╗ ██║█████╗     ██║   \r\n██╔═══╝ ██╔══██╗██║   ██║   ██║   ██║   ██║██║╚██╗██║    ██║╚██╗██║██╔══╝     ██║   \r\n██║     ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║ ╚████║    ██║ ╚████║███████╗   ██║   \r\n╚═╝     ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝  ╚═══╝    ╚═╝  ╚═══╝╚══════╝   ╚═╝   \r\n\r\n  ____   ___   ____ _  _______ _____   ____  _____ ______     _______ ____  \r\n / ___| / _ \\ / ___| |/ / ____|_   _| / ___|| ____|  _ \\ \\   / / ____|  _ \\ \r\n \\___ \\| | | | |   | ' /|  _|   | |   \\___ \\|  _| | |_) \\ \\ / /|  _| | |_) |\r\n  ___) | |_| | |___| . \\| |___  | |    ___) | |___|  _ < \\ V / | |___|  _ < \r\n |____/ \\___/ \\____|_|\\_\\_____| |_|   |____/|_____|_| \\_\\ \\_/  |_____|_| \\_\\\r\n                                                                            \r\n\r\n                Powered by ProtonNet\r\n                https://protonnetserver.com\r\n";
 
             this.logger.Info($"\n\n{banner}\n");
         }

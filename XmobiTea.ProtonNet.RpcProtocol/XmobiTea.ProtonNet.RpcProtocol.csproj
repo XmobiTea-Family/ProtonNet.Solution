@@ -13,16 +13,16 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Description>XmobiTea.ProtonNet.RpcProtocol is responsible for encoding, decoding, and transforming XmobiTea.ProtonNet.Networking objects into the specific objects required by the server and client. This ensures seamless communication and interaction between different components within the ProtonNet framework.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\XmobiTea.Binary\XmobiTea.Binary.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Crypto.Aes\XmobiTea.Crypto.Aes.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Crypto\XmobiTea.Crypto.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.Data\XmobiTea.Data.csproj" Version="1.0.3" />
-		<ProjectReference Include="..\XmobiTea.ProtonNet.Networking\XmobiTea.ProtonNet.Networking.csproj" Version="1.0.3" />
+		<ProjectReference Include="..\XmobiTea.Binary\XmobiTea.Binary.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Crypto.Aes\XmobiTea.Crypto.Aes.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Crypto\XmobiTea.Crypto.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.Data\XmobiTea.Data.csproj" Version="1.0.4" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Networking\XmobiTea.ProtonNet.Networking.csproj" Version="1.0.4" />
 	</ItemGroup>
 	
 	<ItemGroup>

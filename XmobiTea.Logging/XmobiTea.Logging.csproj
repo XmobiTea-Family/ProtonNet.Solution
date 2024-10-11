@@ -13,7 +13,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Description>XmobiTea.Logging is an interface designed to work with various logging services, providing a flexible foundation for implementing custom logging solutions. It allows developers to easily integrate different logging frameworks into their applications, ensuring consistent and effective logging practices.</Description>
 	</PropertyGroup>
 

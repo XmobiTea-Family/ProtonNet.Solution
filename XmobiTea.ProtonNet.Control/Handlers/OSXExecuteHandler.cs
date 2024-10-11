@@ -46,7 +46,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// <param name="instance">The proton instance to debug.</param>
         /// <param name="controlAgentPath">The path to the control agent executable.</param>
         /// <param name="args">Arguments for the debug command.</param>
-        protected override void OnExecuteDebug(ProtonInstance instance, string controlAgentPath, string args)
+        protected override void OnExecuteDebug(ProtonNetInstance instance, string controlAgentPath, string args)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// </summary>
         /// <param name="instance">The proton instance to start.</param>
         /// <param name="onDone">Callback to be invoked when the operation is done.</param>
-        protected override void OnExecuteStart(ProtonInstance instance, System.Action<bool> onDone)
+        protected override void OnExecuteStart(ProtonNetInstance instance, System.Action<bool> onDone)
         {
             var servicePath = LibraryUtils.CombineFromRootPath("applications", instance.BinPath, "__service");
 
@@ -97,7 +97,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// <param name="onDone">Callback to be invoked when the operation is done.</param>
         protected override void OnExecuteStop(System.Action<bool> onDone)
         {
-            var instance = ProtonServerSettingsUtils.GetInstance(this.name);
+            var instance = ProtonNetServerSettingsUtils.GetInstance(this.name);
             var servicePath = LibraryUtils.CombineFromRootPath("applications", instance.BinPath, "__service");
 
             if (!System.IO.Directory.Exists(servicePath))
@@ -128,7 +128,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// <param name="instance">The proton instance to install.</param>
         /// <param name="controlAgentPath">The path to the control agent executable.</param>
         /// <param name="args">Arguments for the install command.</param>
-        protected override void OnExecuteInstall(ProtonInstance instance, string controlAgentPath, string args)
+        protected override void OnExecuteInstall(ProtonNetInstance instance, string controlAgentPath, string args)
         {
             var servicePath = LibraryUtils.CombineFromRootPath("applications", instance.BinPath, "__service");
             if (System.IO.Directory.Exists(servicePath))
@@ -236,7 +236,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         {
             this.OnExecuteStop(success =>
             {
-                var instance = ProtonServerSettingsUtils.GetInstance(this.name);
+                var instance = ProtonNetServerSettingsUtils.GetInstance(this.name);
                 var servicePath = LibraryUtils.CombineFromRootPath("applications", instance.BinPath, "__service");
 
                 if (!System.IO.Directory.Exists(servicePath))
@@ -255,7 +255,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// </summary>
         protected override void OnExecuteStatus()
         {
-            var instance = ProtonServerSettingsUtils.GetInstance(this.name);
+            var instance = ProtonNetServerSettingsUtils.GetInstance(this.name);
             var processId = this.GetProcessId(instance);
 
             if (string.IsNullOrEmpty(processId))
@@ -291,7 +291,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// </summary>
         /// <param name="instance">The proton instance to get the process ID for.</param>
         /// <returns>The process ID if it exists; otherwise, null.</returns>
-        private string GetProcessId(ProtonInstance instance)
+        private string GetProcessId(ProtonNetInstance instance)
         {
             var pidFilePath = LibraryUtils.CombineFromRootPath("applications", instance.BinPath, "__service", "instance.pid");
 

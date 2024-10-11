@@ -13,12 +13,12 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Description>XmobiTea.ProtonNet.Server.WebApi is designed to create a server and listen for web API requests. It provides the necessary infrastructure to handle HTTP requests, enabling the development of web services and APIs within the ProtonNet framework.</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\XmobiTea.ProtonNet.Server\XmobiTea.ProtonNet.Server.csproj" Version="1.0.3" />
+		<ProjectReference Include="..\XmobiTea.ProtonNet.Server\XmobiTea.ProtonNet.Server.csproj" Version="1.0.4" />
 	</ItemGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' == 'net46' Or '$(TargetFramework)' == 'net461' Or '$(TargetFramework)' == 'net462' Or '$(TargetFramework)' == 'net47' Or '$(TargetFramework)' == 'net471' Or '$(TargetFramework)' == 'net472' Or '$(TargetFramework)' == 'net48' Or '$(TargetFramework)' == 'net481'">

@@ -13,7 +13,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Description>XmobiTea.Data includes GNData, which features GNHashtable and GNArray, designed to facilitate the serialization of data into various formats and the deserialization of data back into objects. This makes it easier to manage and transfer complex data structures efficiently.</Description>
 	</PropertyGroup>
 

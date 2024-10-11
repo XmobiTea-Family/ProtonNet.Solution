@@ -111,7 +111,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// </summary>
         private void ExecuteDebug()
         {
-            var instance = ProtonServerSettingsUtils.GetInstance(this.name);
+            var instance = ProtonNetServerSettingsUtils.GetInstance(this.name);
 
             if (!instance.Enable)
             {
@@ -146,7 +146,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// </summary>
         private void ExecuteStart()
         {
-            var instance = ProtonServerSettingsUtils.GetInstance(this.name);
+            var instance = ProtonNetServerSettingsUtils.GetInstance(this.name);
 
             if (!instance.Enable)
             {
@@ -191,7 +191,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// </summary>
         private void ExecuteInstall()
         {
-            var instance = ProtonServerSettingsUtils.GetInstance(this.name);
+            var instance = ProtonNetServerSettingsUtils.GetInstance(this.name);
 
             if (!instance.Enable)
             {
@@ -291,14 +291,14 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// <param name="instance">The proton instance to debug.</param>
         /// <param name="controlAgentPath">The path to the control agent.</param>
         /// <param name="args">The arguments for the control agent.</param>
-        protected virtual void OnExecuteDebug(ProtonInstance instance, string controlAgentPath, string args) { }
+        protected virtual void OnExecuteDebug(ProtonNetInstance instance, string controlAgentPath, string args) { }
 
         /// <summary>
         /// Method to handle the start command, to be overridden by derived classes.
         /// </summary>
         /// <param name="instance">The proton instance to start.</param>
         /// <param name="onDone">Callback to execute after starting.</param>
-        protected virtual void OnExecuteStart(ProtonInstance instance, Action<bool> onDone) { }
+        protected virtual void OnExecuteStart(ProtonNetInstance instance, Action<bool> onDone) { }
 
         /// <summary>
         /// Method to handle the stop command, to be overridden by derived classes.
@@ -312,7 +312,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// <param name="instance">The proton instance to install.</param>
         /// <param name="controlAgentPath">The path to the control agent.</param>
         /// <param name="args">The arguments for the control agent.</param>
-        protected virtual void OnExecuteInstall(ProtonInstance instance, string controlAgentPath, string args) { }
+        protected virtual void OnExecuteInstall(ProtonNetInstance instance, string controlAgentPath, string args) { }
 
         /// <summary>
         /// Method to handle the uninstall command, to be overridden by derived classes.

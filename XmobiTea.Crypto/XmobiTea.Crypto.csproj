@@ -13,7 +13,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Description>XmobiTea.Crypto provides an interface designed for implementing cryptographic operations, offering a structured foundation for encryption and decryption processes. While it doesn't include concrete implementations, it serves as a flexible blueprint for integrating cryptographic functionalities into your applications.</Description>
 	</PropertyGroup>
 

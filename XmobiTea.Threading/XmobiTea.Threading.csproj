@@ -13,7 +13,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>ICON.png</PackageIcon>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Description>XmobiTea.Threading is designed to manage processes, providing the tools necessary to efficiently handle threading and concurrency within your application. It ensures that multiple processes are managed effectively, allowing for smooth and coordinated execution in a multithreaded environment.</Description>
 	</PropertyGroup>
 

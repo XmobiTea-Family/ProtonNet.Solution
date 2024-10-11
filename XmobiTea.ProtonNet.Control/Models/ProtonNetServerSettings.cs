@@ -5,7 +5,7 @@ namespace XmobiTea.ProtonNet.Control.Models
     /// <summary>
     /// Represents the settings for a Proton server instance.
     /// </summary>
-    class ProtonServerSettings
+    class ProtonNetServerSettings
     {
         /// <summary>
         /// Gets or sets the target runtime environment for the Proton server.
@@ -20,7 +20,7 @@ namespace XmobiTea.ProtonNet.Control.Models
         /// <summary>
         /// Gets or sets the list of Proton instances configured for the server.
         /// </summary>
-        public List<ProtonInstance> Instances { get; set; }
+        public List<ProtonNetInstance> Instances { get; set; }
 
     }
 

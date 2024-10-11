@@ -7,6 +7,7 @@ using XmobiTea.Logging;
 using XmobiTea.ProtonNet.Server.WebApi.Controllers;
 using XmobiTea.ProtonNet.Server.WebApi.Controllers.Attribute;
 using XmobiTea.ProtonNet.Server.WebApi.Controllers.Render;
+using XmobiTea.ProtonNet.Server.WebApi.Controllers.Support;
 using XmobiTea.ProtonNet.Server.WebApi.Exceptions;
 using XmobiTea.ProtonNet.Server.WebApi.Extensions;
 using XmobiTea.ProtonNet.Server.WebApi.Helper;
@@ -176,6 +177,12 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
         private System.Collections.Generic.IList<WebApiController> webApiControllerLst { get; }
 
         /// <summary>
+        /// A list of final Web API controller response handlers
+        /// that process responses before sending them back to the client.
+        /// </summary>
+        private System.Collections.Generic.IList<IBeforeWebApiControllerResponse> beforeWebApiControllerResponseLst { get; }
+
+        /// <summary>
         /// Dictionary tracking the amount of requests received per session per second.
         /// </summary>
         private System.Collections.Concurrent.ConcurrentDictionary<IWebApiSession, SessionPerSecondAmount> sessionReceiveAtTimeAmountDict { get; }
@@ -257,6 +264,8 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
             this.middlewareMethodController = new MethodController(string.Empty, string.Empty);
 
             this.webApiControllerLst = new System.Collections.Generic.List<WebApiController>();
+            this.beforeWebApiControllerResponseLst = new System.Collections.Generic.List<IBeforeWebApiControllerResponse>();
+
             this.sessionReceiveAtTimeAmountDict = new System.Collections.Concurrent.ConcurrentDictionary<IWebApiSession, SessionPerSecondAmount>();
 
             this.staticCache = new StaticCache();
@@ -336,6 +345,10 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
                     this.AddMethodControllerFor(webApiController, methodInfo, DetectUrlUtils.GetSinglePrefixLst(httpMethodAttribute, routeAttribute), httpMethodType);
                 }
             }
+
+            if (webApiController is IBeforeWebApiControllerResponse beforeWebApiControllerResponse)
+                this.beforeWebApiControllerResponseLst.Add(beforeWebApiControllerResponse);
+
         }
 
         /// <summary>
@@ -851,7 +864,14 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
             var pendingRequest = System.Threading.Interlocked.Increment(ref this.pendingRequest);
             if (pendingRequest > this.maxPendingRequest)
             {
-                session.SendResponseAsync(new ProtonNetCommon.HttpResponse().MakeErrorResponse(StatusCode.TooManyRequests));
+                var response = new ProtonNetCommon.HttpResponse().MakeErrorResponse(StatusCode.TooManyRequests);
+
+                foreach (var c in this.beforeWebApiControllerResponseLst)
+                {
+                    c.OnPostControllerResponse(session, request, response);
+                }
+
+                session.SendResponseAsync(response);
 
                 System.Threading.Interlocked.Decrement(ref this.pendingRequest);
 
@@ -876,7 +896,14 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
             var sessionAmountInCurrentSecond = System.Threading.Interlocked.Increment(ref sessionPerSecondAmount.AmountInCurrentSecond);
             if (sessionAmountInCurrentSecond > this.maxSessionRequestPerSecond)
             {
-                session.SendResponseAsync(new ProtonNetCommon.HttpResponse().MakeErrorResponse(StatusCode.TooManyRequests));
+                var response = new ProtonNetCommon.HttpResponse().MakeErrorResponse(StatusCode.TooManyRequests);
+
+                foreach (var c in this.beforeWebApiControllerResponseLst)
+                {
+                    c.OnPostControllerResponse(session, request, response);
+                }
+
+                session.SendResponseAsync(response);
 
                 this.logger.Warn($"buffer drop because max request per session per second, current: {sessionAmountInCurrentSecond}, maxSessionRequestPerSecond: {this.maxSessionRequestPerSecond}");
                 return;
@@ -888,7 +915,14 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
             {
                 sessionPendingRequest = System.Threading.Interlocked.Decrement(ref sessionPerSecondAmount.PendingRequest);
 
-                session.SendResponseAsync(new ProtonNetCommon.HttpResponse().MakeErrorResponse(StatusCode.TooManyRequests));
+                var response = new ProtonNetCommon.HttpResponse().MakeErrorResponse(StatusCode.TooManyRequests);
+
+                foreach (var c in this.beforeWebApiControllerResponseLst)
+                {
+                    c.OnPostControllerResponse(session, request, response);
+                }
+
+                session.SendResponseAsync(response);
 
                 this.logger.Warn($"buffer drop because max pending request, current: {sessionPendingRequest}, maxSessionPendingRequest: {this.maxSessionPendingRequest}");
                 return;
@@ -920,7 +954,14 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
 
                 if (localMethodController == null)
                 {
-                    session.SendResponseAsync(new ProtonNetCommon.HttpResponse().MakeErrorResponse(StatusCode.NotFound));
+                    var response = new ProtonNetCommon.HttpResponse().MakeErrorResponse(StatusCode.NotFound);
+
+                    foreach (var c in this.beforeWebApiControllerResponseLst)
+                    {
+                        c.OnPostControllerResponse(session, request, response);
+                    }
+
+                    session.SendResponseAsync(response);
 
                     System.Threading.Interlocked.Decrement(ref pendingRequest);
                     System.Threading.Interlocked.Decrement(ref sessionPerSecondAmount.PendingRequest);
@@ -960,7 +1001,15 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
                 response = await this.InvokeFunctionInternal(session, request, middlewareMethodControllerLst, singlePrefixLst, queryLst, methodController).ConfigureAwait(false);
             }
 
-            if (response != null) session.SendResponseAsync(response);
+            if (response != null)
+            {
+                foreach (var c in this.beforeWebApiControllerResponseLst)
+                {
+                    c.OnPostControllerResponse(session, request, response);
+                }
+
+                session.SendResponseAsync(response);
+            }
 
             System.Threading.Interlocked.Decrement(ref this.pendingRequest);
 

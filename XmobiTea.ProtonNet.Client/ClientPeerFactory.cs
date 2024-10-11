@@ -370,7 +370,7 @@ namespace XmobiTea.ProtonNet.Client
             }
             catch (System.Exception exception)
             {
-                this.logger.Error("Service ClientPeerFactory", exception);
+                this.logger.Fatal("Service ClientPeerFactory", exception);
             }
         }
 

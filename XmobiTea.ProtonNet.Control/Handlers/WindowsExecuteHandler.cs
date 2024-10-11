@@ -51,7 +51,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// <param name="instance">The proton instance to debug.</param>
         /// <param name="controlAgentPath">The path to the control agent executable.</param>
         /// <param name="args">Arguments for the debug command.</param>
-        protected override void OnExecuteDebug(ProtonInstance instance, string controlAgentPath, string args)
+        protected override void OnExecuteDebug(ProtonNetInstance instance, string controlAgentPath, string args)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// </summary>
         /// <param name="instance">The proton instance to start.</param>
         /// <param name="onDone">Callback to be invoked when the operation is done.</param>
-        protected override void OnExecuteStart(ProtonInstance instance, Action<bool> onDone)
+        protected override void OnExecuteStart(ProtonNetInstance instance, Action<bool> onDone)
         {
             var startInfo = new ProcessStartInfo("sc", $"start \"{ProtonAgentControl} - {this.name}\"")
             {
@@ -151,7 +151,7 @@ namespace XmobiTea.ProtonNet.Control.Handlers
         /// <param name="instance">The proton instance to install.</param>
         /// <param name="controlAgentPath">The path to the control agent executable.</param>
         /// <param name="args">Arguments for the install command.</param>
-        protected override void OnExecuteInstall(ProtonInstance instance, string controlAgentPath, string args)
+        protected override void OnExecuteInstall(ProtonNetInstance instance, string controlAgentPath, string args)
         {
             var startInfo = new ProcessStartInfo("sc", $"create \"{ProtonAgentControl} - {this.name}\" start={instance.StartupType} error=normal binpath=\"\\\"{controlAgentPath}\\\" {args}\"")
             {
