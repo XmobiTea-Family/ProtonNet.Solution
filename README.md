@@ -1,7 +1,4 @@
-﻿
-# Proton Net Server
-
-![GitHub release](https://img.shields.io/github/release/XmobiTea-Family/ProtonNetSolution.svg) ![License](https://img.shields.io/github/license/XmobiTea-Family/ProtonNetSolution) [![GitHub star chart](https://img.shields.io/github/stars/XmobiTea-Family/ProtonNetSolution?style=social)](https://star-history.com/#XmobiTea-Family/ProtonNetSolution)
+﻿![GitHub release](https://img.shields.io/github/release/XmobiTea-Family/ProtonNetSolution.svg) ![License](https://img.shields.io/github/license/XmobiTea-Family/ProtonNetSolution) [![GitHub star chart](https://img.shields.io/github/stars/XmobiTea-Family/ProtonNetSolution?style=social)](https://star-history.com/#XmobiTea-Family/ProtonNetSolution)
 
 ## I. Introduction
 
