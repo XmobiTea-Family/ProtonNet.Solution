@@ -171,7 +171,7 @@ public class ProtonNetworkBehaviour : MonoBehaviour {
 
 ## VI. Documentation and Examples
 
-[ProtonNet Documentation](https://docs.protonnetserver.com)
+[ProtonNet Documentation](https://docs.protonserver.net)
 
 For more detailed examples, check out [ProtonNet Examples](https://github.com/XmobiTea-Family/ProtonNet.Solution.Examples).
 
@@ -181,6 +181,6 @@ Use [ProtonNet Control](https://github.com/XmobiTea-Family/ProtonNet.Solution.Co
 
 ## VIII. Need Help?
 
-- If you encounter any issues, feel free to share them on [ProtonNet Discussions](https://discussions.protonnetserver.com) or contact me via email at changx.develop@gmail.com.
+- If you encounter any issues, feel free to share them on [ProtonNet Discussions](https://discussions.protonserver.net) or contact me via email at changx.develop@gmail.com.
 
 **Enjoy your development with ProtonNet!**
