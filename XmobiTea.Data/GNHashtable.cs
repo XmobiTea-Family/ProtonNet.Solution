@@ -110,6 +110,7 @@ namespace XmobiTea.Data
                 else if (value is IGNData gnData) stringBuilder.Append("\"" + c.Key.ToString() + "\"" + ":" + gnData.ToString());
                 else if (value is string valueStr) stringBuilder.Append("\"" + c.Key.ToString() + "\"" + ":" + "\"" + valueStr + "\"");
                 else if (value is bool boolValue) stringBuilder.Append("\"" + c.Key.ToString() + "\"" + ":" + boolValue.ToString().ToLower());
+                else if (value is byte[] binaryValue) stringBuilder.Append("\"" + c.Key.ToString() + "\"" + ":binary|" + binaryValue);
                 else stringBuilder.Append("\"" + c.Key.ToString() + "\"" + ":" + value);
             }
 

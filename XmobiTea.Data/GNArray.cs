@@ -132,6 +132,7 @@ namespace XmobiTea.Data
                 else if (value is IGNData gnData) stringBuilder.Append(gnData.ToString());
                 else if (value is string valueStr) stringBuilder.Append("\"" + valueStr + "\"");
                 else if (value is bool boolValue) stringBuilder.Append(boolValue.ToString().ToLower());
+                else if (value is byte[] binaryValue) stringBuilder.Append("binary|" + binaryValue);
                 else stringBuilder.Append(value);
             }
 

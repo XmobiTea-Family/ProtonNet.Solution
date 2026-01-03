@@ -48,11 +48,15 @@ namespace XmobiTea.Data.Converter.Models
         private IDataMemberFieldInfoTypeMapper dataMemberFieldInfoMapper { get; }
 
         private System.Type typeOfByte { get; }
+        private System.Type typeOfBinary { get; }
         private System.Type typeOfSByte { get; }
         private System.Type typeOfShort { get; }
+        private System.Type typeOfUShort { get; }
         private System.Type typeOfInt { get; }
+        private System.Type typeOfUInt { get; }
         private System.Type typeOfFloat { get; }
         private System.Type typeOfLong { get; }
+        private System.Type typeOfULong { get; }
         private System.Type typeOfDouble { get; }
         private System.Type typeOfBool { get; }
         private System.Type typeOfString { get; }
@@ -71,12 +75,16 @@ namespace XmobiTea.Data.Converter.Models
         /// <param name="dataMemberFieldInfoMapper">The mapper to retrieve field metadata information.</param>
         public DeserializeConverter(IDataMemberFieldInfoTypeMapper dataMemberFieldInfoMapper)
         {
+            this.typeOfBinary = typeof(byte[]);
             this.typeOfByte = typeof(byte);
             this.typeOfSByte = typeof(sbyte);
-            this.typeOfShort = typeof(short);
+            this.typeOfShort = typeof(short); 
+            this.typeOfUShort = typeof(ushort);
             this.typeOfInt = typeof(int);
+            this.typeOfUInt = typeof(uint);
             this.typeOfFloat = typeof(float);
             this.typeOfLong = typeof(long);
+            this.typeOfULong = typeof(ulong);
             this.typeOfDouble = typeof(double);
             this.typeOfBool = typeof(bool);
             this.typeOfString = typeof(string);
@@ -146,8 +154,16 @@ namespace XmobiTea.Data.Converter.Models
 
             if (lastValue != null)
             {
-                if (declaredField.FieldInfo != null) declaredField.FieldInfo.SetValue(answer, lastValue);
-                else if (declaredField.PropertyInfo != null) declaredField.PropertyInfo.SetValue(answer, lastValue);
+                if (declaredField.FieldInfo != null)
+                {
+                    if (declaredField.FieldInfo.FieldType.IsEnum) declaredField.FieldInfo.SetValue(answer, System.Enum.Parse(declaredField.FieldInfo.FieldType, lastValue as string, true));
+                    else declaredField.FieldInfo.SetValue(answer, lastValue);
+                }
+                else if (declaredField.PropertyInfo != null)
+                {
+                    if (declaredField.PropertyInfo.PropertyType.IsEnum) declaredField.PropertyInfo.SetValue(answer, System.Enum.Parse(declaredField.PropertyInfo.PropertyType, lastValue as string, true));
+                    else declaredField.PropertyInfo.SetValue(answer, lastValue);
+                }
             }
         }
 
@@ -229,6 +245,7 @@ namespace XmobiTea.Data.Converter.Models
             object lastValue;
 
             if (value == null) lastValue = declaredField.DefaultValue;
+            else if (value is byte[]) lastValue = value;
             else if (value is GNArray) lastValue = value;
             else if (value is System.Collections.ICollection) lastValue = value;
             else throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: TypeInvalid, this data must is GNArray, but this data is {value.GetType()}");
@@ -245,7 +262,12 @@ namespace XmobiTea.Data.Converter.Models
                     var requireMinLength = declaredField.MinLength.GetValueOrDefault();
                     var requireMaxLength = declaredField.MaxLength.GetValueOrDefault();
 
-                    if (lastValue is GNArray lastValueGNArray)
+                    if (lastValue is byte[] lastValueBinary)
+                    {
+                        if (requireMinLength > lastValueBinary.Length) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: GNArrayMinLength, minLength is {requireMinLength} but this dataLength is {lastValueBinary.Length}");
+                        if (requireMaxLength < lastValueBinary.Length) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: GNArrayMaxLength, maxLength is {requireMaxLength} but this dataLength is {lastValueBinary.Length}");
+                    }
+                    else if (lastValue is GNArray lastValueGNArray)
                     {
                         if (requireMinLength > lastValueGNArray.Count()) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: GNArrayMinLength, minLength is {requireMinLength} but this dataLength is {lastValueGNArray.Count()}");
                         if (requireMaxLength < lastValueGNArray.Count()) throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: GNArrayMaxLength, maxLength is {requireMaxLength} but this dataLength is {lastValueGNArray.Count()}");
@@ -262,7 +284,8 @@ namespace XmobiTea.Data.Converter.Models
             {
                 if (declaredField.FieldInfo != null)
                 {
-                    if (declaredField.Cls == this.typeOfGNArray) declaredField.FieldInfo.SetValue(answer, lastValue);
+                    if (declaredField.Cls == this.typeOfBinary) declaredField.FieldInfo.SetValue(answer, lastValue);
+                    else if (declaredField.Cls == this.typeOfGNArray) declaredField.FieldInfo.SetValue(answer, lastValue);
                     else if ((this.typeOfCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.FieldInfo.FieldType))
                         || (declaredField.FieldInfo.FieldType.IsGenericType && (declaredField.FieldInfo.FieldType.GetGenericTypeDefinition() == this.typeOfGenericCollection || declaredField.FieldInfo.FieldType.GetGenericTypeDefinition() == this.typeOfCollection))
                         || (declaredField.FieldInfo.FieldType.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericCollection || x.GetGenericTypeDefinition() == this.typeOfCollection))))
@@ -270,7 +293,8 @@ namespace XmobiTea.Data.Converter.Models
                 }
                 else if (declaredField.PropertyInfo != null)
                 {
-                    if (declaredField.Cls == this.typeOfGNArray) declaredField.PropertyInfo.SetValue(answer, lastValue);
+                    if (declaredField.Cls == this.typeOfBinary) declaredField.PropertyInfo.SetValue(answer, lastValue);
+                    else if (declaredField.Cls == this.typeOfGNArray) declaredField.PropertyInfo.SetValue(answer, lastValue);
                     else if ((this.typeOfCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType) || this.typeOfGenericCollection.IsAssignableFrom(declaredField.PropertyInfo.PropertyType))
                         || (declaredField.PropertyInfo.PropertyType.IsGenericType && (declaredField.PropertyInfo.PropertyType.GetGenericTypeDefinition() == this.typeOfGenericCollection || declaredField.PropertyInfo.PropertyType.GetGenericTypeDefinition() == this.typeOfCollection))
                         || (declaredField.PropertyInfo.PropertyType.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericCollection || x.GetGenericTypeDefinition() == this.typeOfCollection))))
@@ -286,7 +310,7 @@ namespace XmobiTea.Data.Converter.Models
             object lastValue;
 
             if (value == null) lastValue = declaredField.DefaultValue;
-            else if (DetectSupport.isNumber(value)) lastValue = value;
+            else if (DetectSupport.IsNumber(value)) lastValue = value;
             else throw new System.ArgumentException($"can not deserialize data, code: {declaredField.Code}, reason: TypeInvalid, this data must is number, but this data is {value.GetType()}");
 
             if (declaredField.ActiveConditionValid)
@@ -356,8 +380,44 @@ namespace XmobiTea.Data.Converter.Models
 
             if (lastValue != null)
             {
-                if (declaredField.FieldInfo != null) declaredField.FieldInfo.SetValue(answer, lastValue);
-                else if (declaredField.PropertyInfo != null) declaredField.PropertyInfo.SetValue(answer, lastValue);
+                if (declaredField.FieldInfo != null)
+                {
+                    if (declaredField.FieldInfo.FieldType.IsEnum)
+                    {
+                        var typeOfValue = lastValue.GetType();
+
+                        if (typeOfValue == this.typeOfByte) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.FieldInfo.FieldType, System.Convert.ToByte(lastValue)));
+                        else if (typeOfValue == this.typeOfSByte) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.FieldInfo.FieldType, System.Convert.ToSByte(lastValue)));
+                        else if (typeOfValue == this.typeOfShort) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.FieldInfo.FieldType, System.Convert.ToInt16(lastValue)));
+                        else if (typeOfValue == this.typeOfUShort) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.FieldInfo.FieldType, System.Convert.ToUInt16(lastValue)));
+                        else if (typeOfValue == this.typeOfInt) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.FieldInfo.FieldType, System.Convert.ToInt32(lastValue)));
+                        else if (typeOfValue == this.typeOfUInt) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.FieldInfo.FieldType, System.Convert.ToUInt32(lastValue)));
+                        else if (typeOfValue == this.typeOfFloat) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.FieldInfo.FieldType, System.Convert.ToSingle(lastValue)));
+                        else if (typeOfValue == this.typeOfLong) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.FieldInfo.FieldType, System.Convert.ToInt64(lastValue)));
+                        else if (typeOfValue == this.typeOfULong) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.FieldInfo.FieldType, System.Convert.ToUInt64(lastValue)));
+                        else if (typeOfValue == this.typeOfDouble) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.FieldInfo.FieldType, System.Convert.ToDouble(lastValue)));
+                    }
+                    else declaredField.FieldInfo.SetValue(answer, lastValue);
+                }
+                else if (declaredField.PropertyInfo != null)
+                {
+                    if (declaredField.PropertyInfo.PropertyType.IsEnum)
+                    {
+                        var typeOfValue = lastValue.GetType();
+
+                        if (typeOfValue == this.typeOfByte) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.PropertyInfo.PropertyType, System.Convert.ToByte(lastValue)));
+                        else if (typeOfValue == this.typeOfSByte) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.PropertyInfo.PropertyType, System.Convert.ToSByte(lastValue)));
+                        else if (typeOfValue == this.typeOfShort) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.PropertyInfo.PropertyType, System.Convert.ToInt16(lastValue)));
+                        else if (typeOfValue == this.typeOfUShort) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.PropertyInfo.PropertyType, System.Convert.ToUInt16(lastValue)));
+                        else if (typeOfValue == this.typeOfInt) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.PropertyInfo.PropertyType, System.Convert.ToInt32(lastValue)));
+                        else if (typeOfValue == this.typeOfUInt) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.PropertyInfo.PropertyType, System.Convert.ToUInt32(lastValue)));
+                        else if (typeOfValue == this.typeOfFloat) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.PropertyInfo.PropertyType, System.Convert.ToSingle(lastValue)));
+                        else if (typeOfValue == this.typeOfLong) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.PropertyInfo.PropertyType, System.Convert.ToInt64(lastValue)));
+                        else if (typeOfValue == this.typeOfULong) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.PropertyInfo.PropertyType, System.Convert.ToUInt64(lastValue)));
+                        else if (typeOfValue == this.typeOfDouble) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.PropertyInfo.PropertyType, System.Convert.ToDouble(lastValue)));
+                    }
+                    else declaredField.PropertyInfo.SetValue(answer, lastValue);
+                }
             }
         }
 
@@ -377,9 +437,12 @@ namespace XmobiTea.Data.Converter.Models
                     if (declaredField.Cls == this.typeOfByte) declaredField.FieldInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfSByte) declaredField.FieldInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfShort) declaredField.FieldInfo.SetValue(answer, lastValue);
+                    else if (declaredField.Cls == this.typeOfUShort) declaredField.FieldInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfInt) declaredField.FieldInfo.SetValue(answer, lastValue);
+                    else if (declaredField.Cls == this.typeOfUInt) declaredField.FieldInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfFloat) declaredField.FieldInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfLong) declaredField.FieldInfo.SetValue(answer, lastValue);
+                    else if (declaredField.Cls == this.typeOfULong) declaredField.FieldInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfDouble) declaredField.FieldInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfBool) declaredField.FieldInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfString) declaredField.FieldInfo.SetValue(answer, lastValue);
@@ -393,18 +456,37 @@ namespace XmobiTea.Data.Converter.Models
                         || (declaredField.FieldInfo.FieldType.IsGenericType && (declaredField.FieldInfo.FieldType.GetGenericTypeDefinition() == this.typeOfGenericCollection || declaredField.FieldInfo.FieldType.GetGenericTypeDefinition() == this.typeOfCollection))
                         || (declaredField.FieldInfo.FieldType.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericCollection || x.GetGenericTypeDefinition() == this.typeOfCollection))))
                         declaredField.FieldInfo.SetValue(answer, this.CastList(this.DeserializeArray((GNArray)lastValue, declaredField.Cls), declaredField.Cls, declaredField.FieldInfo.FieldType.IsArray));
+                    else
+                    {
+                        if (declaredField.Cls.IsEnum)
+                        {
+                            var typeOfValue = lastValue.GetType();
 
-                    else declaredField.FieldInfo.SetValue(answer, this.DeserializeObject((GNHashtable)lastValue, declaredField.Cls));
-
+                            if (typeOfValue == this.typeOfByte) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToByte(lastValue)));
+                            else if (typeOfValue == this.typeOfSByte) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToSByte(lastValue)));
+                            else if (typeOfValue == this.typeOfShort) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToInt16(lastValue)));
+                            else if (typeOfValue == this.typeOfUShort) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToUInt16(lastValue)));
+                            else if (typeOfValue == this.typeOfInt) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToInt32(lastValue)));
+                            else if (typeOfValue == this.typeOfUInt) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToUInt32(lastValue)));
+                            else if (typeOfValue == this.typeOfFloat) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToSingle(lastValue)));
+                            else if (typeOfValue == this.typeOfLong) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToInt64(lastValue)));
+                            else if (typeOfValue == this.typeOfULong) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToUInt64(lastValue)));
+                            else if (typeOfValue == this.typeOfDouble) declaredField.FieldInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToDouble(lastValue)));
+                        }
+                        else declaredField.FieldInfo.SetValue(answer, this.DeserializeObject((GNHashtable)lastValue, declaredField.Cls));
+                    }
                 }
                 else if (declaredField.PropertyInfo != null)
                 {
                     if (declaredField.Cls == this.typeOfByte) declaredField.PropertyInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfSByte) declaredField.PropertyInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfShort) declaredField.PropertyInfo.SetValue(answer, lastValue);
+                    else if (declaredField.Cls == this.typeOfUShort) declaredField.PropertyInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfInt) declaredField.PropertyInfo.SetValue(answer, lastValue);
+                    else if (declaredField.Cls == this.typeOfUInt) declaredField.PropertyInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfFloat) declaredField.PropertyInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfLong) declaredField.PropertyInfo.SetValue(answer, lastValue);
+                    else if (declaredField.Cls == this.typeOfULong) declaredField.PropertyInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfDouble) declaredField.PropertyInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfBool) declaredField.PropertyInfo.SetValue(answer, lastValue);
                     else if (declaredField.Cls == this.typeOfString) declaredField.PropertyInfo.SetValue(answer, lastValue);
@@ -419,8 +501,25 @@ namespace XmobiTea.Data.Converter.Models
                         || (declaredField.PropertyInfo.PropertyType.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericCollection || x.GetGenericTypeDefinition() == this.typeOfCollection))))
                         declaredField.PropertyInfo.SetValue(answer, this.CastList(this.DeserializeArray((GNArray)lastValue, declaredField.Cls), declaredField.Cls, declaredField.PropertyInfo.PropertyType.IsArray));
 
-                    else declaredField.PropertyInfo.SetValue(answer, this.DeserializeObject((GNHashtable)lastValue, declaredField.Cls));
+                    else
+                    {
+                        if (declaredField.Cls.IsEnum)
+                        {
+                            var typeOfValue = lastValue.GetType();
 
+                            if (typeOfValue == this.typeOfByte) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToByte(lastValue)));
+                            else if (typeOfValue == this.typeOfSByte) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToSByte(lastValue)));
+                            else if (typeOfValue == this.typeOfShort) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToInt16(lastValue)));
+                            else if (typeOfValue == this.typeOfUShort) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToUInt16(lastValue)));
+                            else if (typeOfValue == this.typeOfInt) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToInt32(lastValue)));
+                            else if (typeOfValue == this.typeOfUInt) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToUInt32(lastValue)));
+                            else if (typeOfValue == this.typeOfFloat) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToSingle(lastValue)));
+                            else if (typeOfValue == this.typeOfLong) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToInt64(lastValue)));
+                            else if (typeOfValue == this.typeOfULong) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToUInt64(lastValue)));
+                            else if (typeOfValue == this.typeOfDouble) declaredField.PropertyInfo.SetValue(answer, System.Enum.ToObject(declaredField.Cls, System.Convert.ToDouble(lastValue)));
+                        }
+                        else declaredField.PropertyInfo.SetValue(answer, this.DeserializeObject((GNHashtable)lastValue, declaredField.Cls));
+                    }
                 }
             }
         }
@@ -476,12 +575,16 @@ namespace XmobiTea.Data.Converter.Models
                     if (cls == this.typeOfByte) answer.Add(value);
                     else if (cls == this.typeOfSByte) answer.Add(value);
                     else if (cls == this.typeOfShort) answer.Add(value);
+                    else if (cls == this.typeOfUShort) answer.Add(value);
                     else if (cls == this.typeOfInt) answer.Add(value);
+                    else if (cls == this.typeOfUInt) answer.Add(value);
                     else if (cls == this.typeOfFloat) answer.Add(value);
                     else if (cls == this.typeOfLong) answer.Add(value);
+                    else if (cls == this.typeOfULong) answer.Add(value);
                     else if (cls == this.typeOfDouble) answer.Add(value);
                     else if (cls == this.typeOfBool) answer.Add(value);
                     else if (cls == this.typeOfString) answer.Add(value);
+                    else if (cls == this.typeOfBinary) answer.Add(value);
                     else if (cls == this.typeOfGNArray) answer.Add(value);
                     else if (cls == this.typeOfGNHashtable) answer.Add(value);
                     else if ((this.typeOfDictionary.IsAssignableFrom(typeOfValue) || this.typeOfGenericDictionary.IsAssignableFrom(typeOfValue))
@@ -493,7 +596,29 @@ namespace XmobiTea.Data.Converter.Models
                         || (typeOfValue.GetInterfaces().Any(x => x.IsGenericType && (x.GetGenericTypeDefinition() == this.typeOfGenericCollection || x.GetGenericTypeDefinition() == this.typeOfCollection))))
                         answer.Add(this.DeserializeArray((GNArray)value, cls));
                     else
-                        answer.Add(this.DeserializeObject((GNHashtable)value, cls));
+                    {
+                        if (cls.IsEnum)
+                        {
+                            if (typeOfValue == this.typeOfString)
+                            {
+                                answer.Add(System.Enum.Parse(cls, value as string, true));
+                            }
+                            else if (DetectSupport.isNumber(value))
+                            {
+                                if (typeOfValue == this.typeOfByte) answer.Add(System.Enum.ToObject(cls, System.Convert.ToByte(value)));
+                                else if (typeOfValue == this.typeOfSByte) answer.Add(System.Enum.ToObject(cls, System.Convert.ToSByte(value)));
+                                else if (typeOfValue == this.typeOfShort) answer.Add(System.Enum.ToObject(cls, System.Convert.ToInt16(value)));
+                                else if (typeOfValue == this.typeOfUShort) answer.Add(System.Enum.ToObject(cls, System.Convert.ToUInt16(value)));
+                                else if (typeOfValue == this.typeOfInt) answer.Add(System.Enum.ToObject(cls, System.Convert.ToInt32(value)));
+                                else if (typeOfValue == this.typeOfUInt) answer.Add(System.Enum.ToObject(cls, System.Convert.ToUInt32(value)));
+                                else if (typeOfValue == this.typeOfFloat) answer.Add(System.Enum.ToObject(cls, System.Convert.ToSingle(value)));
+                                else if (typeOfValue == this.typeOfLong) answer.Add(System.Enum.ToObject(cls, System.Convert.ToInt64(value)));
+                                else if (typeOfValue == this.typeOfULong) answer.Add(System.Enum.ToObject(cls, System.Convert.ToUInt64(value)));
+                                else if (typeOfValue == this.typeOfDouble) answer.Add(System.Enum.ToObject(cls, System.Convert.ToDouble(value)));
+                            }
+                        }
+                        else answer.Add(this.DeserializeObject((GNHashtable)value, cls));
+                    }    
                 }
             }
 

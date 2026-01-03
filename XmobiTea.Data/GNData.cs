@@ -15,6 +15,11 @@
         {
             if (value == null) return null;
 
+            if (value is byte[] binaryValue)
+            {
+                return binaryValue;
+            }
+
             if (value is System.Collections.IList list)
             {
                 var answer = new GNArray.Builder().AddAll(list).Build();
@@ -242,6 +247,22 @@
             if (value0 != null)
             {
                 return value0.ToArray<T>();
+            }
+            return defaultValue;
+        }
+
+        /// <summary>
+        /// Gets a binary of a specified type associated with the provided key.
+        /// </summary>
+        /// <param name="k">The key to retrieve the binary.</param>
+        /// <param name="defaultValue">The default binary if the key does not exist.</param>
+        /// <returns></returns>
+        public byte[] GetBinary(TKey k, byte[] defaultValue = null)
+        {
+            var value0 = this.GetObject(k);
+            if (value0 != null && value0 is byte[] binaryValue)
+            {
+                return binaryValue;
             }
             return defaultValue;
         }

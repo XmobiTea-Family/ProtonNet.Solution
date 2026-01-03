@@ -905,6 +905,8 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
 
                 session.SendResponseAsync(response);
 
+                System.Threading.Interlocked.Decrement(ref this.pendingRequest);
+
                 this.logger.Warn($"buffer drop because max request per session per second, current: {sessionAmountInCurrentSecond}, maxSessionRequestPerSecond: {this.maxSessionRequestPerSecond}");
                 return;
             }
@@ -923,6 +925,8 @@ namespace XmobiTea.ProtonNet.Server.WebApi.Services
                 }
 
                 session.SendResponseAsync(response);
+
+                System.Threading.Interlocked.Decrement(ref this.pendingRequest);
 
                 this.logger.Warn($"buffer drop because max pending request, current: {sessionPendingRequest}, maxSessionPendingRequest: {this.maxSessionPendingRequest}");
                 return;
