@@ -50,7 +50,7 @@ namespace XmobiTea.Data.Converter
         /// <typeparam name="T">The type of objects in the list.</typeparam>
         /// <param name="gnArray">The GNArray to deserialize.</param>
         /// <returns>The deserialized list of objects.</returns>
-        public System.Collections.IList DeserializeArray<T>(GNArray gnArray) => this.DeserializeArray<T>(gnArray);
+        public System.Collections.IList DeserializeArray<T>(GNArray gnArray) => this.DeserializeArray(gnArray, typeof(T));
 
         /// <summary>
         /// Deserializes a <see cref="GNArray"/> to a list of objects of the specified type.

@@ -12,7 +12,7 @@
         /// <returns>
         /// <c>true</c> if the value is a numeric type; otherwise, <c>false</c>.
         /// </returns>
-        public static bool isNumber(object value)
+        public static bool IsNumber(object value)
         {
             return value is byte
                     || value is sbyte
@@ -43,6 +43,18 @@
                     || value is uint
                     || value is long
                     || value is ulong;
+        }
+
+        /// <summary>
+        /// Determines whether the specified value is a binary type.
+        /// </summary>
+        /// <param name="value">The value to check.</param>
+        /// <returns>
+        /// <c>true</c> if the value is a binary type; otherwise, <c>false</c>
+        /// </returns>
+        public static bool IsBinary(object value)
+        {
+            return value is byte[];
         }
 
     }

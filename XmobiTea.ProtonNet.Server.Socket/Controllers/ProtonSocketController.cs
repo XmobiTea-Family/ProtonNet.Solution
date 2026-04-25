@@ -110,9 +110,9 @@ namespace XmobiTea.ProtonNet.Server.Socket.Controllers
 
             if (this.sessionService.GetSessionCount(sessionId) == 0)
             {
-                this.userPeerSessionService.RemoveUserPeer(sessionId);
-
                 var userPeer = this.userPeerSessionService.GetUserPeer(sessionId);
+
+                this.userPeerSessionService.RemoveUserPeer(sessionId);
 
                 if (userPeer != null)
                 {

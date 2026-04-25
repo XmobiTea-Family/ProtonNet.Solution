@@ -140,9 +140,19 @@ namespace XmobiTea.Data.Converter.Models
                 {
                     var elementCls = gnArrayDataMemberAnno.ElementCls;
 
-                    if (elementCls == null) elementCls = field.FieldType.IsGenericType ? field.FieldType.GetGenericArguments()[0]
-                                                            : field.FieldType.IsArray ? field.FieldType.GetElementType()
-                                                            : field.FieldType;
+                    if (elementCls == null)
+                    {
+                        if (field.FieldType == typeof(byte[]))
+                        {
+                            elementCls = field.FieldType;
+                        }
+                        else
+                        {
+                            elementCls = field.FieldType.IsGenericType ? field.FieldType.GetGenericArguments()[0]
+                                : field.FieldType.IsArray ? field.FieldType.GetElementType()
+                                : field.FieldType;
+                        }
+                    }
 
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(field.Name, FieldDataType.Array, elementCls, field, null);
 
@@ -206,9 +216,19 @@ namespace XmobiTea.Data.Converter.Models
                 {
                     var elementCls = gnArrayDataMemberAnno.ElementCls;
 
-                    if (elementCls == null) elementCls = property.PropertyType.IsGenericType ? property.PropertyType.GetGenericArguments()[0]
-                                                            : property.PropertyType.IsArray ? property.PropertyType.GetElementType()
-                                                            : property.PropertyType;
+                    if (elementCls == null)
+                    {
+                        if (property.PropertyType == typeof(byte[]))
+                        {
+                            elementCls = property.PropertyType;
+                        }
+                        else
+                        {
+                            elementCls = property.PropertyType.IsGenericType ? property.PropertyType.GetGenericArguments()[0]
+                                : property.PropertyType.IsArray ? property.PropertyType.GetElementType()
+                                : property.PropertyType;
+                        }
+                    }
 
                     gnEnhancedObjectFieldMetadata = new GNEnhancedObjectFieldMetadata(property.Name, FieldDataType.Array, elementCls, null, property);
 
@@ -301,7 +321,10 @@ namespace XmobiTea.Data.Converter.Models
                 gnEnhancedObjectFieldMetadata.ActiveConditionValid = true;
 
                 if (dataMemberAnno.MinLength == -1) dataMemberAnno.MinLength = 0;
-                if (dataMemberAnno.MaxLength == -1) dataMemberAnno.MaxLength = 256;
+                if (dataMemberAnno.MaxLength == -1)
+                {
+                    dataMemberAnno.MaxLength = gnEnhancedObjectFieldMetadata.Cls == typeof(byte[]) ? 1024 : 256;
+                }
             }
 
             gnEnhancedObjectFieldMetadata.MustNonNull = dataMemberAnno.MustNonNull;
